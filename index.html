@@ -116,6 +116,7 @@
 
         <main class="flex-1">
             <section id="heroSection" class="bg-white py-16 lg:py-20">
+                {/* Hero Section content - No changes needed here */}
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h2 class="po-wizard-title-font text-5xl lg:text-6xl font-bold text-cyan-700 mb-8 leading-tight">
@@ -161,6 +162,7 @@
             </section>
 
             <section id="featuresSection" class="py-20 bg-slate-100 hidden">
+                 {/* Features Section content - No changes needed here */}
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h3 class="po-wizard-title-font text-4xl font-bold text-cyan-700 mb-6">How PO Wizard Works</h3>
@@ -210,6 +212,7 @@
             </section>
 
             <section id="pricingSection" class="py-20 bg-white hidden">
+                 {/* Pricing Section content - No changes needed here */}
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h3 class="po-wizard-title-font text-4xl font-bold text-cyan-700 mb-6">Simple, Transparent Pricing</h3>
@@ -259,7 +262,8 @@
             </section>
 
             <section id="processingSection" class="bg-slate-100 py-16 lg:py-20 hidden">
-                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                {/* Processing Section content - No structural changes needed */}
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 max-w-4xl mx-auto">
                         <div id="jobContextDisplay_processing" class="mb-6 text-cyan-700">Processing Job: <span id="displayJobNumber_processing" class="font-semibold">N/A</span> | Project: <span id="displayProjectName_processing" class="font-semibold">N/A</span></div>
                         <div class="flex justify-center items-center space-x-4 sm:space-x-8 mb-12">
@@ -268,7 +272,6 @@
                              <div id="processDocsStepIndicator" class="flex flex-col items-center text-xs sm:text-sm"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-2 sm:mb-3 transition-all duration-300">3</div><span class="font-medium text-slate-500">Process</span></div>
                         </div>
                         
-                        <!-- Step 0: Dropbox Access Token Input -->
                         <div id="step0_token_input" class="step-content hidden">
                             <div class="text-center mb-8">
                                 <div class="w-20 h-20 bg-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
@@ -287,7 +290,6 @@
                             <p class="text-xs text-slate-500 mt-2">Need help generating a token? <a href="#" class="text-cyan-600 hover:underline" onclick="alert('Help for token generation will be here.')">Click here</a>.</p>
                         </div>
 
-                        <!-- Step 1: Configure Job -->
                         <div id="step1_configure_job" class="step-content hidden">
                             <div class="text-center mb-8"><div class="w-20 h-20 bg-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><svg class="w-10 h-10 text-cyan-700" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg></div>
                                 <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Configure Job & Paths</h3>
@@ -303,7 +305,6 @@
                             <div class="text-xs text-slate-500 text-center mt-4"><span class="material-icons-outlined text-green-600 text-sm mr-1">lock</span>Secure connection via backend.</div>
                         </div>
 
-                        <!-- Step 2: Process Documents -->
                         <div id="step2_processing_docs" class="step-content hidden">
                              <div class="text-center mb-8"><div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-700 text-3xl">auto_awesome</span></div>
                                 <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Processing Documents...</h3>
@@ -328,6 +329,7 @@
             </section>
 
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
+                {/* Purchase Orders Section content - No structural changes needed */}
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center mb-8">
                         <div><h3 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-2">My Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs_dashboard">Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p></div>
@@ -343,7 +345,6 @@
                         <div class="flex items-center space-x-2"><span class="text-sm text-slate-600">Sort by:</span><select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"><option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option></select></div>
                     </div>
                     <div id="poGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                         {/* PO Cards will be rendered here */}
                     </div>
                     <div id="noPOsActionContainer" class="text-center py-12 hidden">
                         <span class="material-icons-outlined text-6xl text-slate-300 mb-4">folder_open</span>
@@ -358,6 +359,7 @@
         </main>
 
         <footer class="bg-slate-800 text-slate-300">
+            {/* Footer content - No changes needed here */}
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <div class="flex items-center space-x-3 mb-4 md:mb-0">
@@ -371,6 +373,7 @@
     </div>
 
     <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100]">
+         {/* Review Modal content - No structural changes needed */}
         <div class="bg-white rounded-2xl p-6 md:p-8 max-w-6xl w-11/12 md:w-full mx-auto max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6"><h3 id="reviewModalTitle" class="po-wizard-title-font text-2xl font-bold text-cyan-700">Review Purchase Order</h3><button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><span class="material-icons-outlined text-2xl">close</span></button></div>
             <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8">
@@ -399,15 +402,18 @@
 
     <script>
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
+        // No longer need FRONTEND_URL here as redirects are handled by backend based on its env var
+
         let isAuthenticated = false; 
         let currentJobNumberContext = ""; 
         let currentProjectNameContext = "";
-        let dropboxAccessToken = ""; // Store the token temporarily for the session
+        let dropboxAccessToken = ""; 
         let currentOpenPOTaskId = null; 
         let statusPollInterval = null;
         let allFetchedPOs = []; 
-        let mockedUser = { displayName: "Valued User", email: "user@example.com" };
+        let currentUser = null; // Stores { app_token, displayName, email (from JWT) }
 
+        // --- Authentication UI and Logic ---
         function updateAuthUI() {
             const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
             const authDesktop = document.getElementById('authActionsAuthenticated_desktop');
@@ -418,23 +424,22 @@
             const procNavButton = document.getElementById('processingNavButton');
             const mobileProcNavButton = document.getElementById('mobileProcessingNavButton');
 
-            if (isAuthenticated) {
+            if (isAuthenticated && currentUser) {
                 unauthDesktop.classList.add('hidden');
                 authDesktop.classList.remove('hidden');
-                authDesktop.classList.add('flex'); // Ensure it's flex for proper layout
-                userDisplayDesktop.textContent = `Welcome, ${mockedUser.displayName}!`;
+                authDesktop.classList.add('flex'); 
+                userDisplayDesktop.textContent = `Welcome, ${currentUser.displayName}!`;
                 
                 unauthMobile.classList.add('hidden');
                 authMobile.classList.remove('hidden');
                 authMobile.style.display = 'flex'; 
                 authMobile.classList.add('flex-col', 'space-y-2');
-                userDisplayMobile.textContent = `Welcome, ${mockedUser.displayName}!`;
+                userDisplayMobile.textContent = `Welcome, ${currentUser.displayName}!`;
 
                 procNavButton.textContent = 'My POs';
                 mobileProcNavButton.textContent = 'My POs';
                 procNavButton.disabled = false;
                 mobileProcNavButton.disabled = false;
-
             } else {
                 unauthDesktop.classList.remove('hidden');
                 authDesktop.classList.add('hidden');
@@ -451,52 +456,128 @@
             }
         }
 
-        function signInWithGoogle(plan) {
-            console.log("Simulating Sign In with Google...");
-            if (plan) console.log("User selected plan:", plan);
-            isAuthenticated = true;
-            mockedUser = { displayName: "Film Pro", email: "film.pro@gmail.com" }; 
-            updateAuthUI();
-            alert("Successfully signed in (mock)!");
-            showTab('purchaseOrders'); // After sign-in, go to "My POs" (purchaseOrdersSection)
-            if (document.getElementById('mobileMenu') && !document.getElementById('mobileMenu').classList.contains('hidden')) {
-                toggleMobileMenu();
-            }
+        function signInWithGoogle() {
+            // Redirect to backend's Google login initiation endpoint
+            console.log("Redirecting to backend for Google Sign-In...");
+            window.location.href = `${API_BASE_URL}/auth/google/login`;
         }
 
         function signOut() {
-            console.log("Simulating Sign Out...");
+            localStorage.removeItem('app_token');
+            localStorage.removeItem('user_displayName');
+            localStorage.removeItem('user_email'); // Also clear email if stored separately
             isAuthenticated = false;
+            currentUser = null;
             currentJobNumberContext = ""; 
             currentProjectNameContext = "";
             dropboxAccessToken = "";
-            allFetchedPOs = []; // Clear fetched POs on sign out
+            allFetchedPOs = []; 
             updateAuthUI();
             showTab('hero'); 
             if (document.getElementById('mobileMenu') && !document.getElementById('mobileMenu').classList.contains('hidden')) {
                 toggleMobileMenu();
             }
+            console.log("User signed out.");
+        }
+        
+        async function fetchUserDetails(token) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    if (response.status === 401) { // Token invalid or expired
+                        console.warn("Token validation failed (401). Signing out.");
+                        signOut(); // Clear invalid token and sign out user
+                    } else {
+                        console.error(`Failed to fetch user details: ${response.status} ${response.statusText}`);
+                    }
+                    return null;
+                }
+                const userData = await response.json();
+                return {
+                    displayName: userData.full_name || "User",
+                    email: userData.email, // Email from the JWT/backend
+                    app_token: token
+                };
+            } catch (error) {
+                console.error("Error fetching user details:", error);
+                return null;
+            }
         }
 
+
+        async function checkAuthOnLoad() {
+            const token = localStorage.getItem('app_token');
+            if (token) {
+                console.log("Found app_token in localStorage. Verifying...");
+                const userDetails = await fetchUserDetails(token);
+                if (userDetails) {
+                    isAuthenticated = true;
+                    currentUser = userDetails;
+                    localStorage.setItem('user_displayName', currentUser.displayName); // Update/set display name
+                    localStorage.setItem('user_email', currentUser.email); // Store email
+                    console.log("User authenticated from localStorage token:", currentUser);
+                } else {
+                    // fetchUserDetails would have called signOut() if token was invalid
+                    console.log("Token verification failed or no user details returned.");
+                }
+            } else {
+                isAuthenticated = false;
+                currentUser = null;
+                console.log("No token in localStorage. User not authenticated.");
+            }
+            updateAuthUI();
+        }
+
+        async function handleAuthCallback() {
+            if (window.location.hash && window.location.hash.startsWith('#token=')) {
+                const token = window.location.hash.substring('#token='.length);
+                localStorage.setItem('app_token', token);
+                console.log("Token received from URL callback. Fetching user details...");
+
+                const userDetails = await fetchUserDetails(token);
+                if (userDetails) {
+                    isAuthenticated = true;
+                    currentUser = userDetails;
+                    localStorage.setItem('user_displayName', currentUser.displayName);
+                    localStorage.setItem('user_email', currentUser.email);
+                    console.log("User successfully authenticated via callback:", currentUser);
+                    updateAuthUI();
+                    history.pushState("", document.title, window.location.pathname + window.location.search); // Clear token from URL
+                    showTab('purchaseOrders'); 
+                } else {
+                    // fetchUserDetails would have handled signOut on 401
+                    console.error("Could not set up user after auth callback.");
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+                }
+            } else if (window.location.hash && window.location.hash.startsWith('#auth_error=')){
+                const errorMsg = window.location.hash.substring('#auth_error='.length);
+                alert(`Google Sign-In Error: ${decodeURIComponent(errorMsg)}`);
+                history.pushState("", document.title, window.location.pathname + window.location.search); 
+            }
+        }
+
+        // --- End Authentication ---
+
+        // --- Tab Navigation and UI Logic (largely same as previous) ---
         function showTab(tabName) {
-            const protectedTabs = ['processingSection', 'purchaseOrdersSection']; // IDs of sections
-            if (protectedTabs.map(id => id.replace('Section','')).includes(tabName.replace('Section','')) && !isAuthenticated) {
+            const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
+            const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
+
+            if (protectedTabs.includes(sectionId) && !isAuthenticated) {
                 alert('Please sign in to access this feature.');
-                signInWithGoogle(); 
+                // signInWithGoogle(); // No need to call here, alert is enough, user will click sign in button
                 return;
             }
 
             document.querySelectorAll('main > section').forEach(section => section.style.display = 'none');
-            const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
             const sectionElement = document.getElementById(sectionId);
             if (sectionElement) sectionElement.style.display = 'block';
 
             if (sectionId === 'purchaseOrdersSection') {
                 fetchGeneratedPOs(); 
             } else if (sectionId === 'processingSection') {
-                // This section is now only shown via promptForDropboxToken or if a process is ongoing
-                // Initial display logic for processingSection is handled by promptForDropboxToken
-                // If user somehow lands here directly and token not set, prompt for it.
                 if (!dropboxAccessToken) {
                     promptForDropboxToken();
                 }
@@ -542,51 +623,50 @@
         }
 
         function promptForDropboxToken() {
-            if (!isAuthenticated) { signInWithGoogle(); return; }
-
+            if (!isAuthenticated) { 
+                // signInWithGoogle(); // Removed as showTab already handles this
+                alert("Please sign in first.");
+                return; 
+            }
+            // Logic from previous version
             document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
             document.getElementById('processingSection').style.display = 'block';
-
             document.getElementById('step0_token_input').classList.remove('hidden');
             document.getElementById('step1_configure_job').classList.add('hidden');
             document.getElementById('step2_processing_docs').classList.add('hidden');
             document.getElementById('progressSection').classList.remove('expanded');
-            
-            // Clear previous job details for a new batch
             document.getElementById('inputJobNumber').value = '';
             document.getElementById('inputProjectName').value = '';
-            // currentJobNumberContext = ""; // Don't clear global context here yet, only when new job is submitted
-            // currentProjectNameContext = "";
-            updateJobContextDisplay_Processing("N/A", "N/A"); // Show N/A for processing view
+            updateJobContextDisplay_Processing("N/A", "N/A"); 
             updateActiveStepIndicator('token');
         }
 
         function submitDropboxToken() {
+            // Logic from previous version
             const token = document.getElementById('dropboxAccessTokenInput').value.trim();
             if (!token) {
                 alert("Please enter your Dropbox Access Token.");
                 return;
             }
-            dropboxAccessToken = token; // Store for this session (mock)
-            console.log("Dropbox Token Submitted (mock):", dropboxAccessToken);
+            dropboxAccessToken = token; 
+            console.log("Dropbox Token Submitted:", dropboxAccessToken);
 
             document.getElementById('step0_token_input').classList.add('hidden');
             document.getElementById('step1_configure_job').classList.remove('hidden');
             updateActiveStepIndicator('configure');
         }
 
-
-        function updateActiveTabButton(activeTabName) {
+        function updateActiveTabButton(activeTabName) { 
+            // Logic from previous version
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             let targetButtonText = "";
-            if (activeTabName === 'hero' || activeTabName === 'heroSection') targetButtonText = null;
-            else if (activeTabName === 'features' || activeTabName === 'featuresSection') targetButtonText = 'Features';
-            else if (activeTabName === 'pricing' || activeTabName === 'pricingSection') targetButtonText = 'Pricing';
-            else if (activeTabName === 'purchaseOrders' || activeTabName === 'purchaseOrdersSection') {
-                targetButtonText = isAuthenticated ? 'My POs' : 'My POs / Process';
-            } else if (activeTabName === 'processing' || activeTabName === 'processingSection') {
-                 // When in processing section, "My POs" should still be active
-                targetButtonText = isAuthenticated ? 'My POs' : 'My POs / Process';
+            const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
+
+            if (sectionId === 'heroSection') targetButtonText = null;
+            else if (sectionId === 'featuresSection') targetButtonText = 'Features';
+            else if (sectionId === 'pricingSection') targetButtonText = 'Pricing';
+            else if (sectionId === 'purchaseOrdersSection' || sectionId === 'processingSection') {
+                targetButtonText = document.getElementById('processingNavButton').textContent.trim();
             }
             
             if (targetButtonText) {
@@ -598,7 +678,7 @@
             }
         }
         
-        function toggleMobileMenu() {
+        function toggleMobileMenu() { /* ... (same) ... */ 
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
@@ -610,7 +690,7 @@
         const mobileMenuBtn = document.getElementById('mobileMenuButton');
         if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
         
-        function closeMobileMenu() { 
+        function closeMobileMenu() { /* ... (same) ... */ 
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
@@ -620,29 +700,27 @@
             }
         }
         
-        // For the PO Dashboard (purchaseOrdersSection)
-        function updateJobContextDisplay_Dashboard(jobNum, projName) {
+        function updateJobContextDisplay_Dashboard(jobNum, projName) { /* ... (same) ... */ 
             const dispJobNum = document.getElementById('displayJobNumber_dashboard');
             const dispProjName = document.getElementById('displayProjectName_dashboard');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
 
-        // For the Processing Section
-        function updateJobContextDisplay_Processing(jobNum, projName) {
+        function updateJobContextDisplay_Processing(jobNum, projName) { /* ... (same) ... */ 
             const dispJobNum = document.getElementById('displayJobNumber_processing');
             const dispProjName = document.getElementById('displayProjectName_processing');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
 
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateAuthUI(); 
+        document.addEventListener('DOMContentLoaded', async () => { // Make DOMContentLoaded async
+            await handleAuthCallback(); // Wait for auth callback to process first
+            await checkAuthOnLoad();    // Then check existing auth state
             showTab('hero'); 
         });
 
-        function confirmPathsAndProceed() { 
+        function confirmPathsAndProceed() { /* ... (modified to use JWT) ... */ 
             currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
             currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
             
@@ -654,10 +732,10 @@
             }
             if (!dropboxAccessToken) {
                 alert("Dropbox Access Token is missing. Please go back and provide it.");
-                promptForDropboxToken(); // Send user back to token input
+                promptForDropboxToken(); 
                 return;
             }
-            updateJobContextDisplay_Processing(currentJobNumberContext, currentProjectNameContext); // Update display for processing section
+            updateJobContextDisplay_Processing(currentJobNumberContext, currentProjectNameContext); 
 
             document.getElementById('step1_configure_job').classList.add('hidden');
             document.getElementById('step2_processing_docs').classList.remove('hidden');
@@ -666,19 +744,42 @@
             startDocumentProcessing(sourcePath, outputPath);
         }
         
-        async function startDocumentProcessing(sourcePath, outputPath) {
+        async function startDocumentProcessing(sourcePath, outputPath) { /* ... (modified to use JWT) ... */ 
             updateProgressUI(0, "Initializing job submission...");
             const stageSpinner = document.getElementById('stageSpinner'); if (stageSpinner) stageSpinner.style.display = 'block';
+            
+            const appToken = localStorage.getItem('app_token');
+            if (!isAuthenticated || !appToken) { // Double check auth state
+                alert("Authentication error. Please sign in again.");
+                signOut(); 
+                if(stageSpinner) stageSpinner.style.display = 'none';
+                return;
+            }
+
             const payload = { 
-                dropbox_access_token: dropboxAccessToken, // Include the token
+                dropbox_access_token: dropboxAccessToken, 
                 dropbox_source_path: sourcePath, 
                 dropbox_output_path: outputPath, 
                 job_number_context: currentJobNumberContext, 
                 project_name_context: currentProjectNameContext,
-                user_email: isAuthenticated ? mockedUser.email : null 
+                // user_email is derived by backend from JWT
             };
             try {
-                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { 
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${appToken}` 
+                    }, 
+                    body: JSON.stringify(payload) 
+                });
+                if (response.status === 401) { 
+                    console.warn("Celery task submission failed (401). Signing out.");
+                    signOut();
+                    alert("Your session has expired. Please sign in again.");
+                    if(stageSpinner) stageSpinner.style.display = 'none';
+                    return;
+                }
                 if (!response.ok) { 
                     let errorDetail = `Failed to trigger processing: ${response.statusText} (Status: ${response.status})`;
                     try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
@@ -690,13 +791,12 @@
             } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
         }
 
-        function pollTaskStatus(taskId) {
-            // ... (rest of the function is the same)
+        function pollTaskStatus(taskId) { /* ... (same) ... */ 
             if (statusPollInterval) clearInterval(statusPollInterval);
             const stageSpinner = document.getElementById('stageSpinner');
             statusPollInterval = setInterval(async () => {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
+                    const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`); 
                     if (!response.ok) { 
                         let errorDetail = `Error fetching status: ${response.statusText} (Status: ${response.status})`;
                         try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
@@ -715,8 +815,7 @@
             }, 3000);
         }
 
-        function updateProgressUI(percentage, statusText, isError = false) {
-            // ... (rest of the function is the same)
+        function updateProgressUI(percentage, statusText, isError = false) { /* ... (same) ... */ 
             const progressFill = document.getElementById('progressFill'); const progressPercent = document.getElementById('progressPercent');
             const stageTitle = document.getElementById('stageTitle'); const stageDescription = document.getElementById('stageDescription');
             if (percentage !== null && progressFill && progressPercent) { progressFill.style.width = percentage + '%'; progressPercent.textContent = percentage + '%'; }
@@ -728,13 +827,14 @@
         
         function cancelProcessing() { /* ... (same) ... */ if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
 
-        async function fetchGeneratedPOs() {
+        async function fetchGeneratedPOs() { /* ... (modified to use JWT) ... */ 
             const poGrid = document.getElementById('poGrid');
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
-            const noPOsMessageEl = document.getElementById('noPOsMessage'); // The <p> tag inside noPOsActionContainer
+            const noPOsMessageEl = document.getElementById('noPOsMessage');
 
-            if (!isAuthenticated) {
-                if (poGrid) poGrid.innerHTML = ''; // Clear grid
+            const appToken = localStorage.getItem('app_token');
+            if (!isAuthenticated || !appToken) {
+                if (poGrid) poGrid.innerHTML = ''; 
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please sign in to view your Purchase Orders.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
                 updateJobContextDisplay_Dashboard("N/A", "N/A");
@@ -743,24 +843,30 @@
             
             updateJobContextDisplay_Dashboard(currentJobNumberContext, currentProjectNameContext);
             
-            const purchaseOrdersSection = document.getElementById('purchaseOrdersSection');
             if (!poGrid) { console.error("CRITICAL UI Error: poGrid element not found!"); return; }
             
             poGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">Loading POs...</p>'; 
-            if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden'); // Hide while loading
+            if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
 
             if (!currentJobNumberContext) { 
-                poGrid.innerHTML = ''; // Clear "Loading..."
+                poGrid.innerHTML = ''; 
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'No active job selected. Please create a new PO batch.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
                 const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `0 POs Generated`;
-                allFetchedPOs = []; // Ensure filters don't use stale data
+                allFetchedPOs = [];
                 return; 
             }
 
             try {
-                const userEmailParam = isAuthenticated ? `&userEmail=${encodeURIComponent(mockedUser.email)}` : "";
-                const response = await fetch(`${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}${userEmailParam}`);
+                const response = await fetch(`${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}`, {
+                    headers: { 'Authorization': `Bearer ${appToken}` }
+                });
+                if (response.status === 401) {
+                    console.warn("Fetching POs failed (401). Signing out.");
+                    signOut();
+                    alert("Your session has expired. Please sign in again.");
+                    return;
+                }
                 if (!response.ok) {
                     let errorDetail = `Failed to fetch POs: ${response.statusText} (Status: ${response.status})`;
                     try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
@@ -770,7 +876,7 @@
                 const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `${allFetchedPOs.length} POs Generated`;
                 
                 if (allFetchedPOs.length === 0) {
-                    poGrid.innerHTML = ''; // Clear "Loading..."
+                    poGrid.innerHTML = ''; 
                     if (noPOsMessageEl) noPOsMessageEl.textContent = `No Purchase Orders found for Job: ${currentJobNumberContext}. Create a new batch or select another job.`;
                     if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
                 } else {
@@ -779,21 +885,19 @@
                 }
             } catch (error) {
                 console.error('Error fetching/rendering POs:', error);
-                poGrid.innerHTML = ''; // Clear "Loading..."
+                poGrid.innerHTML = ''; 
                 if (noPOsMessageEl) noPOsMessageEl.textContent = `Error loading POs: ${error.message}. Try creating a new batch.`;
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
             }
         }
 
-        function renderPOGrid(posToRender) {
-            // ... (same, just ensure noPOsActionContainer is hidden if posToRender is not empty)
+        function renderPOGrid(posToRender) { /* ... (same) ... */ 
             const poGrid = document.getElementById('poGrid'); 
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             
             if (!poGrid) { console.error("renderPOGrid: poGrid element not found!"); return; }
             poGrid.innerHTML = ''; 
             if (!posToRender || posToRender.length === 0) {
-                // fetchGeneratedPOs handles showing the noPOsActionContainer if allFetchedPOs is empty
                 return;
             }
             if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
@@ -813,14 +917,23 @@
             return card;
         }
 
-        async function openReviewModal(poIdOnGrid) { /* ... (same) ... */ 
+        async function openReviewModal(poIdOnGrid) { /* ... (modified to use JWT) ... */ 
+            const appToken = localStorage.getItem('app_token');
+            if (!isAuthenticated || !appToken) {
+                alert("Authentication error. Please sign in again.");
+                signOut(); return;
+            }
+
             console.log("Opening review for PO ID on Grid:", poIdOnGrid);
             let currentEditingPOData; 
             const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
             if (!poDataToReview || !poDataToReview.full_po_data_for_review) {
                  try { 
                     console.log(`Fetching full data for PO: Job ${currentJobNumberContext}, PO ${poIdOnGrid}`); 
-                    const response = await fetch(`${API_BASE_URL}/get-po-data-for-review/${currentJobNumberContext}/${poIdOnGrid}`); 
+                    const response = await fetch(`${API_BASE_URL}/get-po-data-for-review/${currentJobNumberContext}/${poIdOnGrid}`, {
+                        headers: { 'Authorization': `Bearer ${appToken}` }
+                    }); 
+                    if (response.status === 401) { signOut(); alert("Session expired. Please sign in."); return; }
                     if (!response.ok) { 
                         const errorDetail = await response.json(); 
                         alert(`Error fetching PO details: ${errorDetail.detail || response.statusText}`); return; 
@@ -835,7 +948,7 @@
             }
 
             if (!currentEditingPOData) { alert('Could not load data for this PO.'); return; }
-
+            
             document.getElementById('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPOData.po_number}`;
             document.getElementById('editPoIdOnGrid').value = poIdOnGrid; 
             document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename || ''; 
@@ -871,9 +984,8 @@
                 } 
                 pdfSrc = dbxLink;
             } else if (currentEditingPOData.generated_draft_po_pdf_path_local) { 
-                console.warn("Local PDF path for iframe restricted."); 
+                console.warn("Local PDF path for iframe restricted. PDF might not display."); 
                 pdfSrc = 'about:blank'; 
-                alert("PDF preview for local files not directly supported in this environment."); 
             }
             console.log("Setting PDF viewer src to:", pdfSrc); 
             document.getElementById('pdfViewer').src = pdfSrc;
@@ -907,13 +1019,20 @@
             document.getElementById('pdfViewer').src = 'about:blank'; 
         }
 
-        async function submitPOChanges(isApproval) { /* ... (same logic, ensure user_email is included) ... */ 
+        async function submitPOChanges(isApproval) { /* ... (modified to use JWT) ... */ 
+            const appToken = localStorage.getItem('app_token');
+            if (!isAuthenticated || !appToken) {
+                alert("Authentication error. Please sign in again.");
+                signOut(); return;
+            }
+
             const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForRegen = {};
+            
             formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = []; } while (poDataForRegen.aggregated_line_items.length <= index) { poDataForRegen.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForRegen.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForRegen.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForRegen[key] = value === 'true'; } else { poDataForRegen[key] = value; } } });
             poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value; 
             poDataForRegen.job_number = document.getElementById('editJobNumber').value; 
             poDataForRegen.project_name = document.getElementById('editProjectName').value;
-            poDataForRegen.user_email = isAuthenticated ? mockedUser.email : null; 
+            // user_email is added by backend from JWT
             try { poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]"); } catch (e) { poDataForRegen.backup_document_original_dropbox_paths = []; console.error("Error parsing backup_document_original_dropbox_paths:", e); }
             if (poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => item.description || item.amount ); }
             
@@ -922,7 +1041,15 @@
             }
             console.log("Submitting PO Data for Regeneration:", poDataForRegen);
             try {
-                const response = await fetch(`${API_BASE_URL}/regenerate-po`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ po_data_to_regenerate: poDataForRegen }) });
+                const response = await fetch(`${API_BASE_URL}/regenerate-po`, { 
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${appToken}` 
+                    }, 
+                    body: JSON.stringify({ po_data_to_regenerate: poDataForRegen }) 
+                });
+                if (response.status === 401) { signOut(); alert("Session expired. Please sign in."); return; }
                 if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to regenerate PO: ${response.statusText}`); }
                 alert('PO successfully ' + (isApproval ? 'approved (simulated) and' : '') + ' regenerated and updated!'); 
                 closeReviewModal(); 
