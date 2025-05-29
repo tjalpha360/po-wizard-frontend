@@ -4,19 +4,17 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-    <!-- Updated Font Imports -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <title>PO Wizard - Film Production Invoice Processing</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        /* Updated Color Scheme & Styles - Cyan/Blue Theme */
         body { 
-            background-color: #F8FAFC; /* Tailwind slate-50 - very light cool gray/off-white */
-            font-family: 'Inter', 'Noto Sans', sans-serif; /* Default body font */
+            background-color: #F8FAFC; /* slate-50 */
+            font-family: 'Inter', 'Noto Sans', sans-serif;
         }
         .po-wizard-title-font {
-            font-family: 'Poppins', sans-serif; /* Custom font for PO Wizard title */
+            font-family: 'Poppins', sans-serif;
         }
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07); }
@@ -38,7 +36,6 @@
             background-color: #0891B2; /* cyan-600 */
         }
 
-        /* Other existing styles from previous version */
         .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         .connector-line { width: 4rem; height: 2px; background: #e2e8f0; }
@@ -68,25 +65,26 @@
                         </div>
                     </a>
 
-                    <!-- Desktop Navigation & Actions (hidden on small screens) -->
+                    <!-- Desktop Navigation & Actions -->
                     <div id="desktopMenu" class="hidden md:flex items-center space-x-3 lg:space-x-4">
                         <nav class="flex items-center space-x-1 lg:space-x-3">
                             <button onclick="showTab('features')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50">Features</button>
                             <button onclick="showTab('pricing')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50">Pricing</button>
-                            <button onclick="showTab('processing')" id="processingNavButton" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50 whitespace-nowrap">My POs / Process</button>
+                            <button onclick="showTab('purchaseOrders')" id="processingNavButton" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50 whitespace-nowrap">My POs / Process</button>
                         </nav>
                         <div class="flex items-center space-x-2 lg:space-x-3 border-l border-slate-300 pl-3 lg:pl-4">
-                             <input type="text" id="currentJobNumber" placeholder="Job #" title="Current Job Number" class="px-3 py-2 border border-slate-300 rounded-lg text-sm w-24 focus:ring-cyan-500 focus:border-cyan-500" value="85319">
-                            <button onclick="showSignIn()" id="signInButton" class="whitespace-nowrap items-center px-3 py-2 text-sm lg:text-base text-slate-700 hover:text-cyan-600">
-                                Sign In
-                            </button>
-                            <button onclick="showSignUp()" id="getStartedButton" class="btn-primary whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg font-medium text-sm lg:text-base">
-                                Get Started
-                            </button>
+                            <div id="authActionsUnauthenticated_desktop">
+                                <button onclick="signInWithGoogle()" class="btn-primary whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg font-medium text-sm lg:text-base">
+                                    Sign In with Google
+                                </button>
+                            </div>
+                            <div id="authActionsAuthenticated_desktop" class="hidden items-center space-x-3">
+                                <span id="userDisplayName_desktop" class="text-sm text-slate-700"></span>
+                                <button onclick="signOut()" class="px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50">Sign Out</button>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Mobile Menu Button (Hamburger) -->
                     <div class="md:hidden">
                         <button id="mobileMenuButton" class="text-slate-600 hover:text-cyan-700 focus:outline-none p-2">
                             <span class="material-icons-outlined text-3xl">menu</span>
@@ -95,26 +93,28 @@
                 </div>
             </div>
 
-            <!-- Mobile Menu Dropdown (hidden by default, shown by JS) -->
             <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-slate-200 shadow-lg absolute w-full z-40">
                 <nav class="flex flex-col space-y-1 p-4">
                     <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Features</button>
                     <button onclick="showTab('pricing'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Pricing</button>
-                    <button onclick="showTab('processing'); toggleMobileMenu();" id="mobileProcessingNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">My POs / Process</button>
+                    <button onclick="showTab('purchaseOrders'); toggleMobileMenu();" id="mobileProcessingNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">My POs / Process</button>
                     <hr class="my-2"/>
-                    <div class="px-1 py-2">
-                        <label for="mobileCurrentJobNumber" class="block text-sm font-medium text-slate-700 mb-1">Current Job #:</label>
-                        <input type="text" id="mobileCurrentJobNumber" placeholder="Job #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-cyan-500 focus:border-cyan-500" value="85319">
+                    <div id="authActionsUnauthenticated_mobile">
+                        <button onclick="signInWithGoogle(); toggleMobileMenu();" class="block w-full text-center btn-primary px-3 py-3 rounded-lg font-medium text-base">
+                            Sign In with Google
+                        </button>
                     </div>
-                    <button onclick="showSignIn(); toggleMobileMenu();" id="mobileSignInButton" class="block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Sign In</button>
-                    <button onclick="showSignUp(); toggleMobileMenu();" id="mobileGetStartedButton" class="block w-full text-center btn-primary px-3 py-3 rounded-lg font-medium text-base">Get Started Free</button>
+                    <div id="authActionsAuthenticated_mobile" class="hidden flex flex-col space-y-2">
+                        <span id="userDisplayName_mobile" class="block px-3 py-2 text-slate-700 text-center text-base"></span>
+                        <button onclick="signOut(); toggleMobileMenu();" class="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-3 rounded-lg font-medium text-base">
+                            Sign Out
+                        </button>
+                    </div>
                 </nav>
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="flex-1">
-            <!-- Hero Section -->
             <section id="heroSection" class="bg-white py-16 lg:py-20">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -142,14 +142,14 @@
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                            <button onclick="showSignUp()" class="btn-accent font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300 text-lg">
+                            <button onclick="signInWithGoogle()" class="btn-accent font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300 text-lg">
                                 Start Free Trial - Process 5 Vendors
                             </button>
                             <button onclick="showTab('features')" class="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-4 px-8 rounded-xl transition-all duration-200 border border-cyan-200">
                                 See How It Works
                             </button>
                         </div>
-                        <p class="text-slate-500 mt-6 text-sm">No credit card required • 2-minute setup • Works with any production size</p>
+                        <p class="text-slate-500 mt-6 text-sm">Sign in to start • 2-minute setup • Works with any production size</p>
                     </div>
                     <div class="text-center">
                         <p class="text-slate-600 text-sm mb-6">Trusted by Production Coordinators at:</p>
@@ -217,13 +217,13 @@
                     </div>
                     <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
-                            <div class="text-center mb-8"><h4 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-2">Free</h4><p class="text-slate-600 mb-6">Perfect for small productions</p><div class="text-4xl font-bold text-slate-800 mb-2">Free</div><p class="text-slate-500 text-sm">No credit card required</p></div>
+                            <div class="text-center mb-8"><h4 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-2">Free</h4><p class="text-slate-600 mb-6">Perfect for small productions</p><div class="text-4xl font-bold text-slate-800 mb-2">Free</div><p class="text-slate-500 text-sm">Requires Google Sign-In</p></div>
                             <ul class="space-y-4 mb-8">
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Up to 5 vendors per production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Single production processing</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Basic AI scanning</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Standard PO templates</span></li>
-                            </ul><button onclick="showSignUp('free')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
+                            </ul><button onclick="signInWithGoogle('free')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
                         </div>
                         <div class="pricing-card popular bg-white rounded-2xl p-8 shadow-xl relative">
                             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2"><span class="bg-cyan-500 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</span></div>
@@ -234,7 +234,7 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited iterations on 1 production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Advanced AI with 99% accuracy</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Custom PO templates</span></li>
-                            </ul><button onclick="showSignUp('pro')" class="w-full btn-accent font-semibold py-3 px-6 rounded-xl">Start Free Trial</button>
+                            </ul><button onclick="signInWithGoogle('pro')" class="w-full btn-accent font-semibold py-3 px-6 rounded-xl">Start Free Trial</button>
                         </div>
                         <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
                             <div class="text-center mb-8"><h4 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-2">Enterprise</h4><p class="text-slate-600 mb-6">For production companies</p><div class="text-4xl font-bold text-slate-800 mb-2">$30</div><p class="text-slate-500 text-sm">per month</p></div>
@@ -244,11 +244,11 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Cross-tracking between productions</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Microsoft Excel integration</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Fully custom, unbranded designs</span></li>
-                            </ul><button onclick="showSignUp('enterprise')" class="w-full btn-primary font-semibold py-3 px-6 rounded-xl">Contact Sales</button>
+                            </ul><button onclick="signInWithGoogle('enterprise')" class="w-full btn-primary font-semibold py-3 px-6 rounded-xl">Contact Sales</button>
                         </div>
                     </div>
                     <div class="text-center mt-12">
-                        <p class="text-slate-600 mb-4">All plans include 14-day free trial • No setup fees • Cancel anytime</p>
+                        <p class="text-slate-600 mb-4">All plans include 14-day free trial (requires sign-in) • No setup fees • Cancel anytime</p>
                         <div class="flex justify-center items-center space-x-6 text-sm text-slate-500">
                             <span class="flex items-center"><span class="material-icons-outlined text-green-500 mr-1 text-sm">security</span>Bank-grade security</span>
                             <span class="flex items-center"><span class="material-icons-outlined text-green-500 mr-1 text-sm">support</span>24/7 support</span>
@@ -261,24 +261,50 @@
             <section id="processingSection" class="bg-slate-100 py-16 lg:py-20 hidden">
                  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 max-w-4xl mx-auto">
-                        <div id="jobContextDisplay" class="mb-6 text-cyan-700">Job: <span id="displayJobNumber" class="font-semibold">N/A</span> | Project: <span id="displayProjectName" class="font-semibold">N/A</span></div>
-                        <div class="flex justify-center items-center space-x-8 mb-12">
-                             <div id="step1Indicator" class="flex flex-col items-center"><div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">1</div><span class="text-sm font-medium text-slate-500">Configure Job</span></div>
-                            <div id="step2Indicator" class="flex flex-col items-center"><div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">2</div><span class="text-sm font-medium text-slate-500">Process Documents</span></div>
+                        <div id="jobContextDisplay_processing" class="mb-6 text-cyan-700">Processing Job: <span id="displayJobNumber_processing" class="font-semibold">N/A</span> | Project: <span id="displayProjectName_processing" class="font-semibold">N/A</span></div>
+                        <div class="flex justify-center items-center space-x-4 sm:space-x-8 mb-12">
+                             <div id="tokenStepIndicator" class="flex flex-col items-center text-xs sm:text-sm"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-2 sm:mb-3 transition-all duration-300">1</div><span class="font-medium text-slate-500">Connect</span></div>
+                             <div id="configureStepIndicator" class="flex flex-col items-center text-xs sm:text-sm"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-2 sm:mb-3 transition-all duration-300">2</div><span class="font-medium text-slate-500">Configure</span></div>
+                             <div id="processDocsStepIndicator" class="flex flex-col items-center text-xs sm:text-sm"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-2 sm:mb-3 transition-all duration-300">3</div><span class="font-medium text-slate-500">Process</span></div>
                         </div>
-                        <div id="step1" class="step-content">
-                            <div class="text-center mb-8"><div class="w-20 h-20 bg-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><svg class="w-10 h-10 text-cyan-700" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg></div>
-                                <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Configure Dropbox Processing</h3>
-                                <p class="text-slate-600 max-w-lg mx-auto mb-8">Enter the Dropbox paths for your source documents and where generated POs should be saved. Ensure your Job Number is set in the header.</p>
+                        
+                        <!-- Step 0: Dropbox Access Token Input -->
+                        <div id="step0_token_input" class="step-content hidden">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 bg-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                    <span class="material-icons-outlined text-cyan-700 text-4xl">vpn_key</span>
+                                </div>
+                                <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Connect to Dropbox</h3>
+                                <p class="text-slate-600 max-w-lg mx-auto mb-8">Please enter your Dropbox Generated Access Token to allow PO Wizard to access your files. This token is temporary and used for this session only.</p>
                             </div>
                             <div class="space-y-4 mb-6">
-                                <div><label for="dropboxSourcePath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Source Path (Vendor Folders):</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/Hyundai_Commercial/SourceVendorDocs" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"></div>
-                                <div><label for="dropboxOutputPath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Output Path (Generated POs):</label><input type="text" id="dropboxOutputPath" value="/POWizardCompany/Output" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"></div>
+                                <div>
+                                    <label for="dropboxAccessTokenInput" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Access Token:</label>
+                                    <input type="password" id="dropboxAccessTokenInput" placeholder="Paste your token here" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                </div>
+                            </div>
+                            <button onclick="submitDropboxToken()" id="submitTokenButton" class="w-full btn-primary font-semibold py-4 px-8 rounded-xl transition-all">Submit Token & Continue</button>
+                            <p class="text-xs text-slate-500 mt-2">Need help generating a token? <a href="#" class="text-cyan-600 hover:underline" onclick="alert('Help for token generation will be here.')">Click here</a>.</p>
+                        </div>
+
+                        <!-- Step 1: Configure Job -->
+                        <div id="step1_configure_job" class="step-content hidden">
+                            <div class="text-center mb-8"><div class="w-20 h-20 bg-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><svg class="w-10 h-10 text-cyan-700" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg></div>
+                                <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Configure Job & Paths</h3>
+                                <p class="text-slate-600 max-w-lg mx-auto mb-8">Enter your Job Number, Project Name, and Dropbox paths. Your POs will be linked to your account.</p>
+                            </div>
+                            <div class="space-y-4 mb-6">
+                                <div><label for="inputJobNumber" class="block text-sm font-medium text-slate-700 text-left mb-1">Job Number:</label><input type="text" id="inputJobNumber" placeholder="e.g., 85319" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"></div>
+                                <div><label for="inputProjectName" class="block text-sm font-medium text-slate-700 text-left mb-1">Project Name:</label><input type="text" id="inputProjectName" placeholder="e.g., Macy's Holiday Shoot" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"></div>
+                                <div><label for="dropboxSourcePath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Source Path (Vendor Folders):</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/SourceDocs" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"></div>
+                                <div><label for="dropboxOutputPath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Output Path (Generated POs):</label><input type="text" id="dropboxOutputPath" value="/POWizardCompany/OutputPOs" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"></div>
                             </div>
                             <button onclick="confirmPathsAndProceed()" id="confirmPathsButton" class="w-full btn-primary font-semibold py-4 px-8 rounded-xl transition-all">Confirm Paths & Proceed to Process</button>
                             <div class="text-xs text-slate-500 text-center mt-4"><span class="material-icons-outlined text-green-600 text-sm mr-1">lock</span>Secure connection via backend.</div>
                         </div>
-                        <div id="step2" class="step-content hidden">
+
+                        <!-- Step 2: Process Documents -->
+                        <div id="step2_processing_docs" class="step-content hidden">
                              <div class="text-center mb-8"><div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-700 text-3xl">auto_awesome</span></div>
                                 <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Processing Documents...</h3>
                                 <p class="text-slate-600 max-w-lg mx-auto mb-8" id="processingStatusText">AI is scanning your Dropbox folder, extracting data, and generating purchase orders. This may take several minutes depending on the number of documents.</p>
@@ -304,15 +330,27 @@
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center mb-8">
-                        <div><h3 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-2">Generated Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs">Review your generated POs before submission</p></div>
-                        <div class="flex items-center space-x-4"><span id="poCount" class="text-sm text-slate-600">0 POs Generated</span><button class="btn-primary px-4 py-2 rounded-lg font-medium" title="Functionality not yet implemented"><span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">download</span><span>Download All (Soon)</span></span></button></div>
+                        <div><h3 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-2">My Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs_dashboard">Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p></div>
+                        <div class="flex items-center space-x-4">
+                            <span id="poCount" class="text-sm text-slate-600">0 POs Generated</span>
+                            <button onclick="promptForDropboxToken()" class="btn-primary px-4 py-2 rounded-lg font-medium text-sm">
+                                <span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">add_circle_outline</span><span>New PO Batch</span></span>
+                            </button>
+                        </div>
                     </div>
                     <div class="bg-slate-100 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center space-x-4"><select id="filterStatus" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="approved">Approved</option></select><input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"></div>
                         <div class="flex items-center space-x-2"><span class="text-sm text-slate-600">Sort by:</span><select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"><option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option></select></div>
                     </div>
                     <div id="poGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                         <p id="noPOsMessage" class="text-slate-500 col-span-full text-center hidden">No purchase orders generated yet for this job, or an error occurred.</p>
+                         {/* PO Cards will be rendered here */}
+                    </div>
+                    <div id="noPOsActionContainer" class="text-center py-12 hidden">
+                        <span class="material-icons-outlined text-6xl text-slate-300 mb-4">folder_open</span>
+                        <p id="noPOsMessage" class="text-slate-500 text-lg mb-6">No Purchase Orders found. Get started by creating a new batch.</p>
+                        <button onclick="promptForDropboxToken()" class="btn-primary py-3 px-8 rounded-lg font-medium text-lg">
+                            Create New PO Batch
+                        </button>
                     </div>
                     <div id="paginationControls" class="flex justify-center items-center space-x-4 mt-12 hidden"><button class="p-2 hover:bg-cyan-50 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_left</span></button><div class="flex space-x-1"><button class="px-3 py-2 bg-cyan-600 text-white rounded-lg">1</button></div><button class="p-2 hover:bg-cyan-50 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_right</span></button></div>
                 </div>
@@ -362,40 +400,106 @@
     <script>
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
         let isAuthenticated = false; 
-        let currentJobNumberContext = "85319"; 
-        let currentProjectNameContext = "Macy's Holiday Shoot";
+        let currentJobNumberContext = ""; 
+        let currentProjectNameContext = "";
+        let dropboxAccessToken = ""; // Store the token temporarily for the session
         let currentOpenPOTaskId = null; 
         let statusPollInterval = null;
         let allFetchedPOs = []; 
+        let mockedUser = { displayName: "Valued User", email: "user@example.com" };
+
+        function updateAuthUI() {
+            const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
+            const authDesktop = document.getElementById('authActionsAuthenticated_desktop');
+            const userDisplayDesktop = document.getElementById('userDisplayName_desktop');
+            const unauthMobile = document.getElementById('authActionsUnauthenticated_mobile');
+            const authMobile = document.getElementById('authActionsAuthenticated_mobile');
+            const userDisplayMobile = document.getElementById('userDisplayName_mobile');
+            const procNavButton = document.getElementById('processingNavButton');
+            const mobileProcNavButton = document.getElementById('mobileProcessingNavButton');
+
+            if (isAuthenticated) {
+                unauthDesktop.classList.add('hidden');
+                authDesktop.classList.remove('hidden');
+                authDesktop.classList.add('flex'); // Ensure it's flex for proper layout
+                userDisplayDesktop.textContent = `Welcome, ${mockedUser.displayName}!`;
+                
+                unauthMobile.classList.add('hidden');
+                authMobile.classList.remove('hidden');
+                authMobile.style.display = 'flex'; 
+                authMobile.classList.add('flex-col', 'space-y-2');
+                userDisplayMobile.textContent = `Welcome, ${mockedUser.displayName}!`;
+
+                procNavButton.textContent = 'My POs';
+                mobileProcNavButton.textContent = 'My POs';
+                procNavButton.disabled = false;
+                mobileProcNavButton.disabled = false;
+
+            } else {
+                unauthDesktop.classList.remove('hidden');
+                authDesktop.classList.add('hidden');
+                authDesktop.classList.remove('flex');
+                
+                unauthMobile.classList.remove('hidden');
+                authMobile.classList.add('hidden');
+                authMobile.style.display = 'none';
+
+                procNavButton.textContent = 'My POs / Process';
+                mobileProcNavButton.textContent = 'My POs / Process';
+                procNavButton.disabled = true;
+                mobileProcNavButton.disabled = true;
+            }
+        }
+
+        function signInWithGoogle(plan) {
+            console.log("Simulating Sign In with Google...");
+            if (plan) console.log("User selected plan:", plan);
+            isAuthenticated = true;
+            mockedUser = { displayName: "Film Pro", email: "film.pro@gmail.com" }; 
+            updateAuthUI();
+            alert("Successfully signed in (mock)!");
+            showTab('purchaseOrders'); // After sign-in, go to "My POs" (purchaseOrdersSection)
+            if (document.getElementById('mobileMenu') && !document.getElementById('mobileMenu').classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        }
+
+        function signOut() {
+            console.log("Simulating Sign Out...");
+            isAuthenticated = false;
+            currentJobNumberContext = ""; 
+            currentProjectNameContext = "";
+            dropboxAccessToken = "";
+            allFetchedPOs = []; // Clear fetched POs on sign out
+            updateAuthUI();
+            showTab('hero'); 
+            if (document.getElementById('mobileMenu') && !document.getElementById('mobileMenu').classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        }
 
         function showTab(tabName) {
+            const protectedTabs = ['processingSection', 'purchaseOrdersSection']; // IDs of sections
+            if (protectedTabs.map(id => id.replace('Section','')).includes(tabName.replace('Section','')) && !isAuthenticated) {
+                alert('Please sign in to access this feature.');
+                signInWithGoogle(); 
+                return;
+            }
+
             document.querySelectorAll('main > section').forEach(section => section.style.display = 'none');
-            const sectionElement = document.getElementById(tabName + 'Section');
+            const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
+            const sectionElement = document.getElementById(sectionId);
             if (sectionElement) sectionElement.style.display = 'block';
 
-            if (tabName === 'processing') {
-                if (!isAuthenticated) { alert('Please "Sign In" to access processing.'); showTab('hero'); return; }
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const progressSection = document.getElementById('progressSection');
-                if(step1) step1.classList.remove('hidden');
-                if(step2) step2.classList.add('hidden');
-                if(progressSection) progressSection.classList.remove('expanded');
-                
-                const step1Div = document.getElementById('step1Indicator')?.querySelector('div');
-                const step2Div = document.getElementById('step2Indicator')?.querySelector('div');
-                if(step1Div) {
-                    step1Div.className = 'w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300'; // Active state (cyan)
-                    step1Div.innerHTML = '1';
-                }
-                if(step2Div) {
-                    step2Div.className = 'w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300'; // Inactive
-                    step2Div.innerHTML = '2';
-                }
-                updateJobContextDisplay();
-            } else if (tabName === 'purchaseOrders') {
-                 if (!isAuthenticated) { alert('Please "Sign In" to view POs.'); showTab('hero'); return; }
+            if (sectionId === 'purchaseOrdersSection') {
                 fetchGeneratedPOs(); 
+            } else if (sectionId === 'processingSection') {
+                // This section is now only shown via promptForDropboxToken or if a process is ongoing
+                // Initial display logic for processingSection is handled by promptForDropboxToken
+                // If user somehow lands here directly and token not set, prompt for it.
+                if (!dropboxAccessToken) {
+                    promptForDropboxToken();
+                }
             }
             updateActiveTabButton(tabName);
             
@@ -404,14 +508,90 @@
                 toggleMobileMenu(); 
             }
         }
+        
+        function updateActiveStepIndicator(activeStepName) {
+            const indicators = {
+                'token': document.getElementById('tokenStepIndicator').querySelector('div'),
+                'configure': document.getElementById('configureStepIndicator').querySelector('div'),
+                'process': document.getElementById('processDocsStepIndicator').querySelector('div')
+            };
+            const activeClass = 'bg-cyan-600 text-white';
+            const inactiveClass = 'bg-slate-300 text-slate-500';
+            const completedClass = 'bg-green-500 text-white';
 
-        function updateActiveTabButton(activeTab) {
+            for (const step in indicators) {
+                indicators[step].className = `w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg mb-2 sm:mb-3 transition-all duration-300 ${inactiveClass}`;
+                if (step === 'token') indicators[step].innerHTML = '1';
+                if (step === 'configure') indicators[step].innerHTML = '2';
+                if (step === 'process') indicators[step].innerHTML = '3';
+            }
+            
+            if (activeStepName === 'token') {
+                indicators.token.className = indicators.token.className.replace(inactiveClass, activeClass);
+            } else if (activeStepName === 'configure') {
+                indicators.token.className = indicators.token.className.replace(inactiveClass, completedClass);
+                indicators.token.innerHTML = '✓';
+                indicators.configure.className = indicators.configure.className.replace(inactiveClass, activeClass);
+            } else if (activeStepName === 'process') {
+                indicators.token.className = indicators.token.className.replace(inactiveClass, completedClass);
+                indicators.token.innerHTML = '✓';
+                indicators.configure.className = indicators.configure.className.replace(inactiveClass, completedClass);
+                indicators.configure.innerHTML = '✓';
+                indicators.process.className = indicators.process.className.replace(inactiveClass, activeClass);
+            }
+        }
+
+        function promptForDropboxToken() {
+            if (!isAuthenticated) { signInWithGoogle(); return; }
+
+            document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
+            document.getElementById('processingSection').style.display = 'block';
+
+            document.getElementById('step0_token_input').classList.remove('hidden');
+            document.getElementById('step1_configure_job').classList.add('hidden');
+            document.getElementById('step2_processing_docs').classList.add('hidden');
+            document.getElementById('progressSection').classList.remove('expanded');
+            
+            // Clear previous job details for a new batch
+            document.getElementById('inputJobNumber').value = '';
+            document.getElementById('inputProjectName').value = '';
+            // currentJobNumberContext = ""; // Don't clear global context here yet, only when new job is submitted
+            // currentProjectNameContext = "";
+            updateJobContextDisplay_Processing("N/A", "N/A"); // Show N/A for processing view
+            updateActiveStepIndicator('token');
+        }
+
+        function submitDropboxToken() {
+            const token = document.getElementById('dropboxAccessTokenInput').value.trim();
+            if (!token) {
+                alert("Please enter your Dropbox Access Token.");
+                return;
+            }
+            dropboxAccessToken = token; // Store for this session (mock)
+            console.log("Dropbox Token Submitted (mock):", dropboxAccessToken);
+
+            document.getElementById('step0_token_input').classList.add('hidden');
+            document.getElementById('step1_configure_job').classList.remove('hidden');
+            updateActiveStepIndicator('configure');
+        }
+
+
+        function updateActiveTabButton(activeTabName) {
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            const buttonMap = { 'hero': null, 'features': 'Features', 'pricing': 'Pricing', 
-                                'processing': 'My POs / Process', 'purchaseOrders': 'My POs / Process'};
-            if (buttonMap[activeTab]) {
+            let targetButtonText = "";
+            if (activeTabName === 'hero' || activeTabName === 'heroSection') targetButtonText = null;
+            else if (activeTabName === 'features' || activeTabName === 'featuresSection') targetButtonText = 'Features';
+            else if (activeTabName === 'pricing' || activeTabName === 'pricingSection') targetButtonText = 'Pricing';
+            else if (activeTabName === 'purchaseOrders' || activeTabName === 'purchaseOrdersSection') {
+                targetButtonText = isAuthenticated ? 'My POs' : 'My POs / Process';
+            } else if (activeTabName === 'processing' || activeTabName === 'processingSection') {
+                 // When in processing section, "My POs" should still be active
+                targetButtonText = isAuthenticated ? 'My POs' : 'My POs / Process';
+            }
+            
+            if (targetButtonText) {
                 document.querySelectorAll('#desktopMenu .tab-button, #mobileMenu .tab-button').forEach(btn => {
-                    if (btn.textContent.trim() === buttonMap[activeTab]) {
+                    if (btn.textContent.trim() === targetButtonText) {
                         btn.classList.add('active');
                     }
                 });
@@ -439,81 +619,64 @@
                 if (menuIcon) menuIcon.textContent = 'menu';
             }
         }
-
-        const desktopJobInput = document.getElementById('currentJobNumber');
-        const mobileJobInput = document.getElementById('mobileCurrentJobNumber');
-
-        function syncJobNumberAndUpdateContext(sourceElement) {
-            const newValue = sourceElement.value;
-            if (desktopJobInput) desktopJobInput.value = newValue;
-            if (mobileJobInput) mobileJobInput.value = newValue;
-            currentJobNumberContext = newValue; 
-            updateJobContextDisplay(); 
-            if (document.getElementById('purchaseOrdersSection').style.display === 'block' && isAuthenticated) {
-                fetchGeneratedPOs();
-            }
-        }
-
-        if (desktopJobInput) desktopJobInput.addEventListener('input', () => syncJobNumberAndUpdateContext(desktopJobInput));
-        if (mobileJobInput) mobileJobInput.addEventListener('input', () => syncJobNumberAndUpdateContext(mobileJobInput));
         
-        function showSignIn() {
-            isAuthenticated = true;
-            ['signInButton', 'mobileSignInButton'].forEach(id => { 
-                const btn = document.getElementById(id); 
-                if(btn) { btn.classList.add('hidden'); }
-            });
-            ['getStartedButton', 'mobileGetStartedButton'].forEach(id => {
-                const btn = document.getElementById(id);
-                if(btn) { 
-                    btn.textContent = 'Process Job'; 
-                    btn.onclick = () => { showTab('processing'); if(id.startsWith('mobile')) toggleMobileMenu(); };
-                }
-            });
-            if(desktopJobInput) desktopJobInput.classList.remove('hidden');
-            syncJobNumberAndUpdateContext(desktopJobInput || mobileJobInput);
-            showTab('processing'); 
+        // For the PO Dashboard (purchaseOrdersSection)
+        function updateJobContextDisplay_Dashboard(jobNum, projName) {
+            const dispJobNum = document.getElementById('displayJobNumber_dashboard');
+            const dispProjName = document.getElementById('displayProjectName_dashboard');
+            if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
+            if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
-        function showSignUp() { showSignIn(); } 
-        
-        function updateJobContextDisplay() {
-            const dispJobNum = document.getElementById('displayJobNumber');
-            const dispProjName = document.getElementById('displayProjectName');
-            const jobDispPOs = document.getElementById('currentJobDisplayPOs');
-            if(dispJobNum) dispJobNum.textContent = currentJobNumberContext || "N/A";
-            if(dispProjName) dispProjName.textContent = currentProjectNameContext || "N/A"; 
-            if (jobDispPOs) jobDispPOs.textContent = `Job: ${currentJobNumberContext || "N/A"} | Project: ${currentProjectNameContext || "N/A"}`;
+
+        // For the Processing Section
+        function updateJobContextDisplay_Processing(jobNum, projName) {
+            const dispJobNum = document.getElementById('displayJobNumber_processing');
+            const dispProjName = document.getElementById('displayProjectName_processing');
+            if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
+            if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
+
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (desktopJobInput) currentJobNumberContext = desktopJobInput.value;
-            else if (mobileJobInput) currentJobNumberContext = mobileJobInput.value;
-            updateJobContextDisplay();
+            updateAuthUI(); 
             showTab('hero'); 
         });
 
         function confirmPathsAndProceed() { 
-            syncJobNumberAndUpdateContext(desktopJobInput || mobileJobInput);
+            currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
+            currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
+            
             const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
             const outputPath = document.getElementById('dropboxOutputPath').value.trim();
-            if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET" || !sourcePath || !outputPath) {
-                alert("Job Number (in header), Dropbox Source Path, and Output Path are required."); return;
+
+            if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath || !outputPath) {
+                alert("Job Number, Project Name, Dropbox Source Path, and Output Path are required."); return;
             }
-            document.getElementById('step1Indicator').querySelector('div').className = 'w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300';
-            document.getElementById('step1Indicator').querySelector('div').innerHTML = '✓';
-            document.getElementById('step1Indicator').querySelector('span').className = 'text-sm font-medium text-slate-700';
-            document.getElementById('step2Indicator').querySelector('div').className = 'w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300'; // Active state for step 2 (cyan)
-            document.getElementById('step2Indicator').querySelector('span').className = 'text-sm font-medium text-slate-700';
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
+            if (!dropboxAccessToken) {
+                alert("Dropbox Access Token is missing. Please go back and provide it.");
+                promptForDropboxToken(); // Send user back to token input
+                return;
+            }
+            updateJobContextDisplay_Processing(currentJobNumberContext, currentProjectNameContext); // Update display for processing section
+
+            document.getElementById('step1_configure_job').classList.add('hidden');
+            document.getElementById('step2_processing_docs').classList.remove('hidden');
             const progressSect = document.getElementById('progressSection'); if(progressSect) progressSect.classList.add('expanded');
+            updateActiveStepIndicator('process');
             startDocumentProcessing(sourcePath, outputPath);
         }
         
         async function startDocumentProcessing(sourcePath, outputPath) {
             updateProgressUI(0, "Initializing job submission...");
             const stageSpinner = document.getElementById('stageSpinner'); if (stageSpinner) stageSpinner.style.display = 'block';
-            const payload = { dropbox_source_path: sourcePath, dropbox_output_path: outputPath, job_number_context: currentJobNumberContext, project_name_context: currentProjectNameContext };
+            const payload = { 
+                dropbox_access_token: dropboxAccessToken, // Include the token
+                dropbox_source_path: sourcePath, 
+                dropbox_output_path: outputPath, 
+                job_number_context: currentJobNumberContext, 
+                project_name_context: currentProjectNameContext,
+                user_email: isAuthenticated ? mockedUser.email : null 
+            };
             try {
                 const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (!response.ok) { 
@@ -528,6 +691,7 @@
         }
 
         function pollTaskStatus(taskId) {
+            // ... (rest of the function is the same)
             if (statusPollInterval) clearInterval(statusPollInterval);
             const stageSpinner = document.getElementById('stageSpinner');
             statusPollInterval = setInterval(async () => {
@@ -552,6 +716,7 @@
         }
 
         function updateProgressUI(percentage, statusText, isError = false) {
+            // ... (rest of the function is the same)
             const progressFill = document.getElementById('progressFill'); const progressPercent = document.getElementById('progressPercent');
             const stageTitle = document.getElementById('stageTitle'); const stageDescription = document.getElementById('stageDescription');
             if (percentage !== null && progressFill && progressPercent) { progressFill.style.width = percentage + '%'; progressPercent.textContent = percentage + '%'; }
@@ -561,18 +726,41 @@
             else if (stageTitle) { stageTitle.classList.remove('text-red-600'); stageTitle.classList.add('text-cyan-700');}
         }
         
-        function cancelProcessing() { if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
+        function cancelProcessing() { /* ... (same) ... */ if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
 
         async function fetchGeneratedPOs() {
-            updateJobContextDisplay(); 
-            const poGrid = document.getElementById('poGrid'); const noPOsMessage = document.getElementById('noPOsMessage');
+            const poGrid = document.getElementById('poGrid');
+            const noPOsActionContainer = document.getElementById('noPOsActionContainer');
+            const noPOsMessageEl = document.getElementById('noPOsMessage'); // The <p> tag inside noPOsActionContainer
+
+            if (!isAuthenticated) {
+                if (poGrid) poGrid.innerHTML = ''; // Clear grid
+                if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please sign in to view your Purchase Orders.';
+                if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                updateJobContextDisplay_Dashboard("N/A", "N/A");
+                return;
+            }
+            
+            updateJobContextDisplay_Dashboard(currentJobNumberContext, currentProjectNameContext);
+            
             const purchaseOrdersSection = document.getElementById('purchaseOrdersSection');
-            if (!poGrid) { console.error("CRITICAL UI Error: poGrid element not found!"); alert("A critical UI element (PO Grid) is missing."); return; }
+            if (!poGrid) { console.error("CRITICAL UI Error: poGrid element not found!"); return; }
+            
             poGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">Loading POs...</p>'; 
-            if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) { noPOsMessage.classList.add('hidden');}
-            if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET") { poGrid.innerHTML = '<p class="text-red-500 col-span-full text-center">Set Job Number to load POs.</p>'; return; }
+            if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden'); // Hide while loading
+
+            if (!currentJobNumberContext) { 
+                poGrid.innerHTML = ''; // Clear "Loading..."
+                if (noPOsMessageEl) noPOsMessageEl.textContent = 'No active job selected. Please create a new PO batch.';
+                if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `0 POs Generated`;
+                allFetchedPOs = []; // Ensure filters don't use stale data
+                return; 
+            }
+
             try {
-                const response = await fetch(`${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}`);
+                const userEmailParam = isAuthenticated ? `&userEmail=${encodeURIComponent(mockedUser.email)}` : "";
+                const response = await fetch(`${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}${userEmailParam}`);
                 if (!response.ok) {
                     let errorDetail = `Failed to fetch POs: ${response.statusText} (Status: ${response.status})`;
                     try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
@@ -580,29 +768,39 @@
                 }
                 const data = await response.json(); allFetchedPOs = data.generated_pos || [];
                 const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `${allFetchedPOs.length} POs Generated`;
-                renderPOGrid(allFetchedPOs);
+                
+                if (allFetchedPOs.length === 0) {
+                    poGrid.innerHTML = ''; // Clear "Loading..."
+                    if (noPOsMessageEl) noPOsMessageEl.textContent = `No Purchase Orders found for Job: ${currentJobNumberContext}. Create a new batch or select another job.`;
+                    if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                } else {
+                    if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
+                    renderPOGrid(allFetchedPOs);
+                }
             } catch (error) {
                 console.error('Error fetching/rendering POs:', error);
-                if (poGrid) { poGrid.innerHTML = `<p class="text-red-500 col-span-full text-center">Error loading POs: ${error.message}</p>`; }
-                if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) { 
-                    noPOsMessage.classList.remove('hidden'); noPOsMessage.textContent = `Error loading POs: ${error.message}. Check console.`;
-                } else if (!noPOsMessage && purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none') { console.error("UI Error: 'noPOsMessage' element missing."); }
+                poGrid.innerHTML = ''; // Clear "Loading..."
+                if (noPOsMessageEl) noPOsMessageEl.textContent = `Error loading POs: ${error.message}. Try creating a new batch.`;
+                if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
             }
         }
 
         function renderPOGrid(posToRender) {
-            const poGrid = document.getElementById('poGrid'); const noPOsMessage = document.getElementById('noPOsMessage');
+            // ... (same, just ensure noPOsActionContainer is hidden if posToRender is not empty)
+            const poGrid = document.getElementById('poGrid'); 
+            const noPOsActionContainer = document.getElementById('noPOsActionContainer');
+            
             if (!poGrid) { console.error("renderPOGrid: poGrid element not found!"); return; }
             poGrid.innerHTML = ''; 
             if (!posToRender || posToRender.length === 0) {
-                if (noPOsMessage) { noPOsMessage.classList.remove('hidden'); noPOsMessage.textContent = 'No POs found for this job/filters.'; } 
-                else { console.warn("renderPOGrid: noPOsMessage element not found."); } return;
+                // fetchGeneratedPOs handles showing the noPOsActionContainer if allFetchedPOs is empty
+                return;
             }
-            if (noPOsMessage) noPOsMessage.classList.add('hidden');
+            if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
             posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
         }
         
-        function createPOCard(po) {
+        function createPOCard(po) { /* ... (same) ... */ 
             const card = document.createElement('div'); card.id = `po-${po.po_id_on_grid}`;
             const isApproved = po.status && po.status.toLowerCase().includes('approved');
             card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''} bg-white`;
@@ -615,7 +813,7 @@
             return card;
         }
 
-        async function openReviewModal(poIdOnGrid) {
+        async function openReviewModal(poIdOnGrid) { /* ... (same) ... */ 
             console.log("Opening review for PO ID on Grid:", poIdOnGrid);
             let currentEditingPOData; 
             const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
@@ -683,7 +881,7 @@
             document.getElementById('reviewModal').classList.add('flex');
         }
         
-        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { /* ... (same) ... */ 
             const container = document.getElementById('editLineItemsContainer'); const index = container.children.length;
             const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
             div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
@@ -691,9 +889,9 @@
             updateTotalAmountFromLines();
         }
 
-        function removeLineItem(button) { button.parentElement.remove(); updateTotalAmountFromLines(); }
+        function removeLineItem(button) { /* ... (same) ... */ button.parentElement.remove(); updateTotalAmountFromLines(); }
         
-        function updateTotalAmountFromLines() {
+        function updateTotalAmountFromLines() { /* ... (same) ... */ 
             let total = 0; 
             document.querySelectorAll('#editLineItemsContainer > div').forEach(lineDiv => { 
                 const amountInput = lineDiv.querySelector('input[name*="[amount]"]'); 
@@ -703,18 +901,19 @@
             document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
 
-        function closeReviewModal() { 
+        function closeReviewModal() { /* ... (same) ... */ 
             document.getElementById('reviewModal').classList.add('hidden'); 
             document.getElementById('reviewModal').classList.remove('flex'); 
             document.getElementById('pdfViewer').src = 'about:blank'; 
         }
 
-        async function submitPOChanges(isApproval) {
+        async function submitPOChanges(isApproval) { /* ... (same logic, ensure user_email is included) ... */ 
             const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForRegen = {};
             formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = []; } while (poDataForRegen.aggregated_line_items.length <= index) { poDataForRegen.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForRegen.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForRegen.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForRegen[key] = value === 'true'; } else { poDataForRegen[key] = value; } } });
             poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value; 
             poDataForRegen.job_number = document.getElementById('editJobNumber').value; 
             poDataForRegen.project_name = document.getElementById('editProjectName').value;
+            poDataForRegen.user_email = isAuthenticated ? mockedUser.email : null; 
             try { poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]"); } catch (e) { poDataForRegen.backup_document_original_dropbox_paths = []; console.error("Error parsing backup_document_original_dropbox_paths:", e); }
             if (poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => item.description || item.amount ); }
             
@@ -725,7 +924,6 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/regenerate-po`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ po_data_to_regenerate: poDataForRegen }) });
                 if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to regenerate PO: ${response.statusText}`); }
-                // const updatedPOInfo = await response.json(); // Commented out as updatedPOInfo is not used
                 alert('PO successfully ' + (isApproval ? 'approved (simulated) and' : '') + ' regenerated and updated!'); 
                 closeReviewModal(); 
                 fetchGeneratedPOs();
@@ -736,7 +934,7 @@
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
 
-        function applyFiltersAndSort() {
+        function applyFiltersAndSort() { /* ... (same) ... */ 
             let filteredPOs = [...allFetchedPOs]; 
             const statusFilter = document.getElementById('filterStatus').value; 
             const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase(); 
@@ -765,14 +963,6 @@
             }
             renderPOGrid(filteredPOs);
         }
-
-        // Initial setup
-        document.addEventListener('DOMContentLoaded', () => {
-            if (desktopJobInput) currentJobNumberContext = desktopJobInput.value;
-            else if (mobileJobInput) currentJobNumberContext = mobileJobInput.value; 
-            updateJobContextDisplay();
-            showTab('hero'); 
-        });
     </script>
 </body>
 </html>
