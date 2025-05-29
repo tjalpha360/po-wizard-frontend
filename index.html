@@ -29,7 +29,6 @@
         .tab-button.active { background: #3b82f6; color: white; }
         .floating-benefit { animation: float 6s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        /* For iframe responsiveness, if needed */
         .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; /* Aspect Ratio 1:sqrt(2) for A4-like */ }
         .iframe-container iframe { position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none; }
     </style>
@@ -39,37 +38,67 @@
         <!-- Header -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-4">
+                <!-- Main header content for medium screens and up -->
+                <div class="flex justify-between items-center py-3">
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
                             <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8v2H6V6zm0 4h8v2H6v-2z"/>
                             </svg>
                         </div>
-                        <a href="#" onclick="showTab('hero')" class="text-xl font-bold text-slate-900">PO Wizard</a>
-                        <span class="text-sm text-slate-500 hidden sm:inline">Built for Production</span>
+                        <a href="#" onclick="showTab('hero'); closeMobileMenu();" class="text-xl font-bold text-slate-900">PO Wizard</a>
+                        <span class="text-sm text-slate-500 hidden lg:inline">Built for Production</span>
                     </div>
-                    <div class="flex items-center space-x-6">
-                        <nav class="hidden md:flex items-center space-x-6">
-                            <button onclick="showTab('features')" class="tab-button px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">Features</button>
-                            <button onclick="showTab('pricing')" class="tab-button px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">Pricing</button>
-                            <button onclick="showTab('processing')" id="processingNavButton" class="tab-button px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">My POs / Process</button>
-                            <span id="connectionStatus" class="hidden items-center space-x-2 text-sm text-green-600">
-                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                <span>Connected to Dropbox (Simulated)</span>
-                            </span>
+
+                    <!-- Hamburger Menu Button for small screens -->
+                    <div class="md:hidden">
+                        <button id="mobileMenuButton" class="text-slate-600 hover:text-slate-800 focus:outline-none">
+                            <span class="material-icons-outlined">menu</span>
+                        </button>
+                    </div>
+
+                    <!-- Desktop Navigation & Actions (hidden on small screens) -->
+                    <div id="desktopMenu" class="hidden md:flex items-center space-x-3 lg:space-x-6">
+                        <nav class="flex items-center space-x-1 lg:space-x-3">
+                            <button onclick="showTab('features')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-600 hover:text-slate-900 hover:bg-slate-100">Features</button>
+                            <button onclick="showTab('pricing')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-600 hover:text-slate-900 hover:bg-slate-100">Pricing</button>
+                            <button onclick="showTab('processing')" id="processingNavButton" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-600 hover:text-slate-900 hover:bg-slate-100">My POs / Process</button>
                         </nav>
-                        <div class="flex items-center space-x-3">
-                             <input type="text" id="currentJobNumber" placeholder="Current Job Number" class="hidden md:inline-flex px-3 py-2 border border-slate-300 rounded-lg text-sm" value="85319">
-                            <button onclick="showSignIn()" id="signInButton" class="hidden md:inline-flex items-center px-4 py-2 text-slate-600 hover:text-slate-900 transition-colors">
+                        <span id="connectionStatus" class="hidden items-center space-x-2 text-sm text-green-600 whitespace-nowrap">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span>Simulated Connection</span>
+                        </span>
+                        <div class="flex items-center space-x-2 lg:space-x-3">
+                             <input type="text" id="currentJobNumber" placeholder="Job #" title="Current Job Number" class="px-3 py-2 border border-slate-300 rounded-lg text-sm w-24 lg:w-28" value="85319">
+                            <button onclick="showSignIn()" id="signInButton" class="whitespace-nowrap items-center px-3 py-2 text-sm lg:text-base text-slate-600 hover:text-slate-900">
                                 Sign In
                             </button>
-                            <button onclick="showSignUp()" id="getStartedButton" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                Get Started Free
+                            <button onclick="showSignUp()" id="getStartedButton" class="whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium text-sm lg:text-base">
+                                Get Started
                             </button>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Mobile Menu Dropdown (hidden by default, shown by JS) -->
+            <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-slate-200">
+                <nav class="flex flex-col space-y-1 p-4">
+                    <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">Features</button>
+                    <button onclick="showTab('pricing'); toggleMobileMenu();" class="tab-button block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">Pricing</button>
+                    <button onclick="showTab('processing'); toggleMobileMenu();" class="tab-button block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">My POs / Process</button>
+                    <hr class="my-2"/>
+                    <div class="px-1 py-2">
+                        <label for="mobileCurrentJobNumber" class="block text-sm font-medium text-slate-700 mb-1">Current Job #:</label>
+                        <input type="text" id="mobileCurrentJobNumber" placeholder="Job #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" value="85319">
+                    </div>
+                     <span id="mobileConnectionStatus" class="hidden items-center space-x-2 text-sm text-green-600 px-3 py-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span>Simulated Connection</span>
+                    </span>
+                    <button onclick="showSignIn(); toggleMobileMenu();" id="mobileSignInButton" class="block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">Sign In</button>
+                    <button onclick="showSignUp(); toggleMobileMenu();" id="mobileGetStartedButton" class="block w-full text-left bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium">Get Started Free</button>
+                </nav>
             </div>
         </header>
 
@@ -86,7 +115,6 @@
                         <p class="text-xl lg:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed mb-12">
                             Transform your chaotic pile of vendor invoices, receipts, and credit card statements into professional purchase orders in minutes, not hours. Built specifically for <strong>production coordinators</strong> tired of manual PO creation.
                         </p>
-                        
                         <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto mb-16">
                             <div class="bg-red-500/10 backdrop-blur-sm rounded-2xl p-8 border border-red-300/20">
                                 <div class="text-red-300 mb-4"><span class="material-icons-outlined text-4xl">warning</span></div>
@@ -103,7 +131,6 @@
                                 </ul>
                             </div>
                         </div>
-
                         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
                             <button onclick="showSignUp()" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-200 text-lg">
                                 Start Free Trial - Process 5 Vendors
@@ -175,6 +202,7 @@
 
             <!-- Pricing Section -->
             <section id="pricingSection" class="py-20 bg-slate-50 hidden">
+                 <!-- ... (Your Pricing Section Content - ensuring it's complete) ... -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h3 class="text-4xl font-bold text-slate-900 mb-6">Simple, Transparent Pricing</h3>
@@ -223,89 +251,44 @@
                 </div>
             </section>
 
-            <!-- Processing Section (Hidden by default, shown after "sign in/up") -->
+            <!-- Processing Section -->
             <section id="processingSection" class="hero-gradient py-16 lg:py-20 hidden">
-                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <!-- ... (Your Processing Section Content - ensuring it's complete) ... -->
+                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 max-w-4xl mx-auto">
-                        <!-- Step Indicators (can be simplified or enhanced later) -->
-                        <div id="jobContextDisplay" class="mb-6 text-slate-700">
-                            Job: <span id="displayJobNumber" class="font-semibold">N/A</span> | 
-                            Project: <span id="displayProjectName" class="font-semibold">N/A</span>
-                        </div>
-                        
+                        <div id="jobContextDisplay" class="mb-6 text-slate-700">Job: <span id="displayJobNumber" class="font-semibold">N/A</span> | Project: <span id="displayProjectName" class="font-semibold">N/A</span></div>
                         <div class="flex justify-center items-center space-x-8 mb-12">
-                             <div id="step1Indicator" class="flex flex-col items-center">
-                                <div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">1</div>
-                                <span class="text-sm font-medium text-slate-500">Configure Job</span>
-                            </div>
-                            <div id="step2Indicator" class="flex flex-col items-center">
-                                <div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">2</div>
-                                <span class="text-sm font-medium text-slate-500">Process Documents</span>
-                            </div>
+                             <div id="step1Indicator" class="flex flex-col items-center"><div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">1</div><span class="text-sm font-medium text-slate-500">Configure Job</span></div>
+                            <div id="step2Indicator" class="flex flex-col items-center"><div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">2</div><span class="text-sm font-medium text-slate-500">Process Documents</span></div>
                         </div>
-
-                        <!-- Step 1: Job Configuration (Dropbox Paths) -->
                         <div id="step1" class="step-content">
-                            <div class="text-center mb-8">
-                                <div class="w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                    <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg>
-                                </div>
+                            <div class="text-center mb-8"><div class="w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg></div>
                                 <h3 class="text-2xl font-bold text-slate-900 mb-4">Configure Dropbox Processing</h3>
-                                <p class="text-slate-600 max-w-lg mx-auto mb-8">
-                                    Enter the Dropbox paths for your source documents and where generated POs should be saved.
-                                    Ensure your Job Number is set in the header.
-                                </p>
+                                <p class="text-slate-600 max-w-lg mx-auto mb-8">Enter the Dropbox paths for your source documents and where generated POs should be saved. Ensure your Job Number is set in the header.</p>
                             </div>
                             <div class="space-y-4 mb-6">
-                                <div>
-                                    <label for="dropboxSourcePath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Source Path (Vendor Folders):</label>
-                                    <input type="text" id="dropboxSourcePath" value="/POWizardCompany/Development/SourceDocuments_85319" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="dropboxOutputPath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Output Path (Generated POs):</label>
-                                    <input type="text" id="dropboxOutputPath" value="/POWizardCompany/Development/GeneratedPOs_85319" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
+                                <div><label for="dropboxSourcePath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Source Path (Vendor Folders):</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/Hyundai_Commercial/SourceVendorDocs" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                                <div><label for="dropboxOutputPath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Output Path (Generated POs):</label><input type="text" id="dropboxOutputPath" value="/POWizardCompany/Output" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
                             </div>
-                            <button onclick="confirmPathsAndProceed()" id="confirmPathsButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-all">
-                                Confirm Paths & Proceed to Process
-                            </button>
-                            <div class="text-xs text-slate-500 text-center mt-4">
-                                <span class="material-icons-outlined text-green-600 text-sm mr-1">lock</span>
-                                Secure connection via backend.
-                            </div>
+                            <button onclick="confirmPathsAndProceed()" id="confirmPathsButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-all">Confirm Paths & Proceed to Process</button>
+                            <div class="text-xs text-slate-500 text-center mt-4"><span class="material-icons-outlined text-green-600 text-sm mr-1">lock</span>Secure connection via backend.</div>
                         </div>
-
-                        <!-- Step 2: Process Documents (Hidden Initially) -->
                         <div id="step2" class="step-content hidden">
-                             <div class="text-center mb-8">
-                                <div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-600 text-3xl">auto_awesome</span></div>
+                             <div class="text-center mb-8"><div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-600 text-3xl">auto_awesome</span></div>
                                 <h3 class="text-2xl font-bold text-slate-900 mb-4">Processing Documents...</h3>
-                                <p class="text-slate-600 max-w-lg mx-auto mb-8" id="processingStatusText">
-                                    AI is scanning your Dropbox folder, extracting data, and generating purchase orders. This may take several minutes depending on the number of documents.
-                                </p>
+                                <p class="text-slate-600 max-w-lg mx-auto mb-8" id="processingStatusText">AI is scanning your Dropbox folder, extracting data, and generating purchase orders. This may take several minutes depending on the number of documents.</p>
                             </div>
-                            <!-- Progress Section (Hidden Initially) -->
-                            <div id="progressSection" class="progress-section"> <!-- Initially hidden via class, expanded by JS -->
+                            <div id="progressSection" class="progress-section"> 
                                 <div class="border-t border-slate-200 pt-8">
                                     <div class="mb-6">
-                                        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
-                                            <div id="progressFill" class="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-700 ease-out" style="width: 0%"></div>
-                                        </div>
-                                        <div class="flex justify-between items-center mt-3">
-                                            <span id="progressPercent" class="text-sm font-semibold text-slate-700">0%</span>
-                                            <span id="estimatedTime" class="text-xs text-slate-500">Calculating...</span>
-                                        </div>
+                                        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden"><div id="progressFill" class="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-700 ease-out" style="width: 0%"></div></div>
+                                        <div class="flex justify-between items-center mt-3"><span id="progressPercent" class="text-sm font-semibold text-slate-700">0%</span><span id="estimatedTime" class="text-xs text-slate-500">Calculating...</span></div>
                                     </div>
                                     <div class="bg-slate-50 rounded-xl p-6 text-center">
-                                        <div class="flex items-center justify-center space-x-2 mb-3">
-                                            <h4 id="stageTitle" class="text-lg font-semibold text-slate-900">Initializing...</h4>
-                                            <div id="stageSpinner" class="w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin"></div>
-                                        </div>
+                                        <div class="flex items-center justify-center space-x-2 mb-3"><h4 id="stageTitle" class="text-lg font-semibold text-slate-900">Initializing...</h4><div id="stageSpinner" class="w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin"></div></div>
                                         <p id="stageDescription" class="text-slate-600 text-sm">Preparing to process your documents.</p>
                                     </div>
-                                    <button onclick="cancelProcessing()" id="cancelProcessingButton" class="mt-6 w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-6 rounded-xl transition-colors duration-200">
-                                        Cancel Processing (Not Implemented)
-                                    </button>
+                                    <button onclick="cancelProcessing()" id="cancelProcessingButton" class="mt-6 w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-6 rounded-xl transition-colors duration-200">Cancel Processing (Not Implemented)</button>
                                 </div>
                             </div>
                         </div>
@@ -315,52 +298,30 @@
 
             <!-- Generated Purchase Orders Section -->
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
+                <!-- ... (Your Purchase Orders Section Content - ensuring it's complete) ... -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h3 class="text-3xl font-bold text-slate-900 mb-2">Generated Purchase Orders</h3>
-                            <p class="text-slate-600" id="currentJobDisplayPOs">Review your generated POs before submission</p>
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <span id="poCount" class="text-sm text-slate-600">0 POs Generated</span>
-                            <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors" title="Functionality not yet implemented" disabled>
-                                <span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">download</span><span>Download All (Soon)</span></span>
-                            </button>
-                        </div>
+                        <div><h3 class="text-3xl font-bold text-slate-900 mb-2">Generated Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs">Review your generated POs before submission</p></div>
+                        <div class="flex items-center space-x-4"><span id="poCount" class="text-sm text-slate-600">0 POs Generated</span><button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors" title="Functionality not yet implemented" disabled><span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">download</span><span>Download All (Soon)</span></span></button></div>
                     </div>
                     <div class="bg-slate-50 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center space-x-4">
-                            <select id="filterStatus" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="approved">Approved</option></select>
-                            <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm text-slate-600">Sort by:</span>
-                            <select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
-                                <option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option>
-                            </select>
-                        </div>
+                        <div class="flex items-center space-x-4"><select id="filterStatus" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="approved">Approved</option></select><input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"></div>
+                        <div class="flex items-center space-x-2"><span class="text-sm text-slate-600">Sort by:</span><select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"><option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option></select></div>
                     </div>
                     <div id="poGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <!-- PO Cards will be populated here -->
                          <p id="noPOsMessage" class="text-slate-500 col-span-full text-center hidden">No purchase orders generated yet for this job, or an error occurred.</p>
                     </div>
-                    <!-- Pagination (Simplified for now) -->
-                    <div id="paginationControls" class="flex justify-center items-center space-x-4 mt-12 hidden">
-                        <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_left</span></button>
-                        <div class="flex space-x-1"><button class="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button></div>
-                        <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_right</span></button>
-                    </div>
+                    <div id="paginationControls" class="flex justify-center items-center space-x-4 mt-12 hidden"><button class="p-2 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_left</span></button><div class="flex space-x-1"><button class="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button></div><button class="p-2 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_right</span></button></div>
                 </div>
             </section>
         </main>
 
         <footer class="bg-slate-800 text-slate-300">
+             <!-- ... (Your Footer Content - ensuring it's complete) ... -->
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <div class="flex items-center space-x-3 mb-4 md:mb-0">
-                        <div class="w-6 h-6 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8v2H6V6zm0 4h8v2H6v-2z"/></svg>
-                        </div>
+                        <div class="w-6 h-6 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8v2H6V6zm0 4h8v2H6v-2z"/></svg></div>
                         <span class="font-bold">PO Wizard</span><span class="text-slate-400">for Film Production</span>
                     </div>
                     <div class="text-center"><p class="text-slate-400 text-sm">Streamlining post-production workflows since 2024</p></div>
@@ -370,78 +331,44 @@
     </div>
 
     <!-- Review PO Modal -->
-    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[100]"> <!-- Increased z-index -->
+    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[100]">
+        <!-- ... (Your Review Modal Content - ensuring it's complete) ... -->
         <div class="bg-white rounded-2xl p-6 md:p-8 max-w-6xl w-11/12 md:w-full mx-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="reviewModalTitle" class="text-2xl font-bold text-slate-900">Review Purchase Order</h3>
-                <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600">
-                    <span class="material-icons-outlined text-2xl">close</span>
-                </button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 id="reviewModalTitle" class="text-2xl font-bold text-slate-900">Review Purchase Order</h3><button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><span class="material-icons-outlined text-2xl">close</span></button></div>
             <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8">
-                <div class="w-full lg:w-1/2 iframe-container">
-                    <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
-                </div>
+                <div class="w-full lg:w-1/2 iframe-container"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe></div>
                 <div class="w-full lg:w-1/2">
                     <form id="reviewForm" class="space-y-4">
-                        <input type="hidden" id="editPoIdOnGrid">
-                        <input type="hidden" id="editOriginalPoPackageFilename">
-                        <input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths"> <!-- Store as JSON string -->
-
-
+                        <input type="hidden" id="editPoIdOnGrid"><input type="hidden" id="editOriginalPoPackageFilename"><input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths">
                         <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input" readonly></div>
                         <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input"></div>
                         <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea"></textarea></div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input"></div>
-                            <div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input"></div>
-                        </div>
-                         <div class="grid grid-cols-2 gap-4">
-                            <div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select"><option value="true">Yes</option><option value="false">No</option></select></div>
-                            <div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
-                        </div>
+                        <div class="grid grid-cols-2 gap-4"><div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input"></div><div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input"></div></div>
+                         <div class="grid grid-cols-2 gap-4"><div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div></div>
                         <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input"></div>
-                        
                         <h4 class="text-md font-semibold text-slate-800 pt-2">Line Items:</h4>
-                        <div id="editLineItemsContainer" class="space-y-2 max-h-48 overflow-y-auto border p-2 rounded-md">
-                            <!-- Line items will be populated here -->
-                        </div>
+                        <div id="editLineItemsContainer" class="space-y-2 max-h-48 overflow-y-auto border p-2 rounded-md"></div>
                         <button type="button" onclick="addLineItemField()" class="text-sm text-blue-600 hover:text-blue-800">+ Add Line Item</button>
-
                         <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input"></div>
                         <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea"></textarea></div>
-                        
-                        <!-- Hidden fields for context -->
-                        <input type="hidden" id="editJobNumber" name="job_number">
-                        <input type="hidden" id="editProjectName" name="project_name">
-
+                        <input type="hidden" id="editJobNumber" name="job_number"><input type="hidden" id="editProjectName" name="project_name">
                     </form>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-8">
-                <button onclick="submitPOChanges(false)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">
-                    Save Changes & Regenerate PO
-                </button>
-                 <button onclick="submitPOChanges(true)" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">
-                    Approve PO (Future)
-                </button>
-                <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium transition-colors">
-                    Cancel
-                </button>
-            </div>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-8"><button onclick="submitPOChanges(false)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">Save Changes & Regenerate PO</button><button onclick="submitPOChanges(true)" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">Approve PO (Future)</button><button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium transition-colors">Cancel</button></div>
         </div>
     </div>
 
     <script>
+        // --- (Full JavaScript from your last provided index.html, including the robust fetchGeneratedPOs) ---
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
-        let isAuthenticated = false; // Simple auth flag
-        let currentJobNumberContext = "85319"; // Default or from input
-        let currentProjectNameContext = "Macy's Holiday Shoot"; // Default
-        let currentOpenPOTaskId = null; // For tracking main processing task
+        let isAuthenticated = false; 
+        let currentJobNumberContext = "85319"; 
+        let currentProjectNameContext = "Macy's Holiday Shoot"; 
+        let currentOpenPOTaskId = null; 
         let statusPollInterval = null;
-        let allFetchedPOs = []; // Store all POs for current job for client-side filtering/sorting
+        let allFetchedPOs = []; 
 
-        // --- Tab Management ---
         function showTab(tabName) {
             document.getElementById('heroSection').style.display = 'none';
             document.getElementById('featuresSection').style.display = 'none';
@@ -453,24 +380,21 @@
             else if (tabName === 'features') document.getElementById('featuresSection').style.display = 'block';
             else if (tabName === 'pricing') document.getElementById('pricingSection').style.display = 'block';
             else if (tabName === 'processing') {
-                if (!isAuthenticated) {
-                    alert('Please "Sign In" to access processing.');
-                    showTab('hero'); return;
-                }
+                if (!isAuthenticated) { alert('Please "Sign In" to access processing.'); showTab('hero'); return; }
                 document.getElementById('processingSection').style.display = 'block';
                 document.getElementById('step1').classList.remove('hidden');
                 document.getElementById('step2').classList.add('hidden');
                 document.getElementById('progressSection').classList.remove('expanded');
                 updateJobContextDisplay();
             } else if (tabName === 'purchaseOrders') {
-                 if (!isAuthenticated) {
-                    alert('Please "Sign In" to view POs.');
-                    showTab('hero'); return;
-                }
+                 if (!isAuthenticated) { alert('Please "Sign In" to view POs.'); showTab('hero'); return; }
                 document.getElementById('purchaseOrdersSection').style.display = 'block';
-                fetchGeneratedPOs(); // Fetch POs when this tab is shown
+                fetchGeneratedPOs(); 
             }
             updateActiveTabButton(tabName);
+            if (document.getElementById('mobileMenu').classList.contains('hidden') === false) { // Close mobile menu on tab change
+                toggleMobileMenu();
+            }
         }
 
         function updateActiveTabButton(activeTab) {
@@ -482,532 +406,256 @@
                 });
             }
         }
+        
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuButton = document.getElementById('mobileMenuButton');
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuButton.innerHTML = '<span class="material-icons-outlined">menu</span>';
+            } else {
+                menuButton.innerHTML = '<span class="material-icons-outlined">close</span>';
+            }
+        }
+        document.getElementById('mobileMenuButton').addEventListener('click', toggleMobileMenu);
+        
+        const desktopJobInput = document.getElementById('currentJobNumber');
+        const mobileJobInput = document.getElementById('mobileCurrentJobNumber');
+        if (desktopJobInput && mobileJobInput) {
+            desktopJobInput.addEventListener('input', (e) => { mobileJobInput.value = e.target.value; currentJobNumberContext = e.target.value; });
+            mobileJobInput.addEventListener('input', (e) => { desktopJobInput.value = e.target.value; currentJobNumberContext = e.target.value; });
+        }
 
-        // --- Authentication Simulation ---
         function showSignIn() {
             isAuthenticated = true;
-            document.getElementById('signInButton').textContent = 'Signed In';
-            document.getElementById('signInButton').disabled = true;
-            document.getElementById('getStartedButton').textContent = 'Process New Job';
-            document.getElementById('getStartedButton').onclick = () => showTab('processing');
-            document.getElementById('currentJobNumber').classList.remove('hidden'); // Show job number input
-            currentJobNumberContext = document.getElementById('currentJobNumber').value || "DEFAULT_JOB";
-            document.getElementById('connectionStatus').classList.remove('hidden');
-            document.getElementById('connectionStatus').classList.add('flex');
-            showTab('processing'); // Go to processing tab after sign in
+            ['signInButton', 'mobileSignInButton'].forEach(id => { 
+                const btn = document.getElementById(id); 
+                if(btn) { btn.textContent = 'Signed In'; btn.disabled = true; }
+            });
+            ['getStartedButton', 'mobileGetStartedButton'].forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) { 
+                    btn.textContent = 'Process New Job'; 
+                    btn.onclick = () => { showTab('processing'); if(id.startsWith('mobile')) toggleMobileMenu(); };
+                }
+            });
+            document.getElementById('currentJobNumber').classList.remove('hidden'); // Desktop
+            if(document.getElementById('mobileCurrentJobNumber').parentElement) document.getElementById('mobileCurrentJobNumber').parentElement.classList.remove('hidden'); // Mobile
+            
+            ['connectionStatus', 'mobileConnectionStatus'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.classList.remove('hidden'); el.classList.add('flex'); }
+            });
+            currentJobNumberContext = document.getElementById('currentJobNumber').value || "DEFAULT_JOB"; // Sync from desktop primarily
+            mobileJobInput.value = currentJobNumberContext; // Ensure mobile is synced
+            showTab('processing'); 
         }
-        function showSignUp() { // "Get Started Free" also acts as sign in for now
-            showSignIn();
-        }
+        function showSignUp() { showSignIn(); }
         
         function updateJobContextDisplay() {
             currentJobNumberContext = document.getElementById('currentJobNumber').value || "NOT_SET";
-            // For now, project name is hardcoded or could be another input
-            // currentProjectNameContext = "Default Project"; 
+            mobileJobInput.value = currentJobNumberContext; // Sync to mobile
+            // currentProjectNameContext can be set elsewhere if needed
             document.getElementById('displayJobNumber').textContent = currentJobNumberContext;
-            document.getElementById('displayProjectName').textContent = currentProjectNameContext; // You'll need to get this from somewhere
-             document.getElementById('currentJobDisplayPOs').textContent = `Job: ${currentJobNumberContext} | Project: ${currentProjectNameContext}`;
+            document.getElementById('displayProjectName').textContent = currentProjectNameContext; 
+            const jobDisplayPOs = document.getElementById('currentJobDisplayPOs');
+            if (jobDisplayPOs) jobDisplayPOs.textContent = `Job: ${currentJobNumberContext} | Project: ${currentProjectNameContext}`;
         }
 
-
-        // --- Processing Steps ---
-        function confirmPathsAndProceed() {
-            updateJobContextDisplay(); // Ensure context is current
+        function confirmPathsAndProceed() { /* ... (confirmPathsAndProceed - unchanged) ... */ 
+            updateJobContextDisplay(); 
             const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
             const outputPath = document.getElementById('dropboxOutputPath').value.trim();
-
             if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET" || !sourcePath || !outputPath) {
-                alert("Job Number (in header), Dropbox Source Path, and Output Path are required.");
-                return;
+                alert("Job Number (in header), Dropbox Source Path, and Output Path are required."); return;
             }
-            
             document.getElementById('step1Indicator').querySelector('div').className = 'w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300';
             document.getElementById('step1Indicator').querySelector('div').innerHTML = '✓';
             document.getElementById('step1Indicator').querySelector('span').className = 'text-sm font-medium text-slate-700';
-
-
             document.getElementById('step2Indicator').querySelector('div').className = 'w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300';
             document.getElementById('step2Indicator').querySelector('span').className = 'text-sm font-medium text-slate-700';
-
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             document.getElementById('progressSection').classList.add('expanded');
             startDocumentProcessing(sourcePath, outputPath);
         }
         
-        async function startDocumentProcessing(sourcePath, outputPath) {
+        async function startDocumentProcessing(sourcePath, outputPath) { /* ... (startDocumentProcessing - unchanged) ... */
             updateProgressUI(0, "Initializing job submission...");
             document.getElementById('stageSpinner').style.display = 'block';
-
-            const payload = {
-                dropbox_source_path: sourcePath,
-                dropbox_output_path: outputPath,
-                job_number_context: currentJobNumberContext,
-                project_name_context: currentProjectNameContext // Make sure this is set appropriately
-            };
-
+            const payload = { dropbox_source_path: sourcePath, dropbox_output_path: outputPath, job_number_context: currentJobNumberContext, project_name_context: currentProjectNameContext };
             try {
-                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`Failed to trigger processing: ${errorData.detail || response.statusText}`);
-                }
-                const data = await response.json();
-                currentOpenPOTaskId = data.task_id;
+                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Failed to trigger processing: ${errorData.detail || response.statusText}`); }
+                const data = await response.json(); currentOpenPOTaskId = data.task_id;
                 updateProgressUI(5, "Job submitted. Waiting for Celery worker...");
                 pollTaskStatus(currentOpenPOTaskId);
-            } catch (error) {
-                console.error('Error starting processing:', error);
-                updateProgressUI(0, `Error: ${error.message}`, true);
-                document.getElementById('stageSpinner').style.display = 'none';
-            }
+            } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); document.getElementById('stageSpinner').style.display = 'none'; }
         }
 
-        function pollTaskStatus(taskId) {
-            if (statusPollInterval) clearInterval(statusPollInterval); // Clear existing interval
-
+        function pollTaskStatus(taskId) { /* ... (pollTaskStatus - unchanged) ... */
+            if (statusPollInterval) clearInterval(statusPollInterval);
             statusPollInterval = setInterval(async () => {
                 try {
                     const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
-                    if (!response.ok) {
-                        // If API returns error, stop polling for this task
-                        const errorData = await response.json();
-                        console.error(`Error fetching task status ${taskId}:`, errorData.detail || response.statusText);
-                        updateProgressUI(null, `Error fetching status: ${errorData.detail || response.statusText}`, true);
-                        clearInterval(statusPollInterval);
-                        document.getElementById('stageSpinner').style.display = 'none';
-                        return;
-                    }
+                    if (!response.ok) { const errorData = await response.json(); console.error(`Error fetching task status ${taskId}:`, errorData.detail || response.statusText); updateProgressUI(null, `Error fetching status: ${errorData.detail || response.statusText}`, true); clearInterval(statusPollInterval); document.getElementById('stageSpinner').style.display = 'none'; return; }
                     const data = await response.json();
-                    
                     let currentStepMessage = data.current_step || data.status;
-                    if (data.status === 'PROGRESS' && data.result && data.result.vendor_name) {
-                        currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`;
-                    } else if (data.status === 'PROGRESS' && data.result && data.result.current_step) {
-                        currentStepMessage = data.result.current_step;
-                    }
-
-
+                    if (data.status === 'PROGRESS' && data.result && data.result.vendor_name) { currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`; } 
+                    else if (data.status === 'PROGRESS' && data.result && data.result.current_step) { currentStepMessage = data.result.current_step; }
                     updateProgressUI(data.progress_percent, currentStepMessage);
-
-                    if (data.status === 'SUCCESS') {
-                        clearInterval(statusPollInterval);
-                        updateProgressUI(100, "Processing complete! POs generated.");
-                        document.getElementById('stageSpinner').style.display = 'none';
-                        // Automatically switch to POs tab
-                        showTab('purchaseOrders');
-                    } else if (data.status === 'FAILURE') {
-                        clearInterval(statusPollInterval);
-                        const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
-                        updateProgressUI(null, `Processing failed: ${failureDetails}`, true);
-                        document.getElementById('stageSpinner').style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error('Error polling task status:', error);
-                    updateProgressUI(null, "Error polling status. Check console.", true);
-                    clearInterval(statusPollInterval); // Stop polling on network or parse error
-                    document.getElementById('stageSpinner').style.display = 'none';
-                }
-            }, 3000); // Poll every 3 seconds
+                    if (data.status === 'SUCCESS') { clearInterval(statusPollInterval); updateProgressUI(100, "Processing complete! POs generated."); document.getElementById('stageSpinner').style.display = 'none'; showTab('purchaseOrders'); } 
+                    else if (data.status === 'FAILURE') { clearInterval(statusPollInterval); const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); updateProgressUI(null, `Processing failed: ${failureDetails}`, true); document.getElementById('stageSpinner').style.display = 'none'; }
+                } catch (error) { console.error('Error polling task status:', error); updateProgressUI(null, "Error polling status. Check console.", true); clearInterval(statusPollInterval); document.getElementById('stageSpinner').style.display = 'none'; }
+            }, 3000);
         }
 
-        function updateProgressUI(percentage, statusText, isError = false) {
-            if (percentage !== null) {
-                document.getElementById('progressFill').style.width = percentage + '%';
-                document.getElementById('progressPercent').textContent = percentage + '%';
-            }
-            document.getElementById('stageTitle').textContent = isError ? "Error" : "Status";
-            document.getElementById('stageDescription').textContent = statusText;
-            if (isError) {
-                document.getElementById('stageTitle').classList.add('text-red-600');
-            } else {
-                document.getElementById('stageTitle').classList.remove('text-red-600');
-            }
+        function updateProgressUI(percentage, statusText, isError = false) { /* ... (updateProgressUI - unchanged) ... */
+            if (percentage !== null) { document.getElementById('progressFill').style.width = percentage + '%'; document.getElementById('progressPercent').textContent = percentage + '%'; }
+            document.getElementById('stageTitle').textContent = isError ? "Error" : "Status"; document.getElementById('stageDescription').textContent = statusText;
+            if (isError) { document.getElementById('stageTitle').classList.add('text-red-600'); } else { document.getElementById('stageTitle').classList.remove('text-red-600'); }
         }
         
-        function cancelProcessing() { // Placeholder
-            if (statusPollInterval) clearInterval(statusPollInterval);
-            console.log("Processing cancellation requested (not fully implemented).");
-            updateProgressUI(0, "Processing cancelled by user.", true);
-            document.getElementById('stageSpinner').style.display = 'none';
-            // Would need backend endpoint to actually cancel Celery task if possible
+        function cancelProcessing() { /* ... (cancelProcessing - unchanged) ... */
+            if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested (not fully implemented)."); updateProgressUI(0, "Processing cancelled by user.", true); document.getElementById('stageSpinner').style.display = 'none';
         }
 
-
-        // --- Purchase Order Grid ---
         async function fetchGeneratedPOs() {
-            updateJobContextDisplay(); // Ensure context is current
+            updateJobContextDisplay(); 
             const poGrid = document.getElementById('poGrid');
             const noPOsMessage = document.getElementById('noPOsMessage');
-            poGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">Loading POs...</p>'; // Loading state
-            noPOsMessage.classList.add('hidden');
+            const purchaseOrdersSection = document.getElementById('purchaseOrdersSection');
+            
+            if (!poGrid) { console.error("CRITICAL UI Error: poGrid element not found!"); alert("A critical UI element (PO Grid) is missing."); return; }
+            
+            poGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">Loading POs...</p>'; 
+            if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) {
+                 noPOsMessage.classList.add('hidden'); // Hide initially
+            }
 
             if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET") {
-                poGrid.innerHTML = '<p class="text-red-500 col-span-full text-center">Please set a Job Number in the header to load POs.</p>';
-                return;
+                poGrid.innerHTML = '<p class="text-red-500 col-span-full text-center">Please set a Job Number in the header to load POs.</p>'; return;
             }
 
             try {
-                // Pass project name if available, backend can use it or ignore
                 const response = await fetch(`${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}`);
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || `Failed to fetch POs: ${response.statusText}`);
+                    const errorText = await response.text(); // Get raw text in case response is not JSON
+                    let errorDetail = `Failed to fetch POs: ${response.statusText} (Status: ${response.status})`;
+                    try { const errorData = JSON.parse(errorText); errorDetail = errorData.detail || errorDetail; } 
+                    catch (e) { console.warn("Could not parse error response as JSON:", errorText); }
+                    throw new Error(errorDetail);
                 }
                 const data = await response.json();
                 allFetchedPOs = data.generated_pos || [];
-                document.getElementById('poCount').textContent = `${allFetchedPOs.length} POs Generated`;
+                if(document.getElementById('poCount')) document.getElementById('poCount').textContent = `${allFetchedPOs.length} POs Generated`;
                 renderPOGrid(allFetchedPOs);
-
             } catch (error) {
-                console.error('Error fetching POs:', error);
-                poGrid.innerHTML = `<p class="text-red-500 col-span-full text-center">Error loading POs: ${error.message}</p>`;
-                noPOsMessage.classList.remove('hidden');
-                noPOsMessage.textContent = `Error loading POs: ${error.message}`;
+                console.error('Error fetching/rendering POs:', error);
+                if (poGrid) { poGrid.innerHTML = `<p class="text-red-500 col-span-full text-center">Error loading POs: ${error.message}</p>`; }
+                if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) { 
+                    noPOsMessage.classList.remove('hidden');
+                    noPOsMessage.textContent = `Error loading POs: ${error.message}. Check console for details.`;
+                } else if (!noPOsMessage && purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none') {
+                    console.error("UI Error: 'noPOsMessage' element is missing from the DOM within the purchaseOrdersSection.");
+                }
             }
         }
 
-        function renderPOGrid(posToRender) {
+        function renderPOGrid(posToRender) { /* ... (renderPOGrid - with checks for noPOsMessage as before) ... */
             const poGrid = document.getElementById('poGrid');
             const noPOsMessage = document.getElementById('noPOsMessage');
-            poGrid.innerHTML = ''; // Clear previous
-
+            if (!poGrid) { console.error("renderPOGrid: poGrid element not found!"); return; }
+            poGrid.innerHTML = ''; 
             if (!posToRender || posToRender.length === 0) {
-                noPOsMessage.classList.remove('hidden');
-                noPOsMessage.textContent = 'No purchase orders found for the current filters or job.';
+                if (noPOsMessage) { noPOsMessage.classList.remove('hidden'); noPOsMessage.textContent = 'No purchase orders found for the current filters or job.'; } 
+                else { console.warn("renderPOGrid: noPOsMessage element not found."); }
                 return;
             }
-            noPOsMessage.classList.add('hidden');
-
-            posToRender.forEach(po => {
-                const card = createPOCard(po);
-                poGrid.appendChild(card);
-            });
+            if (noPOsMessage) noPOsMessage.classList.add('hidden');
+            posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
         }
         
-        function createPOCard(po) {
-            const card = document.createElement('div');
-            card.id = `po-${po.po_id_on_grid}`; // Use po_id_on_grid for unique card ID
-            // Status might include "Regenerated", "Pending Review", etc.
+        function createPOCard(po) { /* ... (createPOCard - unchanged) ... */
+            const card = document.createElement('div'); card.id = `po-${po.po_id_on_grid}`;
             const isApproved = po.status && po.status.toLowerCase().includes('approved');
             card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''}`;
-            
-            // Determine status display
-            let statusDisplay = po.status || 'Unknown';
-            let statusColorClass = 'bg-yellow-100 text-yellow-800'; // Default for pending/unknown
-            if (isApproved) {
-                statusColorClass = 'bg-green-100 text-green-800';
-            } else if (po.status && po.status.toLowerCase().includes('error')) {
-                statusColorClass = 'bg-red-100 text-red-800';
-            }
-
-            card.innerHTML = `
-                <img src="https://via.placeholder.com/300x150.png?text=PO+Preview" alt="PO Thumbnail Placeholder" class="w-full h-32 object-cover">
-                <div class="p-4 md:p-6">
-                    <div class="flex flex-col h-full">
-                        <div class="flex justify-between items-start mb-3">
-                            <h4 class="text-md md:text-lg font-semibold text-slate-900">${po.po_number}</h4>
-                            <span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">
-                                ${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}
-                                <span>${statusDisplay}</span>
-                            </span>
-                        </div>
-                        <p class="text-sm text-slate-600 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p>
-                        <p class="text-lg md:text-xl font-bold text-slate-900 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p>
-                        <p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p>
-                        <div class="mt-auto flex space-x-2">
-                            <button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            let statusDisplay = po.status || 'Unknown'; let statusColorClass = 'bg-yellow-100 text-yellow-800';
+            if (isApproved) { statusColorClass = 'bg-green-100 text-green-800'; } else if (po.status && po.status.toLowerCase().includes('error')) { statusColorClass = 'bg-red-100 text-red-800';}
+            card.innerHTML = `<img src="https://via.placeholder.com/300x150.png?text=PO+Preview" alt="PO Thumbnail Placeholder" class="w-full h-32 object-cover"><div class="p-4 md:p-6"><div class="flex flex-col h-full"><div class="flex justify-between items-start mb-3"><h4 class="text-md md:text-lg font-semibold text-slate-900">${po.po_number}</h4><span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}<span>${statusDisplay}</span></span></div><p class="text-sm text-slate-600 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p><p class="text-lg md:text-xl font-bold text-slate-900 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p><p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p><div class="mt-auto flex space-x-2"><button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button></div></div></div>`;
             return card;
         }
 
-
-        // --- Review PO Modal ---
-        let currentEditingPOData = null; // Store the full data of the PO being edited
-
-        async function openReviewModal(poIdOnGrid) {
-            // poIdOnGrid is likely the PO Number like "JOB001-001"
+        async function openReviewModal(poIdOnGrid) { /* ... (openReviewModal - unchanged) ... */
             console.log("Opening review for PO ID on Grid:", poIdOnGrid);
             const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
-
             if (!poDataToReview || !poDataToReview.full_po_data_for_review) {
-                 try {
-                    // If full_po_data_for_review is missing, fetch it from the specific endpoint
-                    console.log(`Fetching full data for PO: Job ${currentJobNumberContext}, PO ${poIdOnGrid}`);
-                    const response = await fetch(`${API_BASE_URL}/get-po-data-for-review/${currentJobNumberContext}/${poIdOnGrid}`);
-                    if (!response.ok) {
-                        const errorDetail = await response.json();
-                        alert(`Error fetching PO details: ${errorDetail.detail || response.statusText}`);
-                        return;
-                    }
-                    currentEditingPOData = await response.json();
-                } catch (error) {
-                    alert(`Error fetching PO details: ${error.message}`);
-                    console.error("Fetch error for PO details:", error);
-                    return;
-                }
-            } else {
-                 currentEditingPOData = poDataToReview.full_po_data_for_review;
-            }
-            
-            if (!currentEditingPOData) {
-                alert('Could not load data for this PO.');
-                return;
-            }
-
+                 try { console.log(`Fetching full data for PO: Job ${currentJobNumberContext}, PO ${poIdOnGrid}`); const response = await fetch(`${API_BASE_URL}/get-po-data-for-review/${currentJobNumberContext}/${poIdOnGrid}`); if (!response.ok) { const errorDetail = await response.json(); alert(`Error fetching PO details: ${errorDetail.detail || response.statusText}`); return; } currentEditingPOData = await response.json();
+                } catch (error) { alert(`Error fetching PO details: ${error.message}`); console.error("Fetch error for PO details:", error); return; }
+            } else { currentEditingPOData = poDataToReview.full_po_data_for_review; }
+            if (!currentEditingPOData) { alert('Could not load data for this PO.'); return; }
             document.getElementById('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPOData.po_number}`;
-            
-            // Populate form fields
-            document.getElementById('editPoIdOnGrid').value = poIdOnGrid; // Store for submission
-            document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename;
-            document.getElementById('editPoNumber').value = currentEditingPOData.po_number;
-            document.getElementById('editVendor').value = currentEditingPOData.vendor_name;
-            document.getElementById('editVendorAddress').value = currentEditingPOData.vendor_address || '';
-            document.getElementById('editVendorTIN').value = currentEditingPOData.vendor_tin || '';
-            document.getElementById('editPoDate').value = currentEditingPOData.po_date; // Ensure format matches what backend expects or reformat
-            document.getElementById('editHasW9').value = String(currentEditingPOData.has_w9_document || false);
-            document.getElementById('editIsIncorp').value = currentEditingPOData.is_incorp_on_w9 || 'Unknown';
-            document.getElementById('editInvoiceRef').value = currentEditingPOData.invoice_reference_from_po || '';
-            document.getElementById('editTotalAmount').value = currentEditingPOData.total_vendor_amount_str.replace('$', '');
-            document.getElementById('editAdditionalNotes').value = currentEditingPOData.additional_notes || '';
-            
-            // Populate hidden context fields
-            document.getElementById('editJobNumber').value = currentEditingPOData.job_number;
-            document.getElementById('editProjectName').value = currentEditingPOData.project_name;
-
-            // Store backup document paths (as JSON string in a hidden input)
+            document.getElementById('editPoIdOnGrid').value = poIdOnGrid; document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename; document.getElementById('editPoNumber').value = currentEditingPOData.po_number; document.getElementById('editVendor').value = currentEditingPOData.vendor_name; document.getElementById('editVendorAddress').value = currentEditingPOData.vendor_address || ''; document.getElementById('editVendorTIN').value = currentEditingPOData.vendor_tin || ''; document.getElementById('editPoDate').value = currentEditingPOData.po_date; document.getElementById('editHasW9').value = String(currentEditingPOData.has_w9_document || false); document.getElementById('editIsIncorp').value = currentEditingPOData.is_incorp_on_w9 || 'Unknown'; document.getElementById('editInvoiceRef').value = currentEditingPOData.invoice_reference_from_po || ''; document.getElementById('editTotalAmount').value = currentEditingPOData.total_vendor_amount_str.replace('$', ''); document.getElementById('editAdditionalNotes').value = currentEditingPOData.additional_notes || '';
+            document.getElementById('editJobNumber').value = currentEditingPOData.job_number; document.getElementById('editProjectName').value = currentEditingPOData.project_name;
             document.getElementById('editBackupDocsPaths').value = JSON.stringify(currentEditingPOData.backup_document_original_dropbox_paths || []);
-
-
-            // Populate line items
-            const lineItemsContainer = document.getElementById('editLineItemsContainer');
-            lineItemsContainer.innerHTML = ''; // Clear previous
-            if (currentEditingPOData.aggregated_line_items && currentEditingPOData.aggregated_line_items.length > 0) {
-                currentEditingPOData.aggregated_line_items.forEach((item, index) => {
-                    addLineItemField(item);
-                });
-            } else {
-                // Add one empty line item if none exist
-                addLineItemField();
-            }
-
-
-            // Load PDF - use Dropbox link if available and valid
+            const lineItemsContainer = document.getElementById('editLineItemsContainer'); lineItemsContainer.innerHTML = '';
+            if (currentEditingPOData.aggregated_line_items && currentEditingPOData.aggregated_line_items.length > 0) { currentEditingPOData.aggregated_line_items.forEach((item, index) => { addLineItemField(item); }); } else { addLineItemField(); }
             let pdfSrc = 'about:blank';
             if (currentEditingPOData.generated_draft_po_pdf_path_dropbox) {
-                // Ensure it's a direct link if from Dropbox (e.g., ending with ?dl=1)
-                let dbxLink = currentEditingPOData.generated_draft_po_pdf_path_dropbox;
-                if (dbxLink.startsWith("DROPBOX:")) dbxLink = dbxLink.substring(8); // Remove prefix if present
-                // For Dropbox, direct rendering often needs `raw=1` instead of `dl=1` for iframes
-                 if (dbxLink.includes("dropbox.com") && !dbxLink.includes("raw=1")) {
-                    dbxLink = dbxLink.replace("?dl=0", "?raw=1").replace("dl=0", "raw=1");
-                    if (!dbxLink.includes("?raw=1")) dbxLink += "?raw=1";
-                }
-                pdfSrc = dbxLink;
-            } else if (currentEditingPOData.generated_draft_po_pdf_path_local) {
-                // For local files, this is tricky. Browser won't load file:// paths for security.
-                // Backend would need to serve this file. For now, show placeholder or message.
-                console.warn("Local PDF path provided, but direct iframe loading is restricted. Consider serving via backend.");
-                pdfSrc = 'about:blank'; // Or a placeholder page
-                 alert("PDF preview for local files is not directly supported. Using Dropbox link if available or blank.")
-            }
-             console.log("Setting PDF viewer src to:", pdfSrc);
-            document.getElementById('pdfViewer').src = pdfSrc;
-            
-            document.getElementById('reviewModal').classList.remove('hidden');
-            document.getElementById('reviewModal').classList.add('flex');
+                let dbxLink = currentEditingPOData.generated_draft_po_pdf_path_dropbox; if (dbxLink.startsWith("DROPBOX:")) dbxLink = dbxLink.substring(8);
+                 if (dbxLink.includes("dropbox.com") && !dbxLink.includes("raw=1")) { dbxLink = dbxLink.replace("?dl=0", "?raw=1").replace("dl=0", "raw=1"); if (!dbxLink.includes("?raw=1")) dbxLink += "?raw=1"; } pdfSrc = dbxLink;
+            } else if (currentEditingPOData.generated_draft_po_pdf_path_local) { console.warn("Local PDF path for iframe restricted."); pdfSrc = 'about:blank'; alert("PDF preview for local files not directly supported."); }
+            console.log("Setting PDF viewer src to:", pdfSrc); document.getElementById('pdfViewer').src = pdfSrc;
+            document.getElementById('reviewModal').classList.remove('hidden'); document.getElementById('reviewModal').classList.add('flex');
         }
         
-        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
-            const container = document.getElementById('editLineItemsContainer');
-            const index = container.children.length;
-            const div = document.createElement('div');
-            div.className = 'grid grid-cols-10 gap-2 items-center';
-            div.innerHTML = `
-                <input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1">
-                <input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1">
-                <input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1">
-                <input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc">
-                <input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc">
-                <button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>
-            `;
-            container.appendChild(div);
-             // Add event listeners for dynamic calculation (optional)
-            div.querySelectorAll('.line-item-calc').forEach(input => {
-                input.addEventListener('input', updateTotalAmountFromLines);
-            });
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { /* ... (addLineItemField - unchanged) ... */
+            const container = document.getElementById('editLineItemsContainer'); const index = container.children.length;
+            const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
+            div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
+            container.appendChild(div); div.querySelectorAll('.line-item-calc').forEach(input => { input.addEventListener('input', updateTotalAmountFromLines); });
         }
 
-        function removeLineItem(button) {
-            button.parentElement.remove();
-            updateTotalAmountFromLines();
-        }
+        function removeLineItem(button) { /* ... (removeLineItem - unchanged) ... */ button.parentElement.remove(); updateTotalAmountFromLines(); }
         
-        function updateTotalAmountFromLines() {
-            let total = 0;
-            document.querySelectorAll('#editLineItemsContainer > div').forEach(lineDiv => {
-                const amountInput = lineDiv.querySelector('input[name*="[amount]"]');
-                const val = parseFloat(amountInput.value.replace('$', ''));
-                if (!isNaN(val)) {
-                    total += val;
-                }
-            });
-            document.getElementById('editTotalAmount').value = total.toFixed(2);
+        function updateTotalAmountFromLines() { /* ... (updateTotalAmountFromLines - unchanged) ... */
+            let total = 0; document.querySelectorAll('#editLineItemsContainer > div').forEach(lineDiv => { const amountInput = lineDiv.querySelector('input[name*="[amount]"]'); const val = parseFloat(amountInput.value.replace('$', '')); if (!isNaN(val)) { total += val; } }); document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
 
+        function closeReviewModal() { /* ... (closeReviewModal - unchanged) ... */ document.getElementById('reviewModal').classList.add('hidden'); document.getElementById('reviewModal').classList.remove('flex'); document.getElementById('pdfViewer').src = 'about:blank'; currentEditingPOData = null; }
 
-        function closeReviewModal() {
-            document.getElementById('reviewModal').classList.add('hidden');
-            document.getElementById('reviewModal').classList.remove('flex');
-            document.getElementById('pdfViewer').src = 'about:blank'; // Clear iframe
-            currentEditingPOData = null;
-        }
-
-        async function submitPOChanges(isApproval) {
-            // Collect data from the form
-            const form = document.getElementById('reviewForm');
-            const formData = new FormData(form);
-            const poDataForRegen = {};
-
-            // Convert FormData to a nested object structure for JSON
-            formData.forEach((value, key) => {
-                // Handle line items array
-                if (key.startsWith('line_items[')) {
-                    const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/);
-                    if (match) {
-                        const index = parseInt(match[1]);
-                        const field = match[2];
-                        if (!poDataForRegen.aggregated_line_items) {
-                            poDataForRegen.aggregated_line_items = [];
-                        }
-                        while (poDataForRegen.aggregated_line_items.length <= index) {
-                            poDataForRegen.aggregated_line_items.push({});
-                        }
-                        // Ensure amounts are strings, as per schema
-                        if (field === 'amount' || field === 'unit_price') {
-                             poDataForRegen.aggregated_line_items[index][field] = String(value).replace('$', '');
-                        } else {
-                             poDataForRegen.aggregated_line_items[index][field] = value;
-                        }
-                    }
-                } else {
-                    // Handle boolean strings for has_w9_document
-                    if (key === 'has_w9_document') {
-                        poDataForRegen[key] = value === 'true';
-                    } else {
-                         poDataForRegen[key] = value;
-                    }
-                }
-            });
-            // Add fields not directly part of form iteration but stored elsewhere
-            poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
-            poDataForRegen.job_number = document.getElementById('editJobNumber').value;
-            poDataForRegen.project_name = document.getElementById('editProjectName').value;
-            
-            // Retrieve and parse backup document paths
-            try {
-                poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]");
-            } catch (e) {
-                poDataForRegen.backup_document_original_dropbox_paths = [];
-                console.error("Error parsing backup_document_original_dropbox_paths:", e);
-            }
-
-
-             // Clean up line items (remove empty ones if any were added but not filled)
-            if (poDataForRegen.aggregated_line_items) {
-                poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => 
-                    item.description || item.amount // Keep if it has at least a description or amount
-                );
-            }
-
-
-            if (isApproval) {
-                alert("PO Approval functionality is planned for a future update. For now, regenerating the PO with current data.");
-                // In future, this might just update status in GSheet without regeneration if no data changed.
-                // For now, treat as "Save Changes & Regenerate"
-            }
-            
+        async function submitPOChanges(isApproval) { /* ... (submitPOChanges - unchanged) ... */
+            const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForRegen = {};
+            formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = []; } while (poDataForRegen.aggregated_line_items.length <= index) { poDataForRegen.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForRegen.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForRegen.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForRegen[key] = value === 'true'; } else { poDataForRegen[key] = value; } } });
+            poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value; poDataForRegen.job_number = document.getElementById('editJobNumber').value; poDataForRegen.project_name = document.getElementById('editProjectName').value;
+            try { poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]"); } catch (e) { poDataForRegen.backup_document_original_dropbox_paths = []; console.error("Error parsing backup_document_original_dropbox_paths:", e); }
+            if (poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => item.description || item.amount ); }
+            if (isApproval) { alert("PO Approval functionality is planned for a future update."); }
             console.log("Submitting PO Data for Regeneration:", poDataForRegen);
-
             try {
-                const response = await fetch(`${API_BASE_URL}/regenerate-po`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ po_data_to_regenerate: poDataForRegen })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || `Failed to regenerate PO: ${response.statusText}`);
-                }
-                const updatedPOInfo = await response.json();
-                alert('PO successfully regenerated and updated!');
-                closeReviewModal();
-                // Refresh the PO grid to show updated info
-                fetchGeneratedPOs(); 
-            } catch (error) {
-                console.error('Error submitting PO changes:', error);
-                alert(`Error: ${error.message}`);
-            }
+                const response = await fetch(`${API_BASE_URL}/regenerate-po`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ po_data_to_regenerate: poDataForRegen }) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to regenerate PO: ${response.statusText}`); }
+                const updatedPOInfo = await response.json(); alert('PO successfully regenerated and updated!'); closeReviewModal(); fetchGeneratedPOs(); 
+            } catch (error) { console.error('Error submitting PO changes:', error); alert(`Error: ${error.message}`); }
         }
         
-        // --- Filters and Sorts for PO Grid ---
         document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
 
-        function applyFiltersAndSort() {
-            let filteredPOs = [...allFetchedPOs];
-            const statusFilter = document.getElementById('filterStatus').value;
-            const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
-            const sortBy = document.getElementById('sortPOs').value;
-
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                filteredPOs = filteredPOs.filter(po => po.status && po.status.toLowerCase().includes(statusFilter));
-            }
-
-            // Apply vendor name filter
-            if (vendorNameFilter) {
-                filteredPOs = filteredPOs.filter(po => po.vendor_name && po.vendor_name.toLowerCase().includes(vendorNameFilter));
-            }
-
-            // Apply sort
-            switch (sortBy) {
-                case 'date': // Assuming po_date is MM/DD/YY - convert for proper sort
-                    filteredPOs.sort((a, b) => new Date(a.po_date) - new Date(b.po_date));
-                    break;
-                case 'vendor':
-                    filteredPOs.sort((a, b) => a.vendor_name.localeCompare(b.vendor_name));
-                    break;
-                case 'amount': // Assuming total_amount is like "$1,234.56"
-                    filteredPOs.sort((a, b) => parseFloat(a.total_amount.replace('$', '').replace(',', '')) - parseFloat(b.total_amount.replace('$', '').replace(',', '')));
-                    break;
-                case 'status':
-                    filteredPOs.sort((a, b) => (a.status || "").localeCompare(b.status || ""));
-                    break;
-            }
+        function applyFiltersAndSort() { /* ... (applyFiltersAndSort - unchanged) ... */
+            let filteredPOs = [...allFetchedPOs]; const statusFilter = document.getElementById('filterStatus').value; const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase(); const sortBy = document.getElementById('sortPOs').value;
+            if (statusFilter !== 'all') { filteredPOs = filteredPOs.filter(po => po.status && po.status.toLowerCase().includes(statusFilter));}
+            if (vendorNameFilter) { filteredPOs = filteredPOs.filter(po => po.vendor_name && po.vendor_name.toLowerCase().includes(vendorNameFilter));}
+            switch (sortBy) { case 'date': filteredPOs.sort((a, b) => new Date(a.po_date) - new Date(b.po_date)); break; case 'vendor': filteredPOs.sort((a, b) => a.vendor_name.localeCompare(b.vendor_name)); break; case 'amount': filteredPOs.sort((a, b) => parseFloat(a.total_amount.replace('$', '').replace(',', '')) - parseFloat(b.total_amount.replace('$', '').replace(',', ''))); break; case 'status': filteredPOs.sort((a, b) => (a.status || "").localeCompare(b.status || "")); break; }
             renderPOGrid(filteredPOs);
         }
 
-
         // Initial setup
         showTab('hero');
-        document.getElementById('currentJobNumber').addEventListener('change', () => {
-            currentJobNumberContext = document.getElementById('currentJobNumber').value;
-            updateJobContextDisplay();
-            if (document.getElementById('purchaseOrdersSection').style.display === 'block') {
-                fetchGeneratedPOs(); // Reload POs if job number changes while POs tab is active
-            }
-        });
-        updateJobContextDisplay(); // Set initial display based on default job#
+        document.getElementById('currentJobNumber').addEventListener('change', () => { currentJobNumberContext = document.getElementById('currentJobNumber').value; mobileJobInput.value = currentJobNumberContext; updateJobContextDisplay(); if (document.getElementById('purchaseOrdersSection').style.display === 'block') { fetchGeneratedPOs(); } });
+        mobileJobInput.addEventListener('change', () => { currentJobNumberContext = mobileJobInput.value; desktopJobInput.value = currentJobNumberContext; updateJobContextDisplay(); if (document.getElementById('purchaseOrdersSection').style.display === 'block') { fetchGeneratedPOs(); } });
+        updateJobContextDisplay(); 
 
     </script>
 </body>
