@@ -9,95 +9,87 @@
     <title>PO Wizard - Film Production Invoice Processing</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        .hero-gradient { background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 50%, #4a5568 100%); }
+        /* Base hero gradient - Purple scheme example */
+        .hero-gradient { background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #8b5cf6 100%); } /* Dark to light purple */
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1); }
         .progress-section { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.5s ease-in-out; }
         .progress-section.expanded { max-height: 800px; opacity: 1; margin-top: 2rem; }
         .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        .pdf-preview { background: linear-gradient(145deg, #f8fafc, #e2e8f0); border: 2px solid #e2e8f0; transition: all 0.3s ease; }
-        .pdf-preview:hover { border-color: #3b82f6; transform: translateY(-2px); }
-        .pdf-preview.approved { border-color: #10b981; background: linear-gradient(145deg, #f0fdf4, #dcfce7); }
-        .connector-line { width: 4rem; height: 2px; background: #e2e8f0; }
-        .connector-line.completed { background: #10b981; }
+        .pdf-preview { background: linear-gradient(145deg, #f5f3ff, #ede9fe); border: 2px solid #ddd6fe; transition: all 0.3s ease; } /* Lighter Purple/Cream for previews */
+        .pdf-preview:hover { border-color: #8b5cf6; transform: translateY(-2px); } /* Purple accent */
+        .pdf-preview.approved { border-color: #34d399; background: linear-gradient(145deg, #f0fdf4, #dcfce7); }
+        .connector-line { width: 4rem; height: 2px; background: #e5e7eb; } /* Lighter gray */
+        .connector-line.completed { background: #34d399; }
         .pricing-card { transition: all 0.3s ease; }
-        .pricing-card.popular { transform: scale(1.05); border: 2px solid #3b82f6; box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.15); }
+        .pricing-card.popular { transform: scale(1.05); border: 2px solid #8b5cf6; box-shadow: 0 20px 25px -5px rgba(139,92,246, 0.15); } /* Purple for popular */
         .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         .pricing-card.popular:hover { transform: translateY(-4px) scale(1.05); }
         .tab-button { transition: all 0.2s ease; }
-        .tab-button.active { background: #3b82f6; color: white; }
+        .tab-button.active { background: #7c3aed; color: white; } /* Darker Purple for active tab */
         .floating-benefit { animation: float 6s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; /* Aspect Ratio 1:sqrt(2) for A4-like */ }
+        .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; }
         .iframe-container iframe { position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none; }
+        body { background-color: #f7f3ff; } /* Very light purple/lavender for body */
     </style>
 </head>
-<body class="bg-slate-50 font-['Inter','Noto_Sans',sans-serif]">
+<body class="bg-purple-50 font-['Inter','Noto_Sans',sans-serif]">
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Main header content for medium screens and up -->
-                <div class="flex justify-between items-center py-3">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8v2H6V6zm0 4h8v2H6v-2z"/>
-                            </svg>
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8"> {/* Changed to w-full for header background */}
+                <div class="flex justify-between items-center py-3 h-20 md:h-16"> {/* Adjusted height for stacked title */}
+                    <!-- Logo and Brand Name -->
+                    <div class="flex items-center">
+                        <img src="assets/POWizard.png" alt="PO Wizard Logo" class="h-12 w-auto mr-3 md:h-10"> {/* Adjusted logo size */}
+                        <div>
+                            <a href="#" onclick="showTab('hero'); if(typeof closeMobileMenu === 'function') closeMobileMenu();" class="block text-3xl md:text-2xl font-bold text-purple-700 hover:text-purple-900 leading-tight">PO Wizard</a>
+                            <span class="block text-xs text-slate-500 leading-tight">Built for Production</span>
                         </div>
-                        <a href="#" onclick="showTab('hero'); closeMobileMenu();" class="text-xl font-bold text-slate-900">PO Wizard</a>
-                        <span class="text-sm text-slate-500 hidden lg:inline">Built for Production</span>
-                    </div>
-
-                    <!-- Hamburger Menu Button for small screens -->
-                    <div class="md:hidden">
-                        <button id="mobileMenuButton" class="text-slate-600 hover:text-slate-800 focus:outline-none">
-                            <span class="material-icons-outlined">menu</span>
-                        </button>
                     </div>
 
                     <!-- Desktop Navigation & Actions (hidden on small screens) -->
-                    <div id="desktopMenu" class="hidden md:flex items-center space-x-3 lg:space-x-6">
+                    <div id="desktopMenu" class="hidden md:flex items-center space-x-3 lg:space-x-4">
                         <nav class="flex items-center space-x-1 lg:space-x-3">
-                            <button onclick="showTab('features')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-600 hover:text-slate-900 hover:bg-slate-100">Features</button>
-                            <button onclick="showTab('pricing')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-600 hover:text-slate-900 hover:bg-slate-100">Pricing</button>
-                            <button onclick="showTab('processing')" id="processingNavButton" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-600 hover:text-slate-900 hover:bg-slate-100">My POs / Process</button>
+                            <button onclick="showTab('features')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-purple-700 hover:bg-purple-50">Features</button>
+                            <button onclick="showTab('pricing')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-purple-700 hover:bg-purple-50">Pricing</button>
+                            <button onclick="showTab('processing')" id="processingNavButton" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-purple-700 hover:bg-purple-50 whitespace-nowrap">My POs / Process</button>
                         </nav>
-                        <span id="connectionStatus" class="hidden items-center space-x-2 text-sm text-green-600 whitespace-nowrap">
-                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                            <span>Simulated Connection</span>
-                        </span>
-                        <div class="flex items-center space-x-2 lg:space-x-3">
-                             <input type="text" id="currentJobNumber" placeholder="Job #" title="Current Job Number" class="px-3 py-2 border border-slate-300 rounded-lg text-sm w-24 lg:w-28" value="85319">
-                            <button onclick="showSignIn()" id="signInButton" class="whitespace-nowrap items-center px-3 py-2 text-sm lg:text-base text-slate-600 hover:text-slate-900">
+                        <div class="flex items-center space-x-2 lg:space-x-3 border-l border-slate-300 pl-3 lg:pl-4">
+                             <input type="text" id="currentJobNumber" placeholder="Job #" title="Current Job Number" class="px-3 py-2 border border-slate-300 rounded-lg text-sm w-24 lg:w-28 focus:ring-purple-500 focus:border-purple-500" value="85319">
+                            <button onclick="showSignIn()" id="signInButton" class="whitespace-nowrap items-center px-3 py-2 text-sm lg:text-base text-slate-700 hover:text-purple-700">
                                 Sign In
                             </button>
-                            <button onclick="showSignUp()" id="getStartedButton" class="whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium text-sm lg:text-base">
+                            <button onclick="showSignUp()" id="getStartedButton" class="whitespace-nowrap bg-purple-600 hover:bg-purple-700 text-white px-3 lg:px-4 py-2 rounded-lg font-medium text-sm lg:text-base">
                                 Get Started
                             </button>
                         </div>
+                    </div>
+                    
+                    <!-- Mobile Menu Button (Hamburger) -->
+                    <div class="md:hidden">
+                        <button id="mobileMenuButton" class="text-slate-600 hover:text-purple-700 focus:outline-none p-2">
+                            <span class="material-icons-outlined text-3xl">menu</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- Mobile Menu Dropdown (hidden by default, shown by JS) -->
-            <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-slate-200">
+            <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-slate-200 shadow-lg absolute w-full">
                 <nav class="flex flex-col space-y-1 p-4">
-                    <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">Features</button>
-                    <button onclick="showTab('pricing'); toggleMobileMenu();" class="tab-button block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">Pricing</button>
-                    <button onclick="showTab('processing'); toggleMobileMenu();" class="tab-button block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">My POs / Process</button>
+                    <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-purple-700 hover:bg-purple-50 text-left text-base">Features</button>
+                    <button onclick="showTab('pricing'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-purple-700 hover:bg-purple-50 text-left text-base">Pricing</button>
+                    <button onclick="showTab('processing'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-purple-700 hover:bg-purple-50 text-left text-base">My POs / Process</button>
                     <hr class="my-2"/>
                     <div class="px-1 py-2">
                         <label for="mobileCurrentJobNumber" class="block text-sm font-medium text-slate-700 mb-1">Current Job #:</label>
-                        <input type="text" id="mobileCurrentJobNumber" placeholder="Job #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" value="85319">
+                        <input type="text" id="mobileCurrentJobNumber" placeholder="Job #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500" value="85319">
                     </div>
-                     <span id="mobileConnectionStatus" class="hidden items-center space-x-2 text-sm text-green-600 px-3 py-2">
-                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                        <span>Simulated Connection</span>
-                    </span>
-                    <button onclick="showSignIn(); toggleMobileMenu();" id="mobileSignInButton" class="block px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-left">Sign In</button>
-                    <button onclick="showSignUp(); toggleMobileMenu();" id="mobileGetStartedButton" class="block w-full text-left bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium">Get Started Free</button>
+                    <button onclick="showSignIn(); toggleMobileMenu();" id="mobileSignInButton" class="block px-3 py-3 rounded-lg text-slate-700 hover:text-purple-700 hover:bg-purple-50 text-left text-base">Sign In</button>
+                    <button onclick="showSignUp(); toggleMobileMenu();" id="mobileGetStartedButton" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-3 rounded-lg font-medium text-base">Get Started Free</button>
                 </nav>
             </div>
         </header>
@@ -110,59 +102,58 @@
                     <div class="text-center mb-16">
                         <h2 class="text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
                             Stop Wrestling with<br/>
-                            <span class="text-purple-300">Post-Production Receipts</span>
+                            <span class="text-amber-300">Post-Production Receipts</span>
                         </h2>
-                        <p class="text-xl lg:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed mb-12">
+                        <p class="text-xl lg:text-2xl text-purple-200 max-w-4xl mx-auto leading-relaxed mb-12">
                             Transform your chaotic pile of vendor invoices, receipts, and credit card statements into professional purchase orders in minutes, not hours. Built specifically for <strong>production coordinators</strong> tired of manual PO creation.
                         </p>
                         <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto mb-16">
-                            <div class="bg-red-500/10 backdrop-blur-sm rounded-2xl p-8 border border-red-300/20">
+                            <div class="bg-red-700/10 backdrop-blur-sm rounded-2xl p-8 border border-red-500/20">
                                 <div class="text-red-300 mb-4"><span class="material-icons-outlined text-4xl">warning</span></div>
                                 <h3 class="text-xl font-bold text-white mb-4">The Old Way</h3>
-                                <ul class="text-slate-300 space-y-2 text-left">
+                                <ul class="text-purple-200 space-y-2 text-left">
                                     <li>• Hours manually entering vendor data</li><li>• Hunting through receipts and invoices</li><li>• Formatting POs one by one</li><li>• Missing deadlines for production companies</li><li>• Losing track of expenses</li>
                                 </ul>
                             </div>
-                            <div class="bg-green-500/10 backdrop-blur-sm rounded-2xl p-8 border border-green-300/20">
+                            <div class="bg-green-600/10 backdrop-blur-sm rounded-2xl p-8 border border-green-400/20">
                                 <div class="text-green-300 mb-4"><span class="material-icons-outlined text-4xl">auto_awesome</span></div>
                                 <h3 class="text-xl font-bold text-white mb-4">The PO Wizard Way</h3>
-                                <ul class="text-slate-300 space-y-2 text-left">
+                                <ul class="text-purple-200 space-y-2 text-left">
                                     <li>• AI scans all your documents automatically</li><li>• Extracts vendor info, amounts, dates</li><li>• Generates professional POs instantly</li><li>• Ready for production company submission</li><li>• Complete audit trail maintained</li>
                                 </ul>
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                            <button onclick="showSignUp()" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-200 text-lg">
+                            <button onclick="showSignUp()" class="bg-amber-500 hover:bg-amber-600 text-purple-900 font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-amber-300 text-lg">
                                 Start Free Trial - Process 5 Vendors
                             </button>
                             <button onclick="showTab('features')" class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 border border-white/20">
                                 See How It Works
                             </button>
                         </div>
-                        <p class="text-slate-400 mt-6 text-sm">No credit card required • 2-minute setup • Works with any production size</p>
+                        <p class="text-purple-300 mt-6 text-sm">No credit card required • 2-minute setup • Works with any production size</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-slate-400 text-sm mb-6">Trusted by Production Coordinators at:</p>
-                        <div class="flex justify-center items-center space-x-12 opacity-60">
+                        <p class="text-purple-300 text-sm mb-6">Trusted by Production Coordinators at:</p>
+                        <div class="flex justify-center items-center space-x-12 opacity-70">
                             <div class="text-white font-bold text-lg">Netflix</div><div class="text-white font-bold text-lg">HBO</div><div class="text-white font-bold text-lg">Warner Bros</div><div class="text-white font-bold text-lg">A24</div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Features Section -->
-            <section id="featuresSection" class="py-20 bg-white hidden">
+            <section id="featuresSection" class="py-20 bg-purple-50 hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
-                        <h3 class="text-4xl font-bold text-slate-900 mb-6">How PO Wizard Works</h3>
+                        <h3 class="text-4xl font-bold text-purple-800 mb-6">How PO Wizard Works</h3>
                         <p class="text-xl text-slate-600 max-w-3xl mx-auto">Three simple steps to transform your post-production chaos into organized, professional purchase orders</p>
                     </div>
                     <div class="grid lg:grid-cols-3 gap-12 mb-20">
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl font-bold text-blue-600">1</span></div>
-                            <h4 class="text-xl font-bold text-slate-900 mb-4">Upload Your Mess</h4>
+                            <div class="w-20 h-20 bg-purple-200 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl font-bold text-purple-700">1</span></div>
+                            <h4 class="text-xl font-bold text-purple-900 mb-4">Upload Your Mess</h4>
                             <p class="text-slate-600 mb-6">Connect your Dropbox or upload folders full of vendor invoices, receipts, credit card statements, and random charges from your production.</p>
-                            <div class="bg-slate-50 rounded-xl p-6">
+                            <div class="bg-purple-100 rounded-xl p-6">
                                 <div class="flex justify-center space-x-4 mb-4">
                                     <div class="w-12 h-16 bg-red-100 rounded border-2 border-red-200 flex items-center justify-center"><span class="material-icons-outlined text-red-600 text-sm">receipt</span></div>
                                     <div class="w-12 h-16 bg-blue-100 rounded border-2 border-blue-200 flex items-center justify-center"><span class="material-icons-outlined text-blue-600 text-sm">description</span></div>
@@ -171,73 +162,71 @@
                             </div>
                         </div>
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl font-bold text-purple-600">2</span></div>
-                            <h4 class="text-xl font-bold text-slate-900 mb-4">AI Works Its Magic</h4>
+                            <div class="w-20 h-20 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl font-bold text-amber-700">2</span></div>
+                            <h4 class="text-xl font-bold text-purple-900 mb-4">AI Works Its Magic</h4>
                             <p class="text-slate-600 mb-6">Our AI scans every document, extracts vendor information, amounts, dates, and categories. No manual data entry required.</p>
-                            <div class="bg-slate-50 rounded-xl p-6">
-                                <div class="flex justify-center mb-4"><div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center"><span class="material-icons-outlined text-white text-2xl">psychology</span></div></div>
-                                <div class="space-y-2"><div class="h-2 bg-gradient-to-r from-purple-200 to-blue-200 rounded animate-pulse"></div><div class="h-2 bg-gradient-to-r from-blue-200 to-purple-200 rounded animate-pulse" style="animation-delay: 0.5s"></div><div class="h-2 bg-gradient-to-r from-purple-200 to-blue-200 rounded animate-pulse" style="animation-delay: 1s"></div></div>
+                            <div class="bg-purple-100 rounded-xl p-6">
+                                <div class="flex justify-center mb-4"><div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-amber-500 rounded-full flex items-center justify-center"><span class="material-icons-outlined text-white text-2xl">psychology</span></div></div>
+                                <div class="space-y-2"><div class="h-2 bg-gradient-to-r from-purple-300 to-amber-300 rounded animate-pulse"></div><div class="h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded animate-pulse" style="animation-delay: 0.5s"></div><div class="h-2 bg-gradient-to-r from-purple-300 to-amber-300 rounded animate-pulse" style="animation-delay: 1s"></div></div>
                             </div>
                         </div>
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl font-bold text-green-600">3</span></div>
-                            <h4 class="text-xl font-bold text-slate-900 mb-4">Perfect POs Delivered</h4>
+                            <div class="w-20 h-20 bg-green-200 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl font-bold text-green-700">3</span></div>
+                            <h4 class="text-xl font-bold text-purple-900 mb-4">Perfect POs Delivered</h4>
                             <p class="text-slate-600 mb-6">Get professionally formatted purchase orders ready for production company submission. Review, approve, and download in minutes.</p>
-                            <div class="bg-slate-50 rounded-xl p-6">
+                            <div class="bg-purple-100 rounded-xl p-6">
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div class="h-20 bg-white rounded-lg border-2 border-green-200 p-2"><div class="h-2 bg-green-200 rounded mb-1"></div><div class="h-2 bg-green-100 rounded mb-1"></div><div class="h-2 bg-green-100 rounded"></div><div class="text-xs text-green-600 mt-2 font-medium">PO-001</div></div>
-                                    <div class="h-20 bg-white rounded-lg border-2 border-green-200 p-2"><div class="h-2 bg-green-200 rounded mb-1"></div><div class="h-2 bg-green-100 rounded mb-1"></div><div class="h-2 bg-green-100 rounded"></div><div class="text-xs text-green-600 mt-2 font-medium">PO-002</div></div>
+                                    <div class="h-20 bg-white rounded-lg border-2 border-green-300 p-2"><div class="h-2 bg-green-300 rounded mb-1"></div><div class="h-2 bg-green-100 rounded mb-1"></div><div class="h-2 bg-green-100 rounded"></div><div class="text-xs text-green-700 mt-2 font-medium">PO-001</div></div>
+                                    <div class="h-20 bg-white rounded-lg border-2 border-green-300 p-2"><div class="h-2 bg-green-300 rounded mb-1"></div><div class="h-2 bg-green-100 rounded mb-1"></div><div class="h-2 bg-green-100 rounded"></div><div class="text-xs text-green-700 mt-2 font-medium">PO-002</div></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div class="text-center floating-benefit"><div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-blue-600 text-2xl">schedule</span></div><h4 class="font-bold text-slate-900 mb-2">Save 10+ Hours</h4><p class="text-slate-600 text-sm">Per production wrap</p></div>
-                        <div class="text-center floating-benefit" style="animation-delay: 1s"><div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-green-600 text-2xl">check_circle</span></div><h4 class="font-bold text-slate-900 mb-2">99% Accuracy</h4><p class="text-slate-600 text-sm">AI-powered extraction</p></div>
-                        <div class="text-center floating-benefit" style="animation-delay: 2s"><div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-purple-600 text-2xl">trending_up</span></div><h4 class="font-bold text-slate-900 mb-2">Faster Payments</h4><p class="text-slate-600 text-sm">Professional formatting</p></div>
-                        <div class="text-center floating-benefit" style="animation-delay: 3s"><div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-yellow-600 text-2xl">security</span></div><h4 class="font-bold text-slate-900 mb-2">Audit Trail</h4><p class="text-slate-600 text-sm">Complete documentation</p></div>
+                        <div class="text-center floating-benefit"><div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-blue-600 text-2xl">schedule</span></div><h4 class="font-bold text-purple-900 mb-2">Save 10+ Hours</h4><p class="text-slate-600 text-sm">Per production wrap</p></div>
+                        <div class="text-center floating-benefit" style="animation-delay: 1s"><div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-green-600 text-2xl">check_circle</span></div><h4 class="font-bold text-purple-900 mb-2">99% Accuracy</h4><p class="text-slate-600 text-sm">AI-powered extraction</p></div>
+                        <div class="text-center floating-benefit" style="animation-delay: 2s"><div class="w-16 h-16 bg-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-purple-700 text-2xl">trending_up</span></div><h4 class="font-bold text-purple-900 mb-2">Faster Payments</h4><p class="text-slate-600 text-sm">Professional formatting</p></div>
+                        <div class="text-center floating-benefit" style="animation-delay: 3s"><div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><span class="material-icons-outlined text-amber-600 text-2xl">security</span></div><h4 class="font-bold text-purple-900 mb-2">Audit Trail</h4><p class="text-slate-600 text-sm">Complete documentation</p></div>
                     </div>
                 </div>
             </section>
 
-            <!-- Pricing Section -->
-            <section id="pricingSection" class="py-20 bg-slate-50 hidden">
-                 <!-- ... (Your Pricing Section Content - ensuring it's complete) ... -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section id="pricingSection" class="py-20 bg-purple-50 hidden">
+                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
-                        <h3 class="text-4xl font-bold text-slate-900 mb-6">Simple, Transparent Pricing</h3>
+                        <h3 class="text-4xl font-bold text-purple-800 mb-6">Simple, Transparent Pricing</h3>
                         <p class="text-xl text-slate-600 max-w-3xl mx-auto">Choose the plan that fits your production workflow. Start free, upgrade as you grow.</p>
                     </div>
                     <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                        <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg">
-                            <div class="text-center mb-8"><h4 class="text-2xl font-bold text-slate-900 mb-2">Free</h4><p class="text-slate-600 mb-6">Perfect for small productions</p><div class="text-4xl font-bold text-slate-900 mb-2">Free</div><p class="text-slate-500 text-sm">No credit card required</p></div>
+                        <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg border border-purple-200">
+                            <div class="text-center mb-8"><h4 class="text-2xl font-bold text-purple-900 mb-2">Free</h4><p class="text-slate-600 mb-6">Perfect for small productions</p><div class="text-4xl font-bold text-purple-900 mb-2">Free</div><p class="text-slate-500 text-sm">No credit card required</p></div>
                             <ul class="space-y-4 mb-8">
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Up to 5 vendors per production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Single production processing</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Basic AI scanning</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Standard PO templates</span></li>
-                            </ul><button onclick="showSignUp('free')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
+                            </ul><button onclick="showSignUp('free')" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
                         </div>
-                        <div class="pricing-card popular bg-white rounded-2xl p-8 shadow-xl relative">
-                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2"><span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</span></div>
-                            <div class="text-center mb-8"><h4 class="text-2xl font-bold text-slate-900 mb-2">Pro</h4><p class="text-slate-600 mb-6">For growing productions</p><div class="text-4xl font-bold text-slate-900 mb-2">$20</div><p class="text-slate-500 text-sm">per month</p></div>
+                        <div class="pricing-card popular bg-white rounded-2xl p-8 shadow-xl relative border-2 border-amber-500">
+                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2"><span class="bg-amber-500 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</span></div>
+                            <div class="text-center mb-8"><h4 class="text-2xl font-bold text-purple-900 mb-2">Pro</h4><p class="text-slate-600 mb-6">For growing productions</p><div class="text-4xl font-bold text-purple-900 mb-2">$20</div><p class="text-slate-500 text-sm">per month</p></div>
                             <ul class="space-y-4 mb-8">
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited vendors</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited production amounts</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited iterations on 1 production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Advanced AI with 99% accuracy</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Custom PO templates</span></li>
-                            </ul><button onclick="showSignUp('pro')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors">Start Free Trial</button>
+                            </ul><button onclick="showSignUp('pro')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors">Start Free Trial</button>
                         </div>
-                        <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg">
-                            <div class="text-center mb-8"><h4 class="text-2xl font-bold text-slate-900 mb-2">Enterprise</h4><p class="text-slate-600 mb-6">For production companies</p><div class="text-4xl font-bold text-slate-900 mb-2">$30</div><p class="text-slate-500 text-sm">per month</p></div>
+                        <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg border border-purple-200">
+                            <div class="text-center mb-8"><h4 class="text-2xl font-bold text-purple-900 mb-2">Enterprise</h4><p class="text-slate-600 mb-6">For production companies</p><div class="text-4xl font-bold text-purple-900 mb-2">$30</div><p class="text-slate-500 text-sm">per month</p></div>
                             <ul class="space-y-4 mb-8">
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited productions</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited vendors</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Cross-tracking between productions</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Microsoft Excel integration</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Fully custom, unbranded designs</span></li>
-                            </ul><button onclick="showSignUp('enterprise')" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors">Contact Sales</button>
+                            </ul><button onclick="showSignUp('enterprise')" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors">Contact Sales</button>
                         </div>
                     </div>
                     <div class="text-center mt-12">
@@ -251,41 +240,39 @@
                 </div>
             </section>
 
-            <!-- Processing Section -->
-            <section id="processingSection" class="hero-gradient py-16 lg:py-20 hidden">
-                <!-- ... (Your Processing Section Content - ensuring it's complete) ... -->
+            <section id="processingSection" class="bg-gradient-to-br from-purple-100 via-purple-50 to-orange-100 py-16 lg:py-20 hidden">
                  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 max-w-4xl mx-auto">
-                        <div id="jobContextDisplay" class="mb-6 text-slate-700">Job: <span id="displayJobNumber" class="font-semibold">N/A</span> | Project: <span id="displayProjectName" class="font-semibold">N/A</span></div>
+                        <div id="jobContextDisplay" class="mb-6 text-purple-800">Job: <span id="displayJobNumber" class="font-semibold">N/A</span> | Project: <span id="displayProjectName" class="font-semibold">N/A</span></div>
                         <div class="flex justify-center items-center space-x-8 mb-12">
                              <div id="step1Indicator" class="flex flex-col items-center"><div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">1</div><span class="text-sm font-medium text-slate-500">Configure Job</span></div>
                             <div id="step2Indicator" class="flex flex-col items-center"><div class="w-12 h-12 bg-slate-300 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg mb-3 transition-all duration-300">2</div><span class="text-sm font-medium text-slate-500">Process Documents</span></div>
                         </div>
                         <div id="step1" class="step-content">
-                            <div class="text-center mb-8"><div class="w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg></div>
-                                <h3 class="text-2xl font-bold text-slate-900 mb-4">Configure Dropbox Processing</h3>
+                            <div class="text-center mb-8"><div class="w-20 h-20 bg-purple-200 rounded-3xl flex items-center justify-center mx-auto mb-6"><svg class="w-10 h-10 text-purple-700" fill="currentColor" viewBox="0 0 24 24"><path d="M6.188 8.719c.439-.439.926-.801 1.444-1.087 2.887-1.591 6.589-.745 8.445 2.069l-2.246 2.245c-.644-1.469-2.243-2.015-3.569-1.156-.503.325-.808.817-.808 1.331 0 .694.521 1.304 1.25 1.304.188 0 .375-.047.551-.132l.812.812c-.387.226-.808.363-1.25.363-1.279 0-2.344-1.117-2.344-2.5 0-.691.279-1.328.775-1.791.871-.814 2.079-1.076 3.146-.805l1.397-1.397c.094-.094.219-.156.344-.156.281 0 .531.219.531.5 0 .125-.062.25-.156.344l-8.687 8.687c-.094.094-.219.156-.344-.156-.281 0-.531-.219-.531-.5 0-.125.062.25.156.344l3.344-3.344z"/></svg></div>
+                                <h3 class="text-2xl font-bold text-purple-900 mb-4">Configure Dropbox Processing</h3>
                                 <p class="text-slate-600 max-w-lg mx-auto mb-8">Enter the Dropbox paths for your source documents and where generated POs should be saved. Ensure your Job Number is set in the header.</p>
                             </div>
                             <div class="space-y-4 mb-6">
-                                <div><label for="dropboxSourcePath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Source Path (Vendor Folders):</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/Hyundai_Commercial/SourceVendorDocs" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
-                                <div><label for="dropboxOutputPath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Output Path (Generated POs):</label><input type="text" id="dropboxOutputPath" value="/POWizardCompany/Output" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                                <div><label for="dropboxSourcePath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Source Path (Vendor Folders):</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/Hyundai_Commercial/SourceVendorDocs" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></div>
+                                <div><label for="dropboxOutputPath" class="block text-sm font-medium text-slate-700 text-left mb-1">Dropbox Output Path (Generated POs):</label><input type="text" id="dropboxOutputPath" value="/POWizardCompany/Output" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></div>
                             </div>
-                            <button onclick="confirmPathsAndProceed()" id="confirmPathsButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-all">Confirm Paths & Proceed to Process</button>
+                            <button onclick="confirmPathsAndProceed()" id="confirmPathsButton" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-8 rounded-xl transition-all">Confirm Paths & Proceed to Process</button>
                             <div class="text-xs text-slate-500 text-center mt-4"><span class="material-icons-outlined text-green-600 text-sm mr-1">lock</span>Secure connection via backend.</div>
                         </div>
                         <div id="step2" class="step-content hidden">
-                             <div class="text-center mb-8"><div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-600 text-3xl">auto_awesome</span></div>
-                                <h3 class="text-2xl font-bold text-slate-900 mb-4">Processing Documents...</h3>
+                             <div class="text-center mb-8"><div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-700 text-3xl">auto_awesome</span></div>
+                                <h3 class="text-2xl font-bold text-purple-900 mb-4">Processing Documents...</h3>
                                 <p class="text-slate-600 max-w-lg mx-auto mb-8" id="processingStatusText">AI is scanning your Dropbox folder, extracting data, and generating purchase orders. This may take several minutes depending on the number of documents.</p>
                             </div>
                             <div id="progressSection" class="progress-section"> 
                                 <div class="border-t border-slate-200 pt-8">
                                     <div class="mb-6">
-                                        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden"><div id="progressFill" class="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-700 ease-out" style="width: 0%"></div></div>
+                                        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden"><div id="progressFill" class="h-full bg-gradient-to-r from-green-500 to-purple-500 rounded-full transition-all duration-700 ease-out" style="width: 0%"></div></div>
                                         <div class="flex justify-between items-center mt-3"><span id="progressPercent" class="text-sm font-semibold text-slate-700">0%</span><span id="estimatedTime" class="text-xs text-slate-500">Calculating...</span></div>
                                     </div>
-                                    <div class="bg-slate-50 rounded-xl p-6 text-center">
-                                        <div class="flex items-center justify-center space-x-2 mb-3"><h4 id="stageTitle" class="text-lg font-semibold text-slate-900">Initializing...</h4><div id="stageSpinner" class="w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin"></div></div>
+                                    <div class="bg-purple-50 rounded-xl p-6 text-center">
+                                        <div class="flex items-center justify-center space-x-2 mb-3"><h4 id="stageTitle" class="text-lg font-semibold text-purple-900">Initializing...</h4><div id="stageSpinner" class="w-4 h-4 border-2 border-slate-300 border-t-purple-600 rounded-full animate-spin"></div></div>
                                         <p id="stageDescription" class="text-slate-600 text-sm">Preparing to process your documents.</p>
                                     </div>
                                     <button onclick="cancelProcessing()" id="cancelProcessingButton" class="mt-6 w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-6 rounded-xl transition-colors duration-200">Cancel Processing (Not Implemented)</button>
@@ -296,103 +283,100 @@
                 </div>
             </section>
 
-            <!-- Generated Purchase Orders Section -->
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
-                <!-- ... (Your Purchase Orders Section Content - ensuring it's complete) ... -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center mb-8">
-                        <div><h3 class="text-3xl font-bold text-slate-900 mb-2">Generated Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs">Review your generated POs before submission</p></div>
-                        <div class="flex items-center space-x-4"><span id="poCount" class="text-sm text-slate-600">0 POs Generated</span><button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors" title="Functionality not yet implemented" disabled><span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">download</span><span>Download All (Soon)</span></span></button></div>
+                        <div><h3 class="text-3xl font-bold text-purple-800 mb-2">Generated Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs">Review your generated POs before submission</p></div>
+                        <div class="flex items-center space-x-4"><span id="poCount" class="text-sm text-slate-600">0 POs Generated</span><button class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium transition-colors" title="Functionality not yet implemented"><span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">download</span><span>Download All (Soon)</span></span></button></div>
                     </div>
-                    <div class="bg-slate-50 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center space-x-4"><select id="filterStatus" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="approved">Approved</option></select><input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"></div>
-                        <div class="flex items-center space-x-2"><span class="text-sm text-slate-600">Sort by:</span><select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"><option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option></select></div>
+                    <div class="bg-purple-50 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4"><select id="filterStatus" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-purple-500 focus:border-purple-500"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="approved">Approved</option></select><input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-purple-500 focus:border-purple-500"></div>
+                        <div class="flex items-center space-x-2"><span class="text-sm text-slate-600">Sort by:</span><select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-purple-500 focus:border-purple-500"><option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option></select></div>
                     </div>
                     <div id="poGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                          <p id="noPOsMessage" class="text-slate-500 col-span-full text-center hidden">No purchase orders generated yet for this job, or an error occurred.</p>
                     </div>
-                    <div id="paginationControls" class="flex justify-center items-center space-x-4 mt-12 hidden"><button class="p-2 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_left</span></button><div class="flex space-x-1"><button class="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button></div><button class="p-2 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_right</span></button></div>
+                    <div id="paginationControls" class="flex justify-center items-center space-x-4 mt-12 hidden"><button class="p-2 hover:bg-purple-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_left</span></button><div class="flex space-x-1"><button class="px-3 py-2 bg-purple-600 text-white rounded-lg">1</button></div><button class="p-2 hover:bg-purple-100 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_right</span></button></div>
                 </div>
             </section>
         </main>
 
-        <footer class="bg-slate-800 text-slate-300">
-             <!-- ... (Your Footer Content - ensuring it's complete) ... -->
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <footer class="bg-purple-900 text-purple-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <div class="flex items-center space-x-3 mb-4 md:mb-0">
-                        <div class="w-6 h-6 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8v2H6V6zm0 4h8v2H6v-2z"/></svg></div>
-                        <span class="font-bold">PO Wizard</span><span class="text-slate-400">for Film Production</span>
+                         <img src="assets/POWizard.png" alt="PO Wizard Logo" class="h-8 w-auto filter brightness-0 invert">
+                        <span class="font-bold text-lg text-white">PO Wizard</span><span class="text-purple-300 text-sm">for Film Production</span>
                     </div>
-                    <div class="text-center"><p class="text-slate-400 text-sm">Streamlining post-production workflows since 2024</p></div>
+                    <div class="text-center"><p class="text-purple-300 text-sm">Streamlining post-production workflows since 2024</p></div>
                 </div>
             </div>
         </footer>
     </div>
 
-    <!-- Review PO Modal -->
-    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[100]">
-        <!-- ... (Your Review Modal Content - ensuring it's complete) ... -->
+    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100]">
         <div class="bg-white rounded-2xl p-6 md:p-8 max-w-6xl w-11/12 md:w-full mx-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6"><h3 id="reviewModalTitle" class="text-2xl font-bold text-slate-900">Review Purchase Order</h3><button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><span class="material-icons-outlined text-2xl">close</span></button></div>
+            <div class="flex justify-between items-center mb-6"><h3 id="reviewModalTitle" class="text-2xl font-bold text-purple-900">Review Purchase Order</h3><button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><span class="material-icons-outlined text-2xl">close</span></button></div>
             <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8">
                 <div class="w-full lg:w-1/2 iframe-container"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe></div>
                 <div class="w-full lg:w-1/2">
                     <form id="reviewForm" class="space-y-4">
                         <input type="hidden" id="editPoIdOnGrid"><input type="hidden" id="editOriginalPoPackageFilename"><input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths">
-                        <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input" readonly></div>
-                        <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input"></div>
-                        <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea"></textarea></div>
-                        <div class="grid grid-cols-2 gap-4"><div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input"></div><div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input"></div></div>
-                         <div class="grid grid-cols-2 gap-4"><div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div></div>
-                        <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input"></div>
-                        <h4 class="text-md font-semibold text-slate-800 pt-2">Line Items:</h4>
-                        <div id="editLineItemsContainer" class="space-y-2 max-h-48 overflow-y-auto border p-2 rounded-md"></div>
-                        <button type="button" onclick="addLineItemField()" class="text-sm text-blue-600 hover:text-blue-800">+ Add Line Item</button>
-                        <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input"></div>
-                        <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea"></textarea></div>
+                        <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input focus:ring-purple-500 focus:border-purple-500" readonly></div>
+                        <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input focus:ring-purple-500 focus:border-purple-500"></div>
+                        <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea focus:ring-purple-500 focus:border-purple-500"></textarea></div>
+                        <div class="grid grid-cols-2 gap-4"><div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-purple-500 focus:border-purple-500"></div><div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-purple-500 focus:border-purple-500"></div></div>
+                         <div class="grid grid-cols-2 gap-4"><div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-purple-500 focus:border-purple-500"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-purple-500 focus:border-purple-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div></div>
+                        <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-purple-500 focus:border-purple-500"></div>
+                        <h4 class="text-md font-semibold text-purple-800 pt-2">Line Items:</h4>
+                        <div id="editLineItemsContainer" class="space-y-2 max-h-48 overflow-y-auto border p-2 rounded-md border-purple-200"></div>
+                        <button type="button" onclick="addLineItemField()" class="text-sm text-purple-600 hover:text-purple-800">+ Add Line Item</button>
+                        <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-purple-500 focus:border-purple-500"></div>
+                        <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea focus:ring-purple-500 focus:border-purple-500"></textarea></div>
                         <input type="hidden" id="editJobNumber" name="job_number"><input type="hidden" id="editProjectName" name="project_name">
                     </form>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-8"><button onclick="submitPOChanges(false)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">Save Changes & Regenerate PO</button><button onclick="submitPOChanges(true)" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">Approve PO (Future)</button><button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium transition-colors">Cancel</button></div>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-8">
+                <button onclick="submitPOChanges(false)" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">Save Changes & Regenerate PO</button>
+                <button onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-colors">Approve PO (Future)</button>
+                <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium transition-colors">Cancel</button>
+            </div>
         </div>
     </div>
 
     <script>
         // --- (Full JavaScript from your last provided index.html, including the robust fetchGeneratedPOs) ---
+        // (Ensure API_BASE_URL is correct and all functions are present)
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
         let isAuthenticated = false; 
-        let currentJobNumberContext = "85319"; 
-        let currentProjectNameContext = "Macy's Holiday Shoot"; 
+        let currentJobNumberContext = document.getElementById('currentJobNumber') ? document.getElementById('currentJobNumber').value : "85319"; 
+        let currentProjectNameContext = "Macy's Holiday Shoot"; // Default, can be made dynamic
         let currentOpenPOTaskId = null; 
         let statusPollInterval = null;
         let allFetchedPOs = []; 
 
         function showTab(tabName) {
-            document.getElementById('heroSection').style.display = 'none';
-            document.getElementById('featuresSection').style.display = 'none';
-            document.getElementById('pricingSection').style.display = 'none';
-            document.getElementById('processingSection').style.display = 'none';
-            document.getElementById('purchaseOrdersSection').style.display = 'none';
+            document.querySelectorAll('main > section').forEach(section => section.style.display = 'none');
+            const sectionElement = document.getElementById(tabName + 'Section');
+            if (sectionElement) sectionElement.style.display = 'block';
 
-            if (tabName === 'hero') document.getElementById('heroSection').style.display = 'block';
-            else if (tabName === 'features') document.getElementById('featuresSection').style.display = 'block';
-            else if (tabName === 'pricing') document.getElementById('pricingSection').style.display = 'block';
-            else if (tabName === 'processing') {
+            if (tabName === 'processing') {
                 if (!isAuthenticated) { alert('Please "Sign In" to access processing.'); showTab('hero'); return; }
-                document.getElementById('processingSection').style.display = 'block';
-                document.getElementById('step1').classList.remove('hidden');
-                document.getElementById('step2').classList.add('hidden');
-                document.getElementById('progressSection').classList.remove('expanded');
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const progressSection = document.getElementById('progressSection');
+                if(step1) step1.classList.remove('hidden');
+                if(step2) step2.classList.add('hidden');
+                if(progressSection) progressSection.classList.remove('expanded');
                 updateJobContextDisplay();
             } else if (tabName === 'purchaseOrders') {
                  if (!isAuthenticated) { alert('Please "Sign In" to view POs.'); showTab('hero'); return; }
-                document.getElementById('purchaseOrdersSection').style.display = 'block';
                 fetchGeneratedPOs(); 
             }
             updateActiveTabButton(tabName);
-            if (document.getElementById('mobileMenu').classList.contains('hidden') === false) { // Close mobile menu on tab change
+            const mobileMenu = document.getElementById('mobileMenu'); // Ensure mobile menu closes
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
                 toggleMobileMenu();
             }
         }
@@ -401,7 +385,7 @@
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             const buttonMap = { 'hero': null, 'features': 'Features', 'pricing': 'Pricing', 'processing': 'My POs / Process', 'purchaseOrders': 'My POs / Process'};
             if (buttonMap[activeTab]) {
-                document.querySelectorAll('.tab-button').forEach(btn => {
+                document.querySelectorAll('#desktopMenu .tab-button, #mobileMenu .tab-button').forEach(btn => { // Target both menus
                     if (btn.textContent.trim() === buttonMap[activeTab]) btn.classList.add('active');
                 });
             }
@@ -410,27 +394,37 @@
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
-            mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) {
-                menuButton.innerHTML = '<span class="material-icons-outlined">menu</span>';
-            } else {
-                menuButton.innerHTML = '<span class="material-icons-outlined">close</span>';
+            const menuIcon = menuButton ? menuButton.querySelector('span') : null;
+            if (mobileMenu) mobileMenu.classList.toggle('hidden');
+            if (menuIcon) {
+                menuIcon.textContent = mobileMenu.classList.contains('hidden') ? 'menu' : 'close';
             }
         }
-        document.getElementById('mobileMenuButton').addEventListener('click', toggleMobileMenu);
+        const mobileMenuBtn = document.getElementById('mobileMenuButton');
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
         
         const desktopJobInput = document.getElementById('currentJobNumber');
         const mobileJobInput = document.getElementById('mobileCurrentJobNumber');
-        if (desktopJobInput && mobileJobInput) {
-            desktopJobInput.addEventListener('input', (e) => { mobileJobInput.value = e.target.value; currentJobNumberContext = e.target.value; });
-            mobileJobInput.addEventListener('input', (e) => { desktopJobInput.value = e.target.value; currentJobNumberContext = e.target.value; });
+
+        function syncJobNumberAndUpdateContext(sourceElement) {
+            const newValue = sourceElement.value;
+            if (desktopJobInput) desktopJobInput.value = newValue;
+            if (mobileJobInput) mobileJobInput.value = newValue;
+            currentJobNumberContext = newValue;
+            updateJobContextDisplay(); // Update display elements too
+             if (document.getElementById('purchaseOrdersSection').style.display === 'block' && isAuthenticated) {
+                fetchGeneratedPOs(); // Reload POs if job number changes while POs tab is active
+            }
         }
 
+        if (desktopJobInput) desktopJobInput.addEventListener('change', () => syncJobNumberAndUpdateContext(desktopJobInput));
+        if (mobileJobInput) mobileJobInput.addEventListener('change', () => syncJobNumberAndUpdateContext(mobileJobInput));
+        
         function showSignIn() {
             isAuthenticated = true;
             ['signInButton', 'mobileSignInButton'].forEach(id => { 
                 const btn = document.getElementById(id); 
-                if(btn) { btn.textContent = 'Signed In'; btn.disabled = true; }
+                if(btn) { btn.classList.add('hidden'); }
             });
             ['getStartedButton', 'mobileGetStartedButton'].forEach(id => {
                 const btn = document.getElementById(id);
@@ -439,31 +433,33 @@
                     btn.onclick = () => { showTab('processing'); if(id.startsWith('mobile')) toggleMobileMenu(); };
                 }
             });
-            document.getElementById('currentJobNumber').classList.remove('hidden'); // Desktop
-            if(document.getElementById('mobileCurrentJobNumber').parentElement) document.getElementById('mobileCurrentJobNumber').parentElement.classList.remove('hidden'); // Mobile
-            
-            ['connectionStatus', 'mobileConnectionStatus'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) { el.classList.remove('hidden'); el.classList.add('flex'); }
-            });
-            currentJobNumberContext = document.getElementById('currentJobNumber').value || "DEFAULT_JOB"; // Sync from desktop primarily
-            mobileJobInput.value = currentJobNumberContext; // Ensure mobile is synced
+            if(desktopJobInput) desktopJobInput.classList.remove('hidden'); 
+            // No connection status to show for now
+            // ['connectionStatus', 'mobileConnectionStatus'].forEach(id => { /* ... */ });
+            syncJobNumberAndUpdateContext(desktopJobInput || mobileJobInput); // Sync and update context
             showTab('processing'); 
         }
-        function showSignUp() { showSignIn(); }
+        function showSignUp() { showSignIn(); } 
         
         function updateJobContextDisplay() {
-            currentJobNumberContext = document.getElementById('currentJobNumber').value || "NOT_SET";
-            mobileJobInput.value = currentJobNumberContext; // Sync to mobile
-            // currentProjectNameContext can be set elsewhere if needed
-            document.getElementById('displayJobNumber').textContent = currentJobNumberContext;
-            document.getElementById('displayProjectName').textContent = currentProjectNameContext; 
-            const jobDisplayPOs = document.getElementById('currentJobDisplayPOs');
-            if (jobDisplayPOs) jobDisplayPOs.textContent = `Job: ${currentJobNumberContext} | Project: ${currentProjectNameContext}`;
+            // currentJobNumberContext is already updated by syncJobNumberAndUpdateContext
+            const dispJobNum = document.getElementById('displayJobNumber');
+            const dispProjName = document.getElementById('displayProjectName');
+            const jobDispPOs = document.getElementById('currentJobDisplayPOs');
+
+            if(dispJobNum) dispJobNum.textContent = currentJobNumberContext;
+            if(dispProjName) dispProjName.textContent = currentProjectNameContext; 
+            if (jobDispPOs) jobDispPOs.textContent = `Job: ${currentJobNumberContext} | Project: ${currentProjectNameContext}`;
         }
 
-        function confirmPathsAndProceed() { /* ... (confirmPathsAndProceed - unchanged) ... */ 
-            updateJobContextDisplay(); 
+        document.addEventListener('DOMContentLoaded', () => {
+            if (desktopJobInput) currentJobNumberContext = desktopJobInput.value; // Initialize from desktop input
+            updateJobContextDisplay();
+            showTab('hero'); 
+        });
+
+        function confirmPathsAndProceed() { 
+            syncJobNumberAndUpdateContext(desktopJobInput || mobileJobInput);
             const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
             const outputPath = document.getElementById('dropboxOutputPath').value.trim();
             if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET" || !sourcePath || !outputPath) {
@@ -472,7 +468,7 @@
             document.getElementById('step1Indicator').querySelector('div').className = 'w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300';
             document.getElementById('step1Indicator').querySelector('div').innerHTML = '✓';
             document.getElementById('step1Indicator').querySelector('span').className = 'text-sm font-medium text-slate-700';
-            document.getElementById('step2Indicator').querySelector('div').className = 'w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300';
+            document.getElementById('step2Indicator').querySelector('div').className = 'w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-3 transition-all duration-300';
             document.getElementById('step2Indicator').querySelector('span').className = 'text-sm font-medium text-slate-700';
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
@@ -480,113 +476,109 @@
             startDocumentProcessing(sourcePath, outputPath);
         }
         
-        async function startDocumentProcessing(sourcePath, outputPath) { /* ... (startDocumentProcessing - unchanged) ... */
+        async function startDocumentProcessing(sourcePath, outputPath) {
             updateProgressUI(0, "Initializing job submission...");
-            document.getElementById('stageSpinner').style.display = 'block';
+            const stageSpinner = document.getElementById('stageSpinner');
+            if (stageSpinner) stageSpinner.style.display = 'block';
             const payload = { dropbox_source_path: sourcePath, dropbox_output_path: outputPath, job_number_context: currentJobNumberContext, project_name_context: currentProjectNameContext };
             try {
                 const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) { const errorData = await response.json(); throw new Error(`Failed to trigger processing: ${errorData.detail || response.statusText}`); }
+                if (!response.ok) { 
+                    let errorDetail = `Failed to trigger processing: ${response.statusText} (Status: ${response.status})`;
+                    try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
+                    throw new Error(errorDetail);
+                }
                 const data = await response.json(); currentOpenPOTaskId = data.task_id;
                 updateProgressUI(5, "Job submitted. Waiting for Celery worker...");
                 pollTaskStatus(currentOpenPOTaskId);
-            } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); document.getElementById('stageSpinner').style.display = 'none'; }
+            } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
         }
 
-        function pollTaskStatus(taskId) { /* ... (pollTaskStatus - unchanged) ... */
+        function pollTaskStatus(taskId) {
             if (statusPollInterval) clearInterval(statusPollInterval);
+            const stageSpinner = document.getElementById('stageSpinner');
             statusPollInterval = setInterval(async () => {
                 try {
                     const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
-                    if (!response.ok) { const errorData = await response.json(); console.error(`Error fetching task status ${taskId}:`, errorData.detail || response.statusText); updateProgressUI(null, `Error fetching status: ${errorData.detail || response.statusText}`, true); clearInterval(statusPollInterval); document.getElementById('stageSpinner').style.display = 'none'; return; }
+                    if (!response.ok) { 
+                        let errorDetail = `Error fetching status: ${response.statusText} (Status: ${response.status})`;
+                        try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
+                        console.error(`Error fetching task status ${taskId}:`, errorDetail); 
+                        updateProgressUI(null, errorDetail, true); 
+                        clearInterval(statusPollInterval); if(stageSpinner) stageSpinner.style.display = 'none'; return; 
+                    }
                     const data = await response.json();
                     let currentStepMessage = data.current_step || data.status;
                     if (data.status === 'PROGRESS' && data.result && data.result.vendor_name) { currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`; } 
                     else if (data.status === 'PROGRESS' && data.result && data.result.current_step) { currentStepMessage = data.result.current_step; }
                     updateProgressUI(data.progress_percent, currentStepMessage);
-                    if (data.status === 'SUCCESS') { clearInterval(statusPollInterval); updateProgressUI(100, "Processing complete! POs generated."); document.getElementById('stageSpinner').style.display = 'none'; showTab('purchaseOrders'); } 
-                    else if (data.status === 'FAILURE') { clearInterval(statusPollInterval); const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); updateProgressUI(null, `Processing failed: ${failureDetails}`, true); document.getElementById('stageSpinner').style.display = 'none'; }
-                } catch (error) { console.error('Error polling task status:', error); updateProgressUI(null, "Error polling status. Check console.", true); clearInterval(statusPollInterval); document.getElementById('stageSpinner').style.display = 'none'; }
+                    if (data.status === 'SUCCESS') { clearInterval(statusPollInterval); updateProgressUI(100, "Processing complete! POs generated."); if(stageSpinner) stageSpinner.style.display = 'none'; showTab('purchaseOrders'); } 
+                    else if (data.status === 'FAILURE') { clearInterval(statusPollInterval); const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); updateProgressUI(null, `Processing failed: ${failureDetails}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
+                } catch (error) { console.error('Error polling task status:', error); updateProgressUI(null, "Error polling status. Check console.", true); clearInterval(statusPollInterval); if(stageSpinner) stageSpinner.style.display = 'none'; }
             }, 3000);
         }
 
-        function updateProgressUI(percentage, statusText, isError = false) { /* ... (updateProgressUI - unchanged) ... */
-            if (percentage !== null) { document.getElementById('progressFill').style.width = percentage + '%'; document.getElementById('progressPercent').textContent = percentage + '%'; }
-            document.getElementById('stageTitle').textContent = isError ? "Error" : "Status"; document.getElementById('stageDescription').textContent = statusText;
-            if (isError) { document.getElementById('stageTitle').classList.add('text-red-600'); } else { document.getElementById('stageTitle').classList.remove('text-red-600'); }
+        function updateProgressUI(percentage, statusText, isError = false) {
+            const progressFill = document.getElementById('progressFill'); const progressPercent = document.getElementById('progressPercent');
+            const stageTitle = document.getElementById('stageTitle'); const stageDescription = document.getElementById('stageDescription');
+            if (percentage !== null && progressFill && progressPercent) { progressFill.style.width = percentage + '%'; progressPercent.textContent = percentage + '%'; }
+            if(stageTitle) stageTitle.textContent = isError ? "Error" : "Status"; 
+            if(stageDescription) stageDescription.textContent = statusText;
+            if (isError && stageTitle) { stageTitle.classList.add('text-red-600'); } else if (stageTitle) { stageTitle.classList.remove('text-red-600'); }
         }
         
-        function cancelProcessing() { /* ... (cancelProcessing - unchanged) ... */
-            if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested (not fully implemented)."); updateProgressUI(0, "Processing cancelled by user.", true); document.getElementById('stageSpinner').style.display = 'none';
-        }
+        function cancelProcessing() { if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
 
         async function fetchGeneratedPOs() {
             updateJobContextDisplay(); 
-            const poGrid = document.getElementById('poGrid');
-            const noPOsMessage = document.getElementById('noPOsMessage');
+            const poGrid = document.getElementById('poGrid'); const noPOsMessage = document.getElementById('noPOsMessage');
             const purchaseOrdersSection = document.getElementById('purchaseOrdersSection');
-            
             if (!poGrid) { console.error("CRITICAL UI Error: poGrid element not found!"); alert("A critical UI element (PO Grid) is missing."); return; }
-            
             poGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">Loading POs...</p>'; 
-            if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) {
-                 noPOsMessage.classList.add('hidden'); // Hide initially
-            }
-
-            if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET") {
-                poGrid.innerHTML = '<p class="text-red-500 col-span-full text-center">Please set a Job Number in the header to load POs.</p>'; return;
-            }
-
+            if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) { noPOsMessage.classList.add('hidden');}
+            if (!currentJobNumberContext || currentJobNumberContext === "NOT_SET") { poGrid.innerHTML = '<p class="text-red-500 col-span-full text-center">Set Job Number to load POs.</p>'; return; }
             try {
                 const response = await fetch(`${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}`);
                 if (!response.ok) {
-                    const errorText = await response.text(); // Get raw text in case response is not JSON
                     let errorDetail = `Failed to fetch POs: ${response.statusText} (Status: ${response.status})`;
-                    try { const errorData = JSON.parse(errorText); errorDetail = errorData.detail || errorDetail; } 
-                    catch (e) { console.warn("Could not parse error response as JSON:", errorText); }
+                    try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
                     throw new Error(errorDetail);
                 }
-                const data = await response.json();
-                allFetchedPOs = data.generated_pos || [];
-                if(document.getElementById('poCount')) document.getElementById('poCount').textContent = `${allFetchedPOs.length} POs Generated`;
+                const data = await response.json(); allFetchedPOs = data.generated_pos || [];
+                const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `${allFetchedPOs.length} POs Generated`;
                 renderPOGrid(allFetchedPOs);
             } catch (error) {
                 console.error('Error fetching/rendering POs:', error);
                 if (poGrid) { poGrid.innerHTML = `<p class="text-red-500 col-span-full text-center">Error loading POs: ${error.message}</p>`; }
                 if (purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none' && noPOsMessage) { 
-                    noPOsMessage.classList.remove('hidden');
-                    noPOsMessage.textContent = `Error loading POs: ${error.message}. Check console for details.`;
-                } else if (!noPOsMessage && purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none') {
-                    console.error("UI Error: 'noPOsMessage' element is missing from the DOM within the purchaseOrdersSection.");
-                }
+                    noPOsMessage.classList.remove('hidden'); noPOsMessage.textContent = `Error loading POs: ${error.message}. Check console.`;
+                } else if (!noPOsMessage && purchaseOrdersSection && purchaseOrdersSection.style.display !== 'none') { console.error("UI Error: 'noPOsMessage' element missing."); }
             }
         }
 
-        function renderPOGrid(posToRender) { /* ... (renderPOGrid - with checks for noPOsMessage as before) ... */
-            const poGrid = document.getElementById('poGrid');
-            const noPOsMessage = document.getElementById('noPOsMessage');
+        function renderPOGrid(posToRender) {
+            const poGrid = document.getElementById('poGrid'); const noPOsMessage = document.getElementById('noPOsMessage');
             if (!poGrid) { console.error("renderPOGrid: poGrid element not found!"); return; }
             poGrid.innerHTML = ''; 
             if (!posToRender || posToRender.length === 0) {
-                if (noPOsMessage) { noPOsMessage.classList.remove('hidden'); noPOsMessage.textContent = 'No purchase orders found for the current filters or job.'; } 
-                else { console.warn("renderPOGrid: noPOsMessage element not found."); }
-                return;
+                if (noPOsMessage) { noPOsMessage.classList.remove('hidden'); noPOsMessage.textContent = 'No POs found for this job/filters.'; } 
+                else { console.warn("renderPOGrid: noPOsMessage element not found."); } return;
             }
             if (noPOsMessage) noPOsMessage.classList.add('hidden');
             posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
         }
         
-        function createPOCard(po) { /* ... (createPOCard - unchanged) ... */
+        function createPOCard(po) {
             const card = document.createElement('div'); card.id = `po-${po.po_id_on_grid}`;
             const isApproved = po.status && po.status.toLowerCase().includes('approved');
             card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''}`;
-            let statusDisplay = po.status || 'Unknown'; let statusColorClass = 'bg-yellow-100 text-yellow-800';
+            let statusDisplay = po.status || 'Unknown'; let statusColorClass = 'bg-amber-100 text-amber-800'; // Changed default to amber
             if (isApproved) { statusColorClass = 'bg-green-100 text-green-800'; } else if (po.status && po.status.toLowerCase().includes('error')) { statusColorClass = 'bg-red-100 text-red-800';}
-            card.innerHTML = `<img src="https://via.placeholder.com/300x150.png?text=PO+Preview" alt="PO Thumbnail Placeholder" class="w-full h-32 object-cover"><div class="p-4 md:p-6"><div class="flex flex-col h-full"><div class="flex justify-between items-start mb-3"><h4 class="text-md md:text-lg font-semibold text-slate-900">${po.po_number}</h4><span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}<span>${statusDisplay}</span></span></div><p class="text-sm text-slate-600 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p><p class="text-lg md:text-xl font-bold text-slate-900 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p><p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p><div class="mt-auto flex space-x-2"><button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button></div></div></div>`;
+            card.innerHTML = `<img src="assets/POWizard.png" alt="PO Preview" class="w-full h-32 object-contain p-2 bg-white"> <div class="p-4 md:p-6"><div class="flex flex-col h-full"><div class="flex justify-between items-start mb-3"><h4 class="text-md md:text-lg font-semibold text-purple-900">${po.po_number}</h4><span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}<span>${statusDisplay}</span></span></div><p class="text-sm text-slate-700 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p><p class="text-lg md:text-xl font-bold text-purple-900 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p><p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p><div class="mt-auto flex space-x-2"><button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button></div></div></div>`;
             return card;
         }
 
-        async function openReviewModal(poIdOnGrid) { /* ... (openReviewModal - unchanged) ... */
+        async function openReviewModal(poIdOnGrid) {
             console.log("Opening review for PO ID on Grid:", poIdOnGrid);
             const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
             if (!poDataToReview || !poDataToReview.full_po_data_for_review) {
@@ -595,7 +587,7 @@
             } else { currentEditingPOData = poDataToReview.full_po_data_for_review; }
             if (!currentEditingPOData) { alert('Could not load data for this PO.'); return; }
             document.getElementById('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPOData.po_number}`;
-            document.getElementById('editPoIdOnGrid').value = poIdOnGrid; document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename; document.getElementById('editPoNumber').value = currentEditingPOData.po_number; document.getElementById('editVendor').value = currentEditingPOData.vendor_name; document.getElementById('editVendorAddress').value = currentEditingPOData.vendor_address || ''; document.getElementById('editVendorTIN').value = currentEditingPOData.vendor_tin || ''; document.getElementById('editPoDate').value = currentEditingPOData.po_date; document.getElementById('editHasW9').value = String(currentEditingPOData.has_w9_document || false); document.getElementById('editIsIncorp').value = currentEditingPOData.is_incorp_on_w9 || 'Unknown'; document.getElementById('editInvoiceRef').value = currentEditingPOData.invoice_reference_from_po || ''; document.getElementById('editTotalAmount').value = currentEditingPOData.total_vendor_amount_str.replace('$', ''); document.getElementById('editAdditionalNotes').value = currentEditingPOData.additional_notes || '';
+            document.getElementById('editPoIdOnGrid').value = poIdOnGrid; document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename; document.getElementById('editPoNumber').value = currentEditingPOData.po_number; document.getElementById('editVendor').value = currentEditingPOData.vendor_name; document.getElementById('editVendorAddress').value = currentEditingPOData.vendor_address || ''; document.getElementById('editVendorTIN').value = currentEditingPOData.vendor_tin || ''; document.getElementById('editPoDate').value = currentEditingPOData.po_date; document.getElementById('editHasW9').value = String(currentEditingPOData.has_w9_document || false); document.getElementById('editIsIncorp').value = currentEditingPOData.is_incorp_on_w9 || 'Unknown'; document.getElementById('editInvoiceRef').value = currentEditingPOData.invoice_reference_from_po || ''; document.getElementById('editTotalAmount').value = (currentEditingPOData.total_vendor_amount_str || "").replace('$', ''); document.getElementById('editAdditionalNotes').value = currentEditingPOData.additional_notes || '';
             document.getElementById('editJobNumber').value = currentEditingPOData.job_number; document.getElementById('editProjectName').value = currentEditingPOData.project_name;
             document.getElementById('editBackupDocsPaths').value = JSON.stringify(currentEditingPOData.backup_document_original_dropbox_paths || []);
             const lineItemsContainer = document.getElementById('editLineItemsContainer'); lineItemsContainer.innerHTML = '';
@@ -609,22 +601,22 @@
             document.getElementById('reviewModal').classList.remove('hidden'); document.getElementById('reviewModal').classList.add('flex');
         }
         
-        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { /* ... (addLineItemField - unchanged) ... */
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
             const container = document.getElementById('editLineItemsContainer'); const index = container.children.length;
             const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
-            div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
+            div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1 focus:ring-purple-500 focus:border-purple-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1 focus:ring-purple-500 focus:border-purple-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1 focus:ring-purple-500 focus:border-purple-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-purple-500 focus:border-purple-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-purple-500 focus:border-purple-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
             container.appendChild(div); div.querySelectorAll('.line-item-calc').forEach(input => { input.addEventListener('input', updateTotalAmountFromLines); });
         }
 
-        function removeLineItem(button) { /* ... (removeLineItem - unchanged) ... */ button.parentElement.remove(); updateTotalAmountFromLines(); }
+        function removeLineItem(button) { button.parentElement.remove(); updateTotalAmountFromLines(); }
         
-        function updateTotalAmountFromLines() { /* ... (updateTotalAmountFromLines - unchanged) ... */
+        function updateTotalAmountFromLines() {
             let total = 0; document.querySelectorAll('#editLineItemsContainer > div').forEach(lineDiv => { const amountInput = lineDiv.querySelector('input[name*="[amount]"]'); const val = parseFloat(amountInput.value.replace('$', '')); if (!isNaN(val)) { total += val; } }); document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
 
-        function closeReviewModal() { /* ... (closeReviewModal - unchanged) ... */ document.getElementById('reviewModal').classList.add('hidden'); document.getElementById('reviewModal').classList.remove('flex'); document.getElementById('pdfViewer').src = 'about:blank'; currentEditingPOData = null; }
+        function closeReviewModal() { document.getElementById('reviewModal').classList.add('hidden'); document.getElementById('reviewModal').classList.remove('flex'); document.getElementById('pdfViewer').src = 'about:blank'; currentEditingPOData = null; }
 
-        async function submitPOChanges(isApproval) { /* ... (submitPOChanges - unchanged) ... */
+        async function submitPOChanges(isApproval) {
             const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForRegen = {};
             formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = []; } while (poDataForRegen.aggregated_line_items.length <= index) { poDataForRegen.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForRegen.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForRegen.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForRegen[key] = value === 'true'; } else { poDataForRegen[key] = value; } } });
             poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value; poDataForRegen.job_number = document.getElementById('editJobNumber').value; poDataForRegen.project_name = document.getElementById('editProjectName').value;
@@ -643,20 +635,13 @@
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
 
-        function applyFiltersAndSort() { /* ... (applyFiltersAndSort - unchanged) ... */
+        function applyFiltersAndSort() {
             let filteredPOs = [...allFetchedPOs]; const statusFilter = document.getElementById('filterStatus').value; const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase(); const sortBy = document.getElementById('sortPOs').value;
             if (statusFilter !== 'all') { filteredPOs = filteredPOs.filter(po => po.status && po.status.toLowerCase().includes(statusFilter));}
             if (vendorNameFilter) { filteredPOs = filteredPOs.filter(po => po.vendor_name && po.vendor_name.toLowerCase().includes(vendorNameFilter));}
             switch (sortBy) { case 'date': filteredPOs.sort((a, b) => new Date(a.po_date) - new Date(b.po_date)); break; case 'vendor': filteredPOs.sort((a, b) => a.vendor_name.localeCompare(b.vendor_name)); break; case 'amount': filteredPOs.sort((a, b) => parseFloat(a.total_amount.replace('$', '').replace(',', '')) - parseFloat(b.total_amount.replace('$', '').replace(',', ''))); break; case 'status': filteredPOs.sort((a, b) => (a.status || "").localeCompare(b.status || "")); break; }
             renderPOGrid(filteredPOs);
         }
-
-        // Initial setup
-        showTab('hero');
-        document.getElementById('currentJobNumber').addEventListener('change', () => { currentJobNumberContext = document.getElementById('currentJobNumber').value; mobileJobInput.value = currentJobNumberContext; updateJobContextDisplay(); if (document.getElementById('purchaseOrdersSection').style.display === 'block') { fetchGeneratedPOs(); } });
-        mobileJobInput.addEventListener('change', () => { currentJobNumberContext = mobileJobInput.value; desktopJobInput.value = currentJobNumberContext; updateJobContextDisplay(); if (document.getElementById('purchaseOrdersSection').style.display === 'block') { fetchGeneratedPOs(); } });
-        updateJobContextDisplay(); 
-
     </script>
 </body>
 </html>
