@@ -116,7 +116,6 @@
 
         <main class="flex-1">
             <section id="heroSection" class="bg-white py-16 lg:py-20">
-                {/* Hero Section content - No changes needed here */}
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h2 class="po-wizard-title-font text-5xl lg:text-6xl font-bold text-cyan-700 mb-8 leading-tight">
@@ -143,7 +142,7 @@
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                            <button onclick="signInWithGoogle()" class="btn-accent font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300 text-lg">
+                            <button onclick="handleGetStartedClick('free')" class="btn-accent font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300 text-lg">
                                 Start Free Trial - Process 5 Vendors
                             </button>
                             <button onclick="showTab('features')" class="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-4 px-8 rounded-xl transition-all duration-200 border border-cyan-200">
@@ -162,8 +161,7 @@
             </section>
 
             <section id="featuresSection" class="py-20 bg-slate-100 hidden">
-                 {/* Features Section content - No changes needed here */}
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h3 class="po-wizard-title-font text-4xl font-bold text-cyan-700 mb-6">How PO Wizard Works</h3>
                         <p class="text-xl text-slate-700 max-w-3xl mx-auto">Three simple steps to transform your post-production chaos into organized, professional purchase orders</p>
@@ -212,7 +210,6 @@
             </section>
 
             <section id="pricingSection" class="py-20 bg-white hidden">
-                 {/* Pricing Section content - No changes needed here */}
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h3 class="po-wizard-title-font text-4xl font-bold text-cyan-700 mb-6">Simple, Transparent Pricing</h3>
@@ -226,7 +223,7 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Single production processing</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Basic AI scanning</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Standard PO templates</span></li>
-                            </ul><button onclick="signInWithGoogle('free')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
+                            </ul><button onclick="handleGetStartedClick('free')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
                         </div>
                         <div class="pricing-card popular bg-white rounded-2xl p-8 shadow-xl relative">
                             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2"><span class="bg-cyan-500 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</span></div>
@@ -237,7 +234,7 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited iterations on 1 production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Advanced AI with 99% accuracy</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Custom PO templates</span></li>
-                            </ul><button onclick="signInWithGoogle('pro')" class="w-full btn-accent font-semibold py-3 px-6 rounded-xl">Start Free Trial</button>
+                            </ul><button onclick="handleGetStartedClick('pro')" class="w-full btn-accent font-semibold py-3 px-6 rounded-xl">Start Free Trial</button>
                         </div>
                         <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
                             <div class="text-center mb-8"><h4 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-2">Enterprise</h4><p class="text-slate-600 mb-6">For production companies</p><div class="text-4xl font-bold text-slate-800 mb-2">$30</div><p class="text-slate-500 text-sm">per month</p></div>
@@ -247,7 +244,7 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Cross-tracking between productions</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Microsoft Excel integration</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Fully custom, unbranded designs</span></li>
-                            </ul><button onclick="signInWithGoogle('enterprise')" class="w-full btn-primary font-semibold py-3 px-6 rounded-xl">Contact Sales</button>
+                            </ul><button onclick="handleGetStartedClick('enterprise')" class="w-full btn-primary font-semibold py-3 px-6 rounded-xl">Contact Sales</button>
                         </div>
                     </div>
                     <div class="text-center mt-12">
@@ -262,7 +259,6 @@
             </section>
 
             <section id="processingSection" class="bg-slate-100 py-16 lg:py-20 hidden">
-                {/* Processing Section content - No structural changes needed */}
                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 max-w-4xl mx-auto">
                         <div id="jobContextDisplay_processing" class="mb-6 text-cyan-700">Processing Job: <span id="displayJobNumber_processing" class="font-semibold">N/A</span> | Project: <span id="displayProjectName_processing" class="font-semibold">N/A</span></div>
@@ -329,7 +325,6 @@
             </section>
 
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
-                {/* Purchase Orders Section content - No structural changes needed */}
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center mb-8">
                         <div><h3 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-2">My Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs_dashboard">Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p></div>
@@ -359,7 +354,6 @@
         </main>
 
         <footer class="bg-slate-800 text-slate-300">
-            {/* Footer content - No changes needed here */}
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <div class="flex items-center space-x-3 mb-4 md:mb-0">
@@ -373,7 +367,6 @@
     </div>
 
     <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100]">
-         {/* Review Modal content - No structural changes needed */}
         <div class="bg-white rounded-2xl p-6 md:p-8 max-w-6xl w-11/12 md:w-full mx-auto max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6"><h3 id="reviewModalTitle" class="po-wizard-title-font text-2xl font-bold text-cyan-700">Review Purchase Order</h3><button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><span class="material-icons-outlined text-2xl">close</span></button></div>
             <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8">
@@ -402,8 +395,7 @@
 
     <script>
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
-        // No longer need FRONTEND_URL here as redirects are handled by backend based on its env var
-
+        
         let isAuthenticated = false; 
         let currentJobNumberContext = ""; 
         let currentProjectNameContext = "";
@@ -411,7 +403,7 @@
         let currentOpenPOTaskId = null; 
         let statusPollInterval = null;
         let allFetchedPOs = []; 
-        let currentUser = null; // Stores { app_token, displayName, email (from JWT) }
+        let currentUser = null; // Stores { app_token, displayName, email }
 
         // --- Authentication UI and Logic ---
         function updateAuthUI() {
@@ -457,15 +449,35 @@
         }
 
         function signInWithGoogle() {
-            // Redirect to backend's Google login initiation endpoint
+            // This function now correctly redirects to the backend for Google OAuth
             console.log("Redirecting to backend for Google Sign-In...");
             window.location.href = `${API_BASE_URL}/auth/google/login`;
         }
+        
+        // New helper function to handle "Get Started" type button clicks
+        function handleGetStartedClick(plan) {
+            console.log("handleGetStartedClick called with plan:", plan);
+            if (isAuthenticated && currentUser) {
+                console.log("User already authenticated. Proceeding to create new PO batch.");
+                promptForDropboxToken(); // Directly go to the token input step
+            } else {
+                console.log("User not authenticated. Initiating Google Sign-In.");
+                signInWithGoogle(); // This will redirect to backend
+            }
+            // Close mobile menu if it's open and this was called from a mobile menu button
+            if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
+                 const mobileMenu = document.getElementById('mobileMenu');
+                 if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    toggleMobileMenu();
+                }
+            }
+        }
+
 
         function signOut() {
             localStorage.removeItem('app_token');
             localStorage.removeItem('user_displayName');
-            localStorage.removeItem('user_email'); // Also clear email if stored separately
+            localStorage.removeItem('user_email');
             isAuthenticated = false;
             currentUser = null;
             currentJobNumberContext = ""; 
@@ -486,22 +498,23 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!response.ok) {
-                    if (response.status === 401) { // Token invalid or expired
-                        console.warn("Token validation failed (401). Signing out.");
-                        signOut(); // Clear invalid token and sign out user
+                    if (response.status === 401) { 
+                        console.warn("fetchUserDetails: Token validation failed (401). Signing out.");
+                        signOut(); 
                     } else {
-                        console.error(`Failed to fetch user details: ${response.status} ${response.statusText}`);
+                        console.error(`fetchUserDetails: Failed to fetch user details: ${response.status} ${response.statusText}`);
                     }
                     return null;
                 }
-                const userData = await response.json();
-                return {
-                    displayName: userData.full_name || "User",
-                    email: userData.email, // Email from the JWT/backend
-                    app_token: token
+                const userData = await response.json(); 
+                console.log("fetchUserDetails: Successfully fetched user data:", userData); 
+                return { 
+                    displayName: userData.full_name || userData.email.split('@')[0] || "User",
+                    email: userData.email, 
+                    app_token: token 
                 };
             } catch (error) {
-                console.error("Error fetching user details:", error);
+                console.error("fetchUserDetails: Error fetching user details:", error);
                 return null;
             }
         }
@@ -510,17 +523,16 @@
         async function checkAuthOnLoad() {
             const token = localStorage.getItem('app_token');
             if (token) {
-                console.log("Found app_token in localStorage. Verifying...");
+                console.log("Found app_token in localStorage. Verifying with /users/me...");
                 const userDetails = await fetchUserDetails(token);
                 if (userDetails) {
                     isAuthenticated = true;
                     currentUser = userDetails;
-                    localStorage.setItem('user_displayName', currentUser.displayName); // Update/set display name
-                    localStorage.setItem('user_email', currentUser.email); // Store email
-                    console.log("User authenticated from localStorage token:", currentUser);
+                    localStorage.setItem('user_displayName', currentUser.displayName);
+                    localStorage.setItem('user_email', currentUser.email);
+                    console.log("User authenticated from localStorage token via /users/me:", currentUser);
                 } else {
-                    // fetchUserDetails would have called signOut() if token was invalid
-                    console.log("Token verification failed or no user details returned.");
+                    console.log("Token verification via /users/me failed or no user details returned. User remains signed out.");
                 }
             } else {
                 isAuthenticated = false;
@@ -544,11 +556,10 @@
                     localStorage.setItem('user_email', currentUser.email);
                     console.log("User successfully authenticated via callback:", currentUser);
                     updateAuthUI();
-                    history.pushState("", document.title, window.location.pathname + window.location.search); // Clear token from URL
+                    history.pushState("", document.title, window.location.pathname + window.location.search); 
                     showTab('purchaseOrders'); 
                 } else {
-                    // fetchUserDetails would have handled signOut on 401
-                    console.error("Could not set up user after auth callback.");
+                    console.error("Could not set up user after auth callback (fetchUserDetails returned null).");
                     history.pushState("", document.title, window.location.pathname + window.location.search);
                 }
             } else if (window.location.hash && window.location.hash.startsWith('#auth_error=')){
@@ -560,14 +571,13 @@
 
         // --- End Authentication ---
 
-        // --- Tab Navigation and UI Logic (largely same as previous) ---
+        // --- Tab Navigation and UI Logic ---
         function showTab(tabName) {
             const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
             const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
 
             if (protectedTabs.includes(sectionId) && !isAuthenticated) {
                 alert('Please sign in to access this feature.');
-                // signInWithGoogle(); // No need to call here, alert is enough, user will click sign in button
                 return;
             }
 
@@ -578,15 +588,21 @@
             if (sectionId === 'purchaseOrdersSection') {
                 fetchGeneratedPOs(); 
             } else if (sectionId === 'processingSection') {
-                if (!dropboxAccessToken) {
+                if (!dropboxAccessToken) { // If starting fresh processing flow
+                    promptForDropboxToken();
+                } else { // If returning to an in-progress processing flow (less common now with token step)
+                    // This part might need review based on exact desired UX for re-entering processing
+                    // For now, promptForDropboxToken will reset it.
                     promptForDropboxToken();
                 }
             }
             updateActiveTabButton(tabName);
             
-            const mobileMenu = document.getElementById('mobileMenu');
-            if (mobileMenu && !mobileMenu.classList.contains('hidden') && typeof event !== 'undefined' && event && event.currentTarget && event.currentTarget.closest('#mobileMenu')) {
-                toggleMobileMenu(); 
+            if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
+                const mobileMenu = document.getElementById('mobileMenu');
+                 if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    toggleMobileMenu();
+                }
             }
         }
         
@@ -624,11 +640,9 @@
 
         function promptForDropboxToken() {
             if (!isAuthenticated) { 
-                // signInWithGoogle(); // Removed as showTab already handles this
-                alert("Please sign in first.");
+                alert("Please sign in first to create a new PO batch.");
                 return; 
             }
-            // Logic from previous version
             document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
             document.getElementById('processingSection').style.display = 'block';
             document.getElementById('step0_token_input').classList.remove('hidden');
@@ -639,10 +653,10 @@
             document.getElementById('inputProjectName').value = '';
             updateJobContextDisplay_Processing("N/A", "N/A"); 
             updateActiveStepIndicator('token');
+            updateActiveTabButton('processingSection'); // Ensure "My POs" tab is active
         }
 
         function submitDropboxToken() {
-            // Logic from previous version
             const token = document.getElementById('dropboxAccessTokenInput').value.trim();
             if (!token) {
                 alert("Please enter your Dropbox Access Token.");
@@ -657,7 +671,6 @@
         }
 
         function updateActiveTabButton(activeTabName) { 
-            // Logic from previous version
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             let targetButtonText = "";
             const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
@@ -678,7 +691,7 @@
             }
         }
         
-        function toggleMobileMenu() { /* ... (same) ... */ 
+        function toggleMobileMenu() { 
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
@@ -690,7 +703,7 @@
         const mobileMenuBtn = document.getElementById('mobileMenuButton');
         if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
         
-        function closeMobileMenu() { /* ... (same) ... */ 
+        function closeMobileMenu() { 
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
@@ -700,27 +713,29 @@
             }
         }
         
-        function updateJobContextDisplay_Dashboard(jobNum, projName) { /* ... (same) ... */ 
+        function updateJobContextDisplay_Dashboard(jobNum, projName) { 
             const dispJobNum = document.getElementById('displayJobNumber_dashboard');
             const dispProjName = document.getElementById('displayProjectName_dashboard');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
 
-        function updateJobContextDisplay_Processing(jobNum, projName) { /* ... (same) ... */ 
+        function updateJobContextDisplay_Processing(jobNum, projName) { 
             const dispJobNum = document.getElementById('displayJobNumber_processing');
             const dispProjName = document.getElementById('displayProjectName_processing');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
 
-        document.addEventListener('DOMContentLoaded', async () => { // Make DOMContentLoaded async
-            await handleAuthCallback(); // Wait for auth callback to process first
-            await checkAuthOnLoad();    // Then check existing auth state
+        document.addEventListener('DOMContentLoaded', async () => { 
+            console.log("DOMContentLoaded: Starting auth checks."); 
+            await handleAuthCallback(); 
+            await checkAuthOnLoad();    
             showTab('hero'); 
+            console.log("DOMContentLoaded: Initial auth checks complete. isAuthenticated:", isAuthenticated); 
         });
 
-        function confirmPathsAndProceed() { /* ... (modified to use JWT) ... */ 
+        function confirmPathsAndProceed() { 
             currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
             currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
             
@@ -744,12 +759,12 @@
             startDocumentProcessing(sourcePath, outputPath);
         }
         
-        async function startDocumentProcessing(sourcePath, outputPath) { /* ... (modified to use JWT) ... */ 
+        async function startDocumentProcessing(sourcePath, outputPath) { 
             updateProgressUI(0, "Initializing job submission...");
             const stageSpinner = document.getElementById('stageSpinner'); if (stageSpinner) stageSpinner.style.display = 'block';
             
             const appToken = localStorage.getItem('app_token');
-            if (!isAuthenticated || !appToken) { // Double check auth state
+            if (!isAuthenticated || !appToken) { 
                 alert("Authentication error. Please sign in again.");
                 signOut(); 
                 if(stageSpinner) stageSpinner.style.display = 'none';
@@ -762,7 +777,6 @@
                 dropbox_output_path: outputPath, 
                 job_number_context: currentJobNumberContext, 
                 project_name_context: currentProjectNameContext,
-                // user_email is derived by backend from JWT
             };
             try {
                 const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { 
@@ -791,7 +805,7 @@
             } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
         }
 
-        function pollTaskStatus(taskId) { /* ... (same) ... */ 
+        function pollTaskStatus(taskId) { 
             if (statusPollInterval) clearInterval(statusPollInterval);
             const stageSpinner = document.getElementById('stageSpinner');
             statusPollInterval = setInterval(async () => {
@@ -815,7 +829,7 @@
             }, 3000);
         }
 
-        function updateProgressUI(percentage, statusText, isError = false) { /* ... (same) ... */ 
+        function updateProgressUI(percentage, statusText, isError = false) { 
             const progressFill = document.getElementById('progressFill'); const progressPercent = document.getElementById('progressPercent');
             const stageTitle = document.getElementById('stageTitle'); const stageDescription = document.getElementById('stageDescription');
             if (percentage !== null && progressFill && progressPercent) { progressFill.style.width = percentage + '%'; progressPercent.textContent = percentage + '%'; }
@@ -825,15 +839,15 @@
             else if (stageTitle) { stageTitle.classList.remove('text-red-600'); stageTitle.classList.add('text-cyan-700');}
         }
         
-        function cancelProcessing() { /* ... (same) ... */ if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
+        function cancelProcessing() { if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
 
-        async function fetchGeneratedPOs() { /* ... (modified to use JWT) ... */ 
+        async function fetchGeneratedPOs() { 
             const poGrid = document.getElementById('poGrid');
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             const noPOsMessageEl = document.getElementById('noPOsMessage');
 
             const appToken = localStorage.getItem('app_token');
-            if (!isAuthenticated || !appToken) {
+            if (!isAuthenticated || !appToken) { 
                 if (poGrid) poGrid.innerHTML = ''; 
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please sign in to view your Purchase Orders.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
@@ -891,7 +905,7 @@
             }
         }
 
-        function renderPOGrid(posToRender) { /* ... (same) ... */ 
+        function renderPOGrid(posToRender) { 
             const poGrid = document.getElementById('poGrid'); 
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             
@@ -904,7 +918,7 @@
             posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
         }
         
-        function createPOCard(po) { /* ... (same) ... */ 
+        function createPOCard(po) { 
             const card = document.createElement('div'); card.id = `po-${po.po_id_on_grid}`;
             const isApproved = po.status && po.status.toLowerCase().includes('approved');
             card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''} bg-white`;
@@ -917,7 +931,7 @@
             return card;
         }
 
-        async function openReviewModal(poIdOnGrid) { /* ... (modified to use JWT) ... */ 
+        async function openReviewModal(poIdOnGrid) { 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
@@ -993,7 +1007,7 @@
             document.getElementById('reviewModal').classList.add('flex');
         }
         
-        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { /* ... (same) ... */ 
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { 
             const container = document.getElementById('editLineItemsContainer'); const index = container.children.length;
             const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
             div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
@@ -1001,9 +1015,9 @@
             updateTotalAmountFromLines();
         }
 
-        function removeLineItem(button) { /* ... (same) ... */ button.parentElement.remove(); updateTotalAmountFromLines(); }
+        function removeLineItem(button) { button.parentElement.remove(); updateTotalAmountFromLines(); }
         
-        function updateTotalAmountFromLines() { /* ... (same) ... */ 
+        function updateTotalAmountFromLines() { 
             let total = 0; 
             document.querySelectorAll('#editLineItemsContainer > div').forEach(lineDiv => { 
                 const amountInput = lineDiv.querySelector('input[name*="[amount]"]'); 
@@ -1013,13 +1027,13 @@
             document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
 
-        function closeReviewModal() { /* ... (same) ... */ 
+        function closeReviewModal() { 
             document.getElementById('reviewModal').classList.add('hidden'); 
             document.getElementById('reviewModal').classList.remove('flex'); 
             document.getElementById('pdfViewer').src = 'about:blank'; 
         }
 
-        async function submitPOChanges(isApproval) { /* ... (modified to use JWT) ... */ 
+        async function submitPOChanges(isApproval) { 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
@@ -1032,7 +1046,6 @@
             poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value; 
             poDataForRegen.job_number = document.getElementById('editJobNumber').value; 
             poDataForRegen.project_name = document.getElementById('editProjectName').value;
-            // user_email is added by backend from JWT
             try { poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]"); } catch (e) { poDataForRegen.backup_document_original_dropbox_paths = []; console.error("Error parsing backup_document_original_dropbox_paths:", e); }
             if (poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => item.description || item.amount ); }
             
@@ -1061,7 +1074,7 @@
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
 
-        function applyFiltersAndSort() { /* ... (same) ... */ 
+        function applyFiltersAndSort() { 
             let filteredPOs = [...allFetchedPOs]; 
             const statusFilter = document.getElementById('filterStatus').value; 
             const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase(); 
