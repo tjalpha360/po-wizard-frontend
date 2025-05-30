@@ -35,12 +35,11 @@
         .btn-primary:hover, .btn-accent:hover {
             background-color: #0891B2; 
         }
-        .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; /* Aspect ratio for A4 paper (sqrt(2)) */ }
+        .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; }
         .iframe-container iframe { position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none; }
         
-        /* Styles for backup document viewer in modal */
         .backup-docs-viewer {
-            height: 100%; /* Match iframe height */
+            height: 100%; 
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -48,7 +47,7 @@
             padding: 1rem;
             border: 1px solid #e2e8f0;
             border-radius: 0.5rem;
-            background-color: #f9fafb; /* Light gray background */
+            background-color: #f9fafb; 
         }
         .backup-docs-viewer img, .backup-docs-viewer iframe {
             max-width: 100%;
@@ -57,25 +56,24 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .review-modal-content-area {
-            min-height: 60vh; /* Ensure it has some height */
-            max-height: 70vh; /* Control max height if content is too long */
-            display: flex; /* Added for layout if needed */
-            flex-direction: column; /* Added */
+            min-height: 60vh; 
+            max-height: 70vh; 
+            display: flex; 
+            flex-direction: column; 
         }
         .review-modal-fixed-buttons {
             position: sticky;
             bottom: 0;
-            background-color: white; /* Match modal background */
-            padding-top: 1rem; /* Space from content above */
-            padding-bottom: 1.5rem; /* Space at bottom of modal */
-            border-top: 1px solid #e2e8f0; /* Separator */
-            margin-top: auto; /* Push buttons to bottom if content is short */
+            background-color: white; 
+            padding-top: 1rem; 
+            padding-bottom: 1.5rem; 
+            border-top: 1px solid #e2e8f0; 
+            margin-top: auto; 
         }
     </style>
 </head>
 <body class="bg-slate-50 font-['Inter','Noto_Sans',sans-serif]">
     <div class="min-h-screen flex flex-col">
-        <!-- Header (no changes from your last version) -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
             <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center py-3 h-20 md:h-auto md:py-4">
@@ -133,7 +131,6 @@
         </header>
 
         <main class="flex-1">
-            {/* All <section> elements are the same as your last provided version */}
             <section id="heroSection" class="bg-white py-16 lg:py-20">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -432,9 +429,6 @@
     </div>
 
     <script>
-        // --- All your JavaScript functions from the previous version ---
-        // --- No changes to the JavaScript functions are needed for this specific UI fix ---
-        // --- The changes below are ONLY to the HTML structure of the reviewModal and one line in openReviewModal ---
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
         
         let isAuthenticated = false; 
@@ -446,7 +440,7 @@
         let allFetchedPOs = []; 
         let currentUser = null; 
 
-        function updateAuthUI() { /* ... same ... */ 
+        function updateAuthUI() {
             const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
             const authDesktop = document.getElementById('authActionsAuthenticated_desktop');
             const userDisplayDesktop = document.getElementById('userDisplayName_desktop');
@@ -487,11 +481,13 @@
                 mobileProcNavButton.disabled = true;
             }
         }
-        function signInWithGoogle() { /* ... same ... */ 
+
+        function signInWithGoogle() {
             console.log("Redirecting to backend for Google Sign-In...");
             window.location.href = `${API_BASE_URL}/auth/google/login`;
         }
-        function handleGetStartedClick(plan) { /* ... same ... */ 
+        
+        function handleGetStartedClick(plan) {
             console.log("handleGetStartedClick called with plan:", plan);
             if (isAuthenticated && currentUser) {
                 console.log("User already authenticated. Proceeding to create new PO batch.");
@@ -507,7 +503,8 @@
                 }
             }
         }
-        function signOut() { /* ... same ... */ 
+
+        function signOut() {
             localStorage.removeItem('app_token');
             localStorage.removeItem('user_displayName');
             localStorage.removeItem('user_email');
@@ -524,7 +521,8 @@
             }
             console.log("User signed out.");
         }
-        async function fetchUserDetails(token) { /* ... same ... */ 
+        
+        async function fetchUserDetails(token) {
             try {
                 const response = await fetch(`${API_BASE_URL}/users/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -550,7 +548,8 @@
                 return null;
             }
         }
-        async function checkAuthOnLoad() { /* ... same ... */ 
+
+        async function checkAuthOnLoad() {
             const token = localStorage.getItem('app_token');
             if (token) {
                 console.log("Found app_token in localStorage. Verifying with /users/me...");
@@ -571,7 +570,8 @@
             }
             updateAuthUI();
         }
-        async function handleAuthCallback() { /* ... same ... */ 
+
+        async function handleAuthCallback() {
             if (window.location.hash && window.location.hash.startsWith('#token=')) {
                 const token = window.location.hash.substring('#token='.length);
                 localStorage.setItem('app_token', token);
@@ -597,7 +597,8 @@
                 history.pushState("", document.title, window.location.pathname + window.location.search); 
             }
         }
-        function showTab(tabName) { /* ... same ... */ 
+
+        function showTab(tabName) {
             const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
             const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
 
@@ -628,7 +629,8 @@
                 }
             }
         }
-        function updateActiveStepIndicator(activeStepName) { /* ... same ... */ 
+        
+        function updateActiveStepIndicator(activeStepName) {
             const indicators = {
                 'token': document.getElementById('tokenStepIndicator').querySelector('div'),
                 'configure': document.getElementById('configureStepIndicator').querySelector('div'),
@@ -659,7 +661,8 @@
                 indicators.process.className = indicators.process.className.replace(inactiveClass, activeClass);
             }
         }
-        function promptForDropboxToken() { /* ... same ... */ 
+
+        function promptForDropboxToken() {
             if (!isAuthenticated) { 
                 alert("Please sign in first to create a new PO batch.");
                 return; 
@@ -676,7 +679,8 @@
             updateActiveStepIndicator('token');
             updateActiveTabButton('processingSection'); 
         }
-        function submitDropboxToken() { /* ... same ... */ 
+
+        function submitDropboxToken() {
             const token = document.getElementById('dropboxAccessTokenInput').value.trim();
             if (!token) {
                 alert("Please enter your Dropbox Access Token.");
@@ -689,7 +693,8 @@
             document.getElementById('step1_configure_job').classList.remove('hidden');
             updateActiveStepIndicator('configure');
         }
-        function updateActiveTabButton(activeTabName) { /* ... same ... */ 
+
+        function updateActiveTabButton(activeTabName) { 
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             let targetButtonText = "";
             const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
@@ -709,7 +714,8 @@
                 });
             }
         }
-        function toggleMobileMenu() { /* ... same ... */ 
+        
+        function toggleMobileMenu() { 
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
@@ -720,7 +726,8 @@
         }
         const mobileMenuBtn = document.getElementById('mobileMenuButton');
         if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-        function closeMobileMenu() { /* ... same ... */ 
+        
+        function closeMobileMenu() { 
             const mobileMenu = document.getElementById('mobileMenu');
             const menuButton = document.getElementById('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
@@ -729,30 +736,36 @@
                 if (menuIcon) menuIcon.textContent = 'menu';
             }
         }
-        function updateJobContextDisplay_Dashboard(jobNum, projName) { /* ... same ... */ 
+        
+        function updateJobContextDisplay_Dashboard(jobNum, projName) { 
             const dispJobNum = document.getElementById('displayJobNumber_dashboard');
             const dispProjName = document.getElementById('displayProjectName_dashboard');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
-        function updateJobContextDisplay_Processing(jobNum, projName) { /* ... same ... */ 
+
+        function updateJobContextDisplay_Processing(jobNum, projName) { 
             const dispJobNum = document.getElementById('displayJobNumber_processing');
             const dispProjName = document.getElementById('displayProjectName_processing');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
-        document.addEventListener('DOMContentLoaded', async () => { /* ... same ... */ 
+
+        document.addEventListener('DOMContentLoaded', async () => { 
             console.log("DOMContentLoaded: Starting auth checks."); 
             await handleAuthCallback(); 
             await checkAuthOnLoad();    
             showTab('hero'); 
             console.log("DOMContentLoaded: Initial auth checks complete. isAuthenticated:", isAuthenticated); 
         });
-        function confirmPathsAndProceed() { /* ... same ... */ 
+
+        function confirmPathsAndProceed() { 
             currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
             currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
+            
             const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
             const outputPath = document.getElementById('dropboxOutputPath').value.trim();
+
             if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath || !outputPath) {
                 alert("Job Number, Project Name, Dropbox Source Path, and Output Path are required."); return;
             }
@@ -762,15 +775,18 @@
                 return;
             }
             updateJobContextDisplay_Processing(currentJobNumberContext, currentProjectNameContext); 
+
             document.getElementById('step1_configure_job').classList.add('hidden');
             document.getElementById('step2_processing_docs').classList.remove('hidden');
             const progressSect = document.getElementById('progressSection'); if(progressSect) progressSect.classList.add('expanded');
             updateActiveStepIndicator('process');
             startDocumentProcessing(sourcePath, outputPath);
         }
-        async function startDocumentProcessing(sourcePath, outputPath) { /* ... same, already passes dropboxAccessToken in payload ... */ 
+        
+        async function startDocumentProcessing(sourcePath, outputPath) { 
             updateProgressUI(0, "Initializing job submission...");
             const stageSpinner = document.getElementById('stageSpinner'); if (stageSpinner) stageSpinner.style.display = 'block';
+            
             const appToken = localStorage.getItem('app_token'); 
             if (!isAuthenticated || !appToken) { 
                 alert("Authentication error. Please sign in again.");
@@ -778,6 +794,7 @@
                 if(stageSpinner) stageSpinner.style.display = 'none';
                 return;
             }
+
             const payload = { 
                 dropbox_access_token: dropboxAccessToken, 
                 dropbox_source_path: sourcePath, 
@@ -811,7 +828,8 @@
                 pollTaskStatus(currentOpenPOTaskId);
             } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
         }
-        function pollTaskStatus(taskId) { /* ... same ... */ 
+
+        function pollTaskStatus(taskId) { 
             if (statusPollInterval) clearInterval(statusPollInterval);
             const stageSpinner = document.getElementById('stageSpinner');
             statusPollInterval = setInterval(async () => {
@@ -834,7 +852,8 @@
                 } catch (error) { console.error('Error polling task status:', error); updateProgressUI(null, "Error polling status. Check console.", true); clearInterval(statusPollInterval); if(stageSpinner) stageSpinner.style.display = 'none'; }
             }, 3000);
         }
-        function updateProgressUI(percentage, statusText, isError = false) { /* ... same ... */ 
+
+        function updateProgressUI(percentage, statusText, isError = false) { 
             const progressFill = document.getElementById('progressFill'); const progressPercent = document.getElementById('progressPercent');
             const stageTitle = document.getElementById('stageTitle'); const stageDescription = document.getElementById('stageDescription');
             if (percentage !== null && progressFill && progressPercent) { progressFill.style.width = percentage + '%'; progressPercent.textContent = percentage + '%'; }
@@ -843,8 +862,10 @@
             if (isError && stageTitle) { stageTitle.classList.add('text-red-600'); stageTitle.classList.remove('text-cyan-700');} 
             else if (stageTitle) { stageTitle.classList.remove('text-red-600'); stageTitle.classList.add('text-cyan-700');}
         }
-        function cancelProcessing() { /* ... same ... */ if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
-        async function fetchGeneratedPOs() { /* ... (modified to use JWT and pass dropboxAccessToken) ... */ 
+        
+        function cancelProcessing() { if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
+
+        async function fetchGeneratedPOs() { 
             const poGrid = document.getElementById('poGrid');
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             const noPOsMessageEl = document.getElementById('noPOsMessage');
@@ -857,7 +878,7 @@
                 updateJobContextDisplay_Dashboard("N/A", "N/A");
                 return;
             }
-            if (!dropboxAccessToken) { // Check for session Dropbox token
+            if (!dropboxAccessToken) {
                 console.warn("fetchGeneratedPOs: Dropbox Access Token not set for this session. User needs to connect to Dropbox first.");
                 if (poGrid) poGrid.innerHTML = ''; 
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please connect to Dropbox to view POs for this job.';
@@ -926,7 +947,7 @@
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
             }
         }
-        function renderPOGrid(posToRender) { /* ... same ... */ 
+        function renderPOGrid(posToRender) { 
             const poGrid = document.getElementById('poGrid'); 
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             if (!poGrid) { console.error("renderPOGrid: poGrid element not found!"); return; }
@@ -935,7 +956,7 @@
             if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
             posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
         }
-        function createPOCard(po) { /* ... same ... */ 
+        function createPOCard(po) { 
             const card = document.createElement('div'); card.id = `po-${po.po_id_on_grid}`;
             const isApproved = po.status && po.status.toLowerCase().includes('approved');
             card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''} bg-white`;
@@ -946,7 +967,7 @@
             card.innerHTML = `<img src="assets/POWizard.png" alt="PO Preview" class="w-full h-32 object-contain p-2 bg-white"> <div class="p-4 md:p-6"><div class="flex flex-col h-full"><div class="flex justify-between items-start mb-3"><h4 class="text-md md:text-lg font-semibold text-cyan-700">${po.po_number}</h4><span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}<span>${statusDisplay}</span></span></div><p class="text-sm text-slate-700 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p><p class="text-lg md:text-xl font-bold text-cyan-700 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p><p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p><div class="mt-auto flex space-x-2"><button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button></div></div></div>`;
             return card;
         }
-        async function openReviewModal(poIdOnGrid) { /* ... (modified to use JWT and pass dropboxAccessToken) ... */ 
+        async function openReviewModal(poIdOnGrid) { 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
@@ -986,7 +1007,6 @@
                 }
             }
             if (!currentEditingPOData) { alert('Could not load data for this PO.'); return; }
-            
             document.getElementById('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPOData.po_number}`;
             document.getElementById('editPoIdOnGrid').value = poIdOnGrid; 
             document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename || ''; 
@@ -1003,7 +1023,6 @@
             document.getElementById('editJobNumber').value = currentEditingPOData.job_number; 
             document.getElementById('editProjectName').value = currentEditingPOData.project_name;
             document.getElementById('editBackupDocsPaths').value = JSON.stringify(currentEditingPOData.backup_document_original_dropbox_paths || []);
-            
             const lineItemsContainer = document.getElementById('editLineItemsContainer'); 
             lineItemsContainer.innerHTML = '';
             if (currentEditingPOData.aggregated_line_items && currentEditingPOData.aggregated_line_items.length > 0) { 
@@ -1011,21 +1030,10 @@
             } else { 
                 addLineItemField();
             }
-            
-            // --- PDF and Backup Docs Viewer Logic ---
-            const pdfDisplayArea = document.getElementById('pdfDisplayArea');
-            const backupDocsDisplayArea = document.getElementById('backupDocsDisplayArea');
-            const pdfViewerIframe = document.getElementById('pdfViewer');
-            
-            pdfViewerIframe.src = 'about:blank'; // Clear previous PDF
-            backupDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Loading backup documents...</p>'; // Reset backups
-            
-            showReviewContent('pdf', currentEditingPOData); // Default to showing PO PDF
-        
+            showReviewContent('pdf', currentEditingPOData);
             document.getElementById('reviewModal').classList.remove('hidden'); 
             document.getElementById('reviewModal').classList.add('flex');
         }
-
         async function showReviewContent(contentType, poData) {
             const pdfDisplayArea = document.getElementById('pdfDisplayArea');
             const backupDocsDisplayArea = document.getElementById('backupDocsDisplayArea');
@@ -1040,28 +1048,29 @@
                 viewPoPdfButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 viewBackupDocsButton.classList.remove('btn-primary');
                 viewBackupDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-
                 let pdfSrc = 'about:blank';
                 if (poData.generated_draft_po_pdf_path_dropbox) {
                     let dbxLink = poData.generated_draft_po_pdf_path_dropbox;
-                    // Construct a viewable link (Dropbox direct links often need ?raw=1 or similar)
-                    // This might need to be a temporary shared link generated by backend if direct path embedding is an issue.
-                    // For now, try common pattern:
-                    if (dbxLink.includes("dropbox.com/s/") && !dbxLink.includes("?raw=1")) { // Shared link
+                    if (dbxLink.includes("dropbox.com/s/") && !dbxLink.includes("?raw=1")) { 
                         dbxLink = dbxLink.replace("?dl=0", "") + "?raw=1";
-                    } else if (dbxLink.includes("dropbox.com/scl/fi/") && !dbxLink.includes("?raw=1")){ // Newer shared link
+                    } else if (dbxLink.includes("dropbox.com/scl/fi/") && !dbxLink.includes("?raw=1")){
                          dbxLink = dbxLink.split("?")[0] + "?raw=1";
+                    } else if (!dbxLink.startsWith("http") && dbxLink.startsWith("/")) { 
+                        // This case is for a direct path, which won't work in iframe.
+                        // For now, we show a message or try a generic pattern if it helps.
+                        // Ideally, backend provides a fully formed, embeddable URL or a temporary direct link.
+                        console.warn("Direct Dropbox path provided, iframe embedding might fail:", dbxLink);
+                        // pdfSrc = `https://www.dropbox.com/preview${dbxLink}`; // This is a guess, might not work
+                        pdfSrc = 'about:blank'; // Fallback if direct path cannot be made viewable
+                        alert("Cannot directly preview this PDF path. Please ensure it's a shared, raw-linkable URL from Dropbox.");
+                    } else {
+                        pdfSrc = dbxLink; // Assume it's already a usable URL
                     }
-                    // If it's a direct path (not a shared link), iframe embedding is usually not possible directly.
-                    // We'd ideally have the backend provide a temporary direct serving URL or a shared link.
-                    // For now, this will likely only work if generated_draft_po_pdf_path_dropbox is already a viewable URL.
-                    pdfSrc = dbxLink;
                     console.log("Setting PDF viewer src to (attempt):", pdfSrc);
                 } else {
                     console.warn("No Dropbox PDF path available for review modal iframe.");
                 }
                 pdfViewerIframe.src = pdfSrc;
-
             } else if (contentType === 'backups') {
                 pdfDisplayArea.classList.add('hidden');
                 backupDocsDisplayArea.classList.remove('hidden');
@@ -1069,41 +1078,38 @@
                 viewBackupDocsButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 viewPoPdfButton.classList.remove('btn-primary');
                 viewPoPdfButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-
                 backupDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Fetching backup documents...</p>';
                 const backupPaths = poData.backup_document_original_dropbox_paths || [];
                 if (backupPaths.length > 0) {
                     let contentHtml = '';
                     for (const path of backupPaths) {
-                        // For Dropbox paths, we need a way to get a temporary viewable link or download them.
-                        // This is complex from pure client-side JS without backend help or if links aren't public.
-                        // For now, just list paths. Actual viewing requires backend to serve or provide temp links.
-                        let viewableLink = path; // Placeholder
+                        let viewableLink = path; 
+                        let isEmbeddable = false;
                         if (viewableLink.includes("dropbox.com/s/") && !viewableLink.includes("?raw=1")) {
-                            viewableLink = viewableLink.replace("?dl=0", "") + "?raw=1";
+                            viewableLink = viewableLink.replace("?dl=0", "") + "?raw=1"; isEmbeddable = true;
                         } else if (viewableLink.includes("dropbox.com/scl/fi/") && !viewableLink.includes("?raw=1")){
-                             viewableLink = viewableLink.split("?")[0] + "?raw=1";
-                        } else if (!viewableLink.startsWith("http")) { // If it's just a path
-                            // Cannot directly embed a Dropbox path like /folder/file.pdf
-                            // This would require a backend endpoint to serve the file or get a temp link.
-                            // For now, show the path and a placeholder.
-                             contentHtml += `<div class="p-2 border rounded mb-2 bg-white">
-                                                <p class="font-medium text-sm truncate" title="${path}">${Path(path).name}</p>
-                                                <p class="text-xs text-slate-500">Preview not available for direct path. Path: ${path}</p>
-                                                <a href="https://www.dropbox.com/home${path}" target="_blank" class="text-xs text-cyan-600 hover:underline">Open in Dropbox (requires login)</a>
-                                            </div>`;
-                            continue; // Skip trying to embed this one
+                             viewableLink = viewableLink.split("?")[0] + "?raw=1"; isEmbeddable = true;
+                        } else if (viewableLink.startsWith("http")) {
+                            isEmbeddable = true; // Assume other http links might be embeddable
                         }
 
                         const ext = Path(path).suffix.toLowerCase();
-                        if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-                            contentHtml += `<img src="${viewableLink}" alt="${Path(path).name}" class="mb-4 border rounded">`;
-                        } else if (ext === '.pdf') {
-                            contentHtml += `<div class="iframe-container mb-4"><iframe src="${viewableLink}" title="${Path(path).name}"></iframe></div>`;
-                        } else {
-                            contentHtml += `<div class="p-2 border rounded mb-2 bg-white">
+                        if (isEmbeddable) {
+                            if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
+                                contentHtml += `<img src="${viewableLink}" alt="${Path(path).name}" class="mb-4 border rounded">`;
+                            } else if (ext === '.pdf') {
+                                contentHtml += `<div class="iframe-container mb-4" style="padding-top: 70.71%;"><iframe src="${viewableLink}" title="${Path(path).name}"></iframe></div>`; // A4 Portrait
+                            } else {
+                                contentHtml += `<div class="p-2 border rounded mb-2 bg-white">
+                                                    <p class="font-medium text-sm truncate" title="${path}">${Path(path).name}</p>
+                                                    <a href="${viewableLink}" target="_blank" class="text-xs text-cyan-600 hover:underline">View/Download File (Unknown Type)</a>
+                                                </div>`;
+                            }
+                        } else { // If not embeddable (likely a direct Dropbox path)
+                             contentHtml += `<div class="p-2 border rounded mb-2 bg-white">
                                                 <p class="font-medium text-sm truncate" title="${path}">${Path(path).name}</p>
-                                                <a href="${viewableLink}" target="_blank" class="text-xs text-cyan-600 hover:underline">View/Download File</a>
+                                                <p class="text-xs text-slate-500">Direct preview not available. Path: ${path}</p>
+                                                <a href="https://www.dropbox.com/home${path}" target="_blank" class="text-xs text-cyan-600 hover:underline">Open in Dropbox (requires login)</a>
                                             </div>`;
                         }
                     }
@@ -1113,8 +1119,6 @@
                 }
             }
         }
-        // Helper for Path().name and Path().suffix like behavior if not using a library
-        // Simple polyfill for Path().name and Path().suffix
         const Path = (filepath) => {
             const parts = filepath.split(/[\\/]/);
             const name = parts[parts.length - 1];
@@ -1123,16 +1127,15 @@
             const suffix = dotIndex > -1 ? name.substring(dotIndex) : '';
             return { name, stem, suffix };
         };
-
-        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { /* ... same ... */ 
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { 
             const container = document.getElementById('editLineItemsContainer'); const index = container.children.length;
             const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
             div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
             container.appendChild(div); div.querySelectorAll('.line-item-calc').forEach(input => { input.addEventListener('input', updateTotalAmountFromLines); });
             updateTotalAmountFromLines();
         }
-        function removeLineItem(button) { /* ... same ... */ button.parentElement.remove(); updateTotalAmountFromLines(); }
-        function updateTotalAmountFromLines() { /* ... same ... */ 
+        function removeLineItem(button) { button.parentElement.remove(); updateTotalAmountFromLines(); }
+        function updateTotalAmountFromLines() { 
             let total = 0; 
             document.querySelectorAll('#editLineItemsContainer > div').forEach(lineDiv => { 
                 const amountInput = lineDiv.querySelector('input[name*="[amount]"]'); 
@@ -1141,13 +1144,13 @@
             }); 
             document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
-        function closeReviewModal() { /* ... same ... */ 
+        function closeReviewModal() { 
             document.getElementById('reviewModal').classList.add('hidden'); 
             document.getElementById('reviewModal').classList.remove('flex'); 
             document.getElementById('pdfViewer').src = 'about:blank'; 
-            document.getElementById('backupDocsDisplayArea').innerHTML = ''; // Clear backups too
+            document.getElementById('backupDocsDisplayArea').innerHTML = '';
         }
-        async function submitPOChanges(isApproval) { /* ... (same - already passes dropboxAccessToken) ... */ 
+        async function submitPOChanges(isApproval) { 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
@@ -1193,7 +1196,7 @@
         document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
-        function applyFiltersAndSort() { /* ... same ... */ 
+        function applyFiltersAndSort() { 
             let filteredPOs = [...allFetchedPOs]; 
             const statusFilter = document.getElementById('filterStatus').value; 
             const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase(); 
