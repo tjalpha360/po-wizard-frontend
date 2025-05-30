@@ -52,12 +52,9 @@
 </head>
 <body class="bg-slate-50 font-['Inter','Noto_Sans',sans-serif]">
     <div class="min-h-screen flex flex-col">
-        <!-- Header and other HTML sections remain the same as your last provided version -->
-        <!-- Header -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
             <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center py-3 h-20 md:h-auto md:py-4">
-                    <!-- Logo and Brand Name -->
                     <a href="#" onclick="showTab('hero'); if(typeof closeMobileMenu === 'function') closeMobileMenu();" class="flex items-center cursor-pointer">
                         <img src="assets/POWizard.png" alt="PO Wizard Logo" class="h-10 w-auto mr-2 sm:mr-3 md:h-12">
                         <div class="flex flex-col justify-center">
@@ -65,8 +62,6 @@
                             <span class="block text-xs text-slate-500 leading-tight mt-[-2px] sm:mt-0">Built for Production</span>
                         </div>
                     </a>
-
-                    <!-- Desktop Navigation & Actions -->
                     <div id="desktopMenu" class="hidden md:flex items-center space-x-3 lg:space-x-4">
                         <nav class="flex items-center space-x-1 lg:space-x-3">
                             <button onclick="showTab('features')" class="tab-button px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50">Features</button>
@@ -85,7 +80,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="md:hidden">
                         <button id="mobileMenuButton" class="text-slate-600 hover:text-cyan-700 focus:outline-none p-2">
                             <span class="material-icons-outlined text-3xl">menu</span>
@@ -93,7 +87,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-slate-200 shadow-lg absolute w-full z-40">
                 <nav class="flex flex-col space-y-1 p-4">
                     <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Features</button>
@@ -116,7 +109,6 @@
         </header>
 
         <main class="flex-1">
-            {/* ... All your <section> elements remain unchanged ... */}
             <section id="heroSection" class="bg-white py-16 lg:py-20">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -401,13 +393,12 @@
         let isAuthenticated = false; 
         let currentJobNumberContext = ""; 
         let currentProjectNameContext = "";
-        let dropboxAccessToken = ""; // This IS the user-provided Dropbox token for the current session/batch
+        let dropboxAccessToken = ""; 
         let currentOpenPOTaskId = null; 
         let statusPollInterval = null;
         let allFetchedPOs = []; 
-        let currentUser = null; // Stores { app_token, displayName, email }
+        let currentUser = null; 
 
-        // --- Authentication UI and Logic ---
         function updateAuthUI() {
             const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
             const authDesktop = document.getElementById('authActionsAuthenticated_desktop');
@@ -480,7 +471,7 @@
             currentUser = null;
             currentJobNumberContext = ""; 
             currentProjectNameContext = "";
-            dropboxAccessToken = ""; // Clear the session Dropbox token on sign out
+            dropboxAccessToken = ""; 
             allFetchedPOs = []; 
             updateAuthUI();
             showTab('hero'); 
@@ -566,9 +557,6 @@
             }
         }
 
-        // --- End Authentication ---
-
-        // --- Tab Navigation and UI Logic ---
         function showTab(tabName) {
             const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
             const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
@@ -585,13 +573,11 @@
             if (sectionId === 'purchaseOrdersSection') {
                 fetchGeneratedPOs(); 
             } else if (sectionId === 'processingSection') {
-                if (!dropboxAccessToken && isAuthenticated) { // Only prompt if authenticated and no token yet for THIS session
+                if (!dropboxAccessToken && isAuthenticated) { 
                     promptForDropboxToken();
                 } else if (!isAuthenticated) {
-                    // This case should ideally be caught by the protectedTabs check above
                     signInWithGoogle();
                 }
-                // If dropboxAccessToken is already set, and user re-enters, the existing state is fine.
             }
             updateActiveTabButton(tabName);
             
@@ -742,7 +728,7 @@
             if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath || !outputPath) {
                 alert("Job Number, Project Name, Dropbox Source Path, and Output Path are required."); return;
             }
-            if (!dropboxAccessToken) { // This token is from the user input in step0
+            if (!dropboxAccessToken) { 
                 alert("Dropbox Access Token is missing. Please go back and provide it.");
                 promptForDropboxToken(); 
                 return;
@@ -760,7 +746,7 @@
             updateProgressUI(0, "Initializing job submission...");
             const stageSpinner = document.getElementById('stageSpinner'); if (stageSpinner) stageSpinner.style.display = 'block';
             
-            const appToken = localStorage.getItem('app_token'); // App's JWT for auth with backend
+            const appToken = localStorage.getItem('app_token'); 
             if (!isAuthenticated || !appToken) { 
                 alert("Authentication error. Please sign in again.");
                 signOut(); 
@@ -769,7 +755,7 @@
             }
 
             const payload = { 
-                dropbox_access_token: dropboxAccessToken, // User's Dropbox token for this session
+                dropbox_access_token: dropboxAccessToken, 
                 dropbox_source_path: sourcePath, 
                 dropbox_output_path: outputPath, 
                 job_number_context: currentJobNumberContext, 
@@ -843,7 +829,7 @@
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             const noPOsMessageEl = document.getElementById('noPOsMessage');
 
-            const appToken = localStorage.getItem('app_token'); // Your app's JWT
+            const appToken = localStorage.getItem('app_token'); 
             if (!isAuthenticated || !appToken) { 
                 if (poGrid) poGrid.innerHTML = ''; 
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please sign in to view your Purchase Orders.';
@@ -851,16 +837,11 @@
                 updateJobContextDisplay_Dashboard("N/A", "N/A");
                 return;
             }
-            // CRITICAL: Check if dropboxAccessToken (user's Dropbox token for this session) is set.
-            // If not, the user hasn't gone through the "Connect to Dropbox" step for this session.
             if (!dropboxAccessToken) {
                 console.warn("fetchGeneratedPOs: Dropbox Access Token not set for this session. User needs to connect to Dropbox first.");
                 if (poGrid) poGrid.innerHTML = ''; 
-                if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please connect to Dropbox to view or process POs for a job.';
+                if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please connect to Dropbox to view POs for this job.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
-                // Optionally, you could even call promptForDropboxToken() here if currentJobNumberContext IS set,
-                // implying they are trying to view POs for a job but haven't re-authenticated Dropbox this session.
-                // For now, just showing the message.
                 updateJobContextDisplay_Dashboard(currentJobNumberContext || "N/A", currentProjectNameContext || "N/A");
                 return;
             }
@@ -882,7 +863,6 @@
             }
 
             try {
-                // Pass the session's dropboxAccessToken as a query parameter
                 const url = `${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${appToken}` }
@@ -894,9 +874,9 @@
                     alert("Your session has expired. Please sign in again.");
                     return;
                 }
-                if (response.status === 400) { // Could be missing dropboxAccessToken on backend
+                if (response.status === 400) { 
                     const errorData = await response.json();
-                    alert(`Error fetching POs: ${errorData.detail || "Bad request (possibly missing Dropbox token)."}`);
+                    alert(`Error fetching POs: ${errorData.detail || "Bad request (possibly missing Dropbox token for API)."}`);
                     console.error("Error fetching POs (400):", errorData);
                     if (poGrid) poGrid.innerHTML = ''; 
                     if (noPOsMessageEl) noPOsMessageEl.textContent = `Error: ${errorData.detail || "Could not fetch POs."}`;
@@ -959,9 +939,9 @@
                 alert("Authentication error. Please sign in again.");
                 signOut(); return;
             }
-            if (!dropboxAccessToken) { // Check if session Dropbox token is available
+            if (!dropboxAccessToken) { 
                 alert("Dropbox session token is missing. Please go through the 'Connect to Dropbox' step again for the current job.");
-                promptForDropboxToken(); // Guide user to re-enter token for this session
+                promptForDropboxToken(); 
                 return;
             }
 
@@ -969,8 +949,6 @@
             let currentEditingPOData; 
             const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
             
-            // If full_po_data_for_review is already populated from listing, use it.
-            // Otherwise, fetch it specifically. This assumes list_generated_pos_for_job now populates it.
             if (poDataToReview && poDataToReview.full_po_data_for_review) {
                 currentEditingPOData = poDataToReview.full_po_data_for_review;
                 console.log("Using pre-fetched full_po_data_for_review.");
@@ -999,7 +977,6 @@
 
             if (!currentEditingPOData) { alert('Could not load data for this PO.'); return; }
             
-            // Populate modal (same as before)
             document.getElementById('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPOData.po_number}`;
             document.getElementById('editPoIdOnGrid').value = poIdOnGrid; 
             document.getElementById('editOriginalPoPackageFilename').value = currentEditingPOData.original_po_package_filename || ''; 
@@ -1028,7 +1005,6 @@
             let pdfSrc = 'about:blank';
             if (currentEditingPOData.generated_draft_po_pdf_path_dropbox) {
                 let dbxLink = currentEditingPOData.generated_draft_po_pdf_path_dropbox; 
-                // Assume dbxLink from backend is already a direct viewable link or needs ?raw=1
                 if (dbxLink.includes("dropbox.com") && !dbxLink.includes("raw=1") && !dbxLink.includes("dl=1")) { 
                     if (dbxLink.includes("?dl=0")) {
                         dbxLink = dbxLink.replace("?dl=0", "?raw=1");
@@ -1041,7 +1017,7 @@
             } else { 
                 console.warn("No Dropbox PDF path available for review modal iframe.");
             }
-            document.getElementById('pdfViewer').src = pdfSrc; // Set it even if it's about:blank
+            document.getElementById('pdfViewer').src = pdfSrc; 
             document.getElementById('reviewModal').classList.remove('hidden'); 
             document.getElementById('reviewModal').classList.add('flex');
         }
@@ -1078,7 +1054,7 @@
                 alert("Authentication error. Please sign in again.");
                 signOut(); return;
             }
-             if (!dropboxAccessToken) { // Check if session Dropbox token is available
+             if (!dropboxAccessToken) { 
                 alert("Dropbox session token is missing for regeneration. Please go through the 'Connect to Dropbox' step again for the current job.");
                 promptForDropboxToken(); 
                 return;
@@ -1115,7 +1091,7 @@
                 if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to regenerate PO: ${response.statusText}`); }
                 alert('PO successfully ' + (isApproval ? 'approved (simulated) and' : '') + ' regenerated and updated!'); 
                 closeReviewModal(); 
-                fetchGeneratedPOs();
+                fetchGeneratedPOs(); // Refresh POs, this will now use the current dropboxAccessToken
             } catch (error) { console.error('Error submitting PO changes:', error); alert(`Error: ${error.message}`); }
         }
         
