@@ -38,7 +38,7 @@
         .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; /* A4 Aspect Ratio */ }
         .iframe-container iframe { position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none; }
 
-        .backup-docs-viewer {
+        .relevant-docs-viewer { /* Renamed from backup-docs-viewer */
             height: 100%;
             overflow-y: auto;
             display: flex;
@@ -49,15 +49,29 @@
             border-radius: 0.5rem;
             background-color: #f9fafb;
         }
-        .backup-docs-viewer img, .backup-docs-viewer iframe {
+        .relevant-docs-viewer img { /* Renamed from backup-docs-viewer */
             max-width: 100%;
             height: auto;
             border: 1px solid #ccc;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: block; /* Ensure img is block for proper layout */
+            margin-bottom: 0.5rem;
         }
+         .relevant-docs-viewer .doc-item {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            background-color: #ffffff;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        }
+        .relevant-docs-viewer .doc-item p {
+            margin-bottom: 0.25rem;
+        }
+
+
         .review-modal-content-area {
             min-height: 60vh;
-            max-height: 70vh; /* Adjusted for better modal height */
+            max-height: 70vh; 
             display: flex;
             flex-direction: column;
         }
@@ -391,15 +405,16 @@
 
             <div class="flex items-center space-x-2 mb-4 flex-shrink-0 border-b pb-2">
                 <button id="viewPoPdfButton" onclick="showReviewContent('pdf', currentEditingPODataForModal)" class="btn-primary px-3 py-1.5 text-sm rounded-md">View PO PDF</button>
-                <button id="viewBackupDocsButton" onclick="showReviewContent('backups', currentEditingPODataForModal)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 text-sm rounded-md">View Backup Docs</button>
+                <button id="viewRelevantDocsButton" onclick="showReviewContent('relevantDocs', currentEditingPODataForModal)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 text-sm rounded-md">View Relevant Documents</button>
             </div>
 
             <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8 flex-grow overflow-y-auto review-modal-content-area">
                 <div id="pdfDisplayArea" class="w-full lg:w-1/2 iframe-container">
                     <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
+                    <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads.</p>
                 </div>
-                <div id="backupDocsDisplayArea" class="w-full lg:w-1/2 backup-docs-viewer hidden">
-                    <p class="text-center text-slate-500">Loading backup documents...</p>
+                <div id="relevantDocsDisplayArea" class="w-full lg:w-1/2 relevant-docs-viewer hidden">
+                    <p class="text-center text-slate-500">Loading relevant documents...</p>
                 </div>
 
                 <div class="w-full lg:w-1/2 lg:max-h-full overflow-y-auto pr-2">
@@ -439,7 +454,7 @@
         let statusPollInterval = null;
         let allFetchedPOs = [];
         let currentUser = null;
-        let currentEditingPODataForModal = null; // Store PO data for modal context
+        let currentEditingPODataForModal = null;
 
         function updateAuthUI() {
             const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
@@ -688,7 +703,7 @@
                 return;
             }
             dropboxAccessToken = token;
-            console.log("Dropbox Token Submitted:", dropboxAccessToken);
+            console.log("Dropbox Token Submitted:", dropboxAccessToken ? "Token Present" : "Token Missing/Empty"); // Log if token is present
 
             document.getElementById('step0_token_input').classList.add('hidden');
             document.getElementById('step1_configure_job').classList.remove('hidden');
@@ -983,7 +998,7 @@
             const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
 
             if (poDataToReview && poDataToReview.full_po_data_for_review) {
-                currentEditingPODataForModal = poDataToReview.full_po_data_for_review; // Use the global var
+                currentEditingPODataForModal = poDataToReview.full_po_data_for_review;
                 console.log("Using pre-fetched full_po_data_for_review for modal.");
             } else {
                  try {
@@ -1001,9 +1016,8 @@
                         const errorDetail = await response.json();
                         alert(`Error fetching PO details: ${errorDetail.detail || response.statusText}`); return;
                     }
-                    currentEditingPODataForModal = await response.json(); // Use the global var
-                    console.log("Fetched full_po_data_for_review for modal.");
-                     // Update the allFetchedPOs array with the newly fetched full data if needed
+                    currentEditingPODataForModal = await response.json();
+                    console.log("Fetched full_po_data_for_review for modal:", currentEditingPODataForModal);
                     const indexInAllPOs = allFetchedPOs.findIndex(p => p.po_id_on_grid === poIdOnGrid);
                     if (indexInAllPOs !== -1) {
                         allFetchedPOs[indexInAllPOs].full_po_data_for_review = currentEditingPODataForModal;
@@ -1031,7 +1045,6 @@
             document.getElementById('editAdditionalNotes').value = currentEditingPODataForModal.additional_notes || '';
             document.getElementById('editJobNumber').value = currentEditingPODataForModal.job_number;
             document.getElementById('editProjectName').value = currentEditingPODataForModal.project_name;
-            // Storing the backup paths (which should be temporary https links from backend)
             document.getElementById('editBackupDocsPaths').value = JSON.stringify(currentEditingPODataForModal.backup_document_original_dropbox_paths || []);
 
             const lineItemsContainer = document.getElementById('editLineItemsContainer');
@@ -1041,142 +1054,140 @@
             } else {
                 addLineItemField();
             }
-            showReviewContent('pdf', currentEditingPODataForModal); // Pass currentEditingPODataForModal
+            showReviewContent('pdf', currentEditingPODataForModal);
             document.getElementById('reviewModal').classList.remove('hidden');
             document.getElementById('reviewModal').classList.add('flex');
         }
 
-        async function showReviewContent(contentType, poDataForDisplay) { // poDataForDisplay is the context for this call
+        async function showReviewContent(contentType, poDataForDisplay) {
             const pdfDisplayArea = document.getElementById('pdfDisplayArea');
-            const backupDocsDisplayArea = document.getElementById('backupDocsDisplayArea');
+            const relevantDocsDisplayArea = document.getElementById('relevantDocsDisplayArea'); // Renamed
             const pdfViewerIframe = document.getElementById('pdfViewer');
+            const pdfViewerFallbackMessage = document.getElementById('pdfViewerFallbackMessage');
             const viewPoPdfButton = document.getElementById('viewPoPdfButton');
-            const viewBackupDocsButton = document.getElementById('viewBackupDocsButton');
+            const viewRelevantDocsButton = document.getElementById('viewRelevantDocsButton'); // Renamed ID
 
             if (!poDataForDisplay) {
                 console.error("showReviewContent called without poDataForDisplay.");
                 if (pdfViewerIframe) pdfViewerIframe.src = 'about:blank';
-                if (backupDocsDisplayArea) backupDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: PO data not available.</p>';
+                if (relevantDocsDisplayArea) relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: PO data not available.</p>';
                 return;
             }
+            
+            pdfViewerFallbackMessage.classList.add('hidden'); // Hide fallback by default
 
             if (contentType === 'pdf') {
                 pdfDisplayArea.classList.remove('hidden');
-                backupDocsDisplayArea.classList.add('hidden');
+                relevantDocsDisplayArea.classList.add('hidden');
                 viewPoPdfButton.classList.add('btn-primary');
                 viewPoPdfButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-                viewBackupDocsButton.classList.remove('btn-primary');
-                viewBackupDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
+                viewRelevantDocsButton.classList.remove('btn-primary');
+                viewRelevantDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
 
-                let pdfSrc = 'about:blank'; // Default
+                let pdfSrc = 'about:blank';
                 if (poDataForDisplay.generated_draft_po_pdf_path_dropbox) {
                     let dbxLink = poDataForDisplay.generated_draft_po_pdf_path_dropbox;
+                    console.log("Raw PO PDF link from backend:", dbxLink);
 
                     if (typeof dbxLink === 'string' && dbxLink.startsWith("https://")) {
-                        // This should catch temporary links from files_get_temporary_link
-                        // and also properly formed shared links.
-                        // Temporary links are usually direct and don't need ?raw=1.
-                        // Shared links might need conversion.
+                        // Check if it's a Dropbox share link that needs ?raw=1
                         if ((dbxLink.includes("dropbox.com/s/") || dbxLink.includes("dropbox.com/scl/fi/")) &&
                             !dbxLink.includes("raw=1") && !dbxLink.includes("dl=1")) {
-
-                            let [base, params] = dbxLink.split('?');
-                            let newQuery = "raw=1";
-                            if (params) {
-                                const existingParams = params.split('&').filter(p => !p.startsWith('dl='));
-                                if (existingParams.length > 0) {
-                                    newQuery += "&" + existingParams.join('&');
-                                }
+                            
+                            const urlParts = dbxLink.split('?');
+                            pdfSrc = urlParts[0] + "?raw=1";
+                            if (urlParts.length > 1) {
+                                const otherParams = urlParts[1].split('&').filter(p => !p.startsWith('dl=') && !p.startsWith('rlkey=')); // rlkey can also interfere
+                                if(otherParams.length > 0) pdfSrc += "&" + otherParams.join('&');
                             }
-                            pdfSrc = base + "?" + newQuery.replace(/&&+/, '&').replace(/&$/, ''); // Clean up
-                            console.log("Converted shared Dropbox link to raw for main PDF:", pdfSrc);
+                            console.log("Converted PO PDF shared link to raw:", pdfSrc);
                         } else {
-                            // Assumes it's either a temporary direct link or already a raw/dl=1 shared link
-                            pdfSrc = dbxLink;
-                            console.log("Using Dropbox link as is for main PDF (temporary or already raw/dl):", pdfSrc);
+                            pdfSrc = dbxLink; // Assume it's a temporary direct link or already raw
+                             console.log("Using PO PDF link as is (temp or already raw):", pdfSrc);
                         }
                     } else if (typeof dbxLink === 'string' && dbxLink.startsWith("/")) {
-                        console.warn("Direct Dropbox path received for main PO PDF, cannot embed directly:", dbxLink);
-                        alert("Cannot directly preview this PDF path. The backend provided a direct path instead of a viewable link.");
+                        console.warn("Direct Dropbox path for main PO PDF, cannot embed directly:", dbxLink);
+                        alert("Cannot directly preview this PDF. The backend provided a direct path instead of a viewable link for the main PO.");
+                        pdfViewerFallbackMessage.classList.remove('hidden');
                         pdfSrc = 'about:blank';
                     } else {
                         console.warn("Unknown or invalid Dropbox link format for main PO PDF:", dbxLink);
                         alert("The link for the PO PDF is invalid or missing.");
+                        pdfViewerFallbackMessage.classList.remove('hidden');
                         pdfSrc = 'about:blank';
                     }
                 } else {
-                    console.warn("No Dropbox PDF path available for review modal iframe (main PO).");
+                    console.warn("No Dropbox PDF path available for main PO.");
                     alert("No PDF link available for this PO.");
+                    pdfViewerFallbackMessage.classList.remove('hidden');
                 }
                 pdfViewerIframe.src = pdfSrc;
-            } else if (contentType === 'backups') {
+
+            } else if (contentType === 'relevantDocs') { // Renamed from 'backups'
                 pdfDisplayArea.classList.add('hidden');
-                backupDocsDisplayArea.classList.remove('hidden');
-                viewBackupDocsButton.classList.add('btn-primary');
-                viewBackupDocsButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
+                relevantDocsDisplayArea.classList.remove('hidden');
+                viewRelevantDocsButton.classList.add('btn-primary');
+                viewRelevantDocsButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 viewPoPdfButton.classList.remove('btn-primary');
                 viewPoPdfButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-                backupDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Fetching backup documents...</p>';
+                relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Loading relevant documents...</p>';
 
-                const backupPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
-                if (backupPaths.length > 0) {
+                const relevantDocPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
+                if (relevantDocPaths.length > 0) {
                     let contentHtml = '';
-                    for (const path of backupPaths) {
+                    for (const path of relevantDocPaths) {
                         let viewableLink = path;
                         let isEmbeddable = false;
+                        const fileDetails = Path(path); 
+                        const ext = fileDetails.suffix.toLowerCase();
 
                         if (typeof viewableLink === 'string' && viewableLink.startsWith("https://")) {
                             isEmbeddable = true;
-                             // Apply ?raw=1 logic only if it's a standard Dropbox shared link, not other temp links
                             if ((viewableLink.includes("dropbox.com/s/") || viewableLink.includes("dropbox.com/scl/fi/")) &&
                                 !viewableLink.includes("raw=1") && !viewableLink.includes("dl=1")) {
-                                let [base, params] = viewableLink.split('?');
-                                let newQuery = "raw=1";
-                                if (params) {
-                                    const existingParams = params.split('&').filter(p => !p.startsWith('dl='));
-                                    if (existingParams.length > 0) {
-                                        newQuery += "&" + existingParams.join('&');
-                                    }
+                                const urlParts = viewableLink.split('?');
+                                viewableLink = urlParts[0] + "?raw=1";
+                                if (urlParts.length > 1) {
+                                     const otherParams = urlParts[1].split('&').filter(p => !p.startsWith('dl=')&& !p.startsWith('rlkey='));
+                                     if(otherParams.length > 0) viewableLink += "&" + otherParams.join('&');
                                 }
-                                viewableLink = base + "?" + newQuery.replace(/&&+/, '&').replace(/&$/, '');
-                                console.log("Converted shared Dropbox link to raw for backup PDF:", viewableLink);
+                                console.log("Converted relevant doc shared link to raw:", viewableLink);
                             } else {
-                                 console.log("Using backup doc link as is (temporary or already raw/dl):", viewableLink);
+                                console.log("Using relevant doc link as is (temp or already raw):", viewableLink);
                             }
                         } else if (typeof viewableLink === 'string' && viewableLink.startsWith("/")) {
-                            console.warn("Direct Dropbox path for backup document:", viewableLink);
                             isEmbeddable = false; // Cannot embed direct paths
+                            console.warn("Direct Dropbox path for relevant document:", viewableLink);
                         } else {
-                            console.warn("Unknown backup document link format:", viewableLink);
-                            isEmbeddable = false;
+                             isEmbeddable = false;
+                             console.warn("Unknown relevant document link format:", viewableLink);
                         }
-
-                        const fileDetails = Path(path); // Path utility should handle URLs or paths
-                        const ext = fileDetails.suffix.toLowerCase();
+                        
+                        contentHtml += `<div class="doc-item">`;
+                        contentHtml += `<p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>`;
 
                         if (isEmbeddable) {
                             if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-                                contentHtml += `<img src="${viewableLink}" alt="${fileDetails.name}" class="mb-4 border rounded">`;
+                                contentHtml += `<img src="${viewableLink}" alt="${fileDetails.name}">`;
                             } else if (ext === '.pdf') {
-                                // For backup PDFs, give slightly less vertical space if needed, or adjust iframe-container padding
-                                contentHtml += `<div class="iframe-container mb-4" style="padding-top: 100%;"><iframe src="${viewableLink}" title="${fileDetails.name}"></iframe></div>`;
+                                contentHtml += `<div class="iframe-container my-2"><iframe src="${viewableLink}" title="${fileDetails.name}"></iframe></div>`;
+                                contentHtml += `<p class="text-xs text-slate-500 text-center">If PDF doesn't display, it may have started downloading.</p>`;
                             } else {
-                                contentHtml += `<div class="p-2 border rounded mb-2 bg-white">
-                                                    <p class="font-medium text-sm truncate" title="${path}">${fileDetails.name}</p>
-                                                    <a href="${viewableLink}" target="_blank" class="text-xs text-cyan-600 hover:underline">View/Download File (Unknown Type)</a>
-                                                </div>`;
+                                contentHtml += `<a href="${viewableLink}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">View/Download File (Unknown Type)</a>`;
                             }
                         } else {
-                             contentHtml += `<div class="p-2 border rounded mb-2 bg-white">
-                                                <p class="font-medium text-sm truncate" title="${path}">${fileDetails.name}</p>
-                                                <p class="text-xs text-slate-500">Direct preview not available. Path: ${path}</p>
-                                                ${ path.startsWith("/") ? `<a href="https://www.dropbox.com/home${path}" target="_blank" class="text-xs text-cyan-600 hover:underline">Open in Dropbox (requires login)</a>` : '' }
-                                            </div>`;
+                            contentHtml += `<p class="text-xs text-red-500">Preview not available.</p>`;
+                            if (typeof path === 'string' && path.startsWith("/")) { // Only offer Dropbox link if it's an actual path
+                                contentHtml += `<a href="https://www.dropbox.com/home${path}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Open in Dropbox (requires login)</a>`;
+                            } else {
+                                contentHtml += `<a href="${path}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Download File</a>`;
+                            }
                         }
+                        contentHtml += `</div>`;
                     }
-                    backupDocsDisplayArea.innerHTML = contentHtml || '<p class="text-center text-slate-500">No viewable backup documents found or links could not be generated.</p>';
+                    relevantDocsDisplayArea.innerHTML = contentHtml || '<p class="text-center text-slate-500">No viewable relevant documents found or links could not be generated.</p>';
                 } else {
-                    backupDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">No backup documents associated with this PO.</p>';
+                    relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">No relevant documents associated with this PO.</p>';
                 }
             }
         }
@@ -1191,20 +1202,20 @@
                     const url = new URL(filepathOrUrl);
                     const pathnameParts = url.pathname.split('/');
                     nameToParse = pathnameParts[pathnameParts.length - 1];
-                } catch (e) { // Fallback if URL parsing fails for some reason
+                } catch (e) { 
                     const parts = filepathOrUrl.split(/[\\/]/);
                     nameToParse = parts[parts.length - 1];
                 }
-            } else { // If it's a local path or direct Dropbox path
+            } else { 
                  const parts = filepathOrUrl.split(/[\\/]/);
                  nameToParse = parts[parts.length - 1];
             }
 
             nameToParse = nameToParse || 'unknown_file';
-            const name = decodeURIComponent(nameToParse); // Decode URI components like %20
+            const name = decodeURIComponent(nameToParse); 
             const dotIndex = name.lastIndexOf('.');
             const stem = dotIndex > -1 ? name.substring(0, dotIndex) : name;
-            const suffix = dotIndex > -1 ? name.substring(dotIndex).toLowerCase() : ''; // Standardize suffix
+            const suffix = dotIndex > -1 ? name.substring(dotIndex).toLowerCase() : ''; 
             return { name, stem, suffix };
         };
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
@@ -1225,11 +1236,15 @@
             document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
         function closeReviewModal() {
-            currentEditingPODataForModal = null; // Clear context on close
+            currentEditingPODataForModal = null; 
             document.getElementById('reviewModal').classList.add('hidden');
             document.getElementById('reviewModal').classList.remove('flex');
-            document.getElementById('pdfViewer').src = 'about:blank';
-            document.getElementById('backupDocsDisplayArea').innerHTML = '';
+            const pdfViewer = document.getElementById('pdfViewer');
+            if (pdfViewer) pdfViewer.src = 'about:blank';
+            const relevantDocsArea = document.getElementById('relevantDocsDisplayArea');
+            if(relevantDocsArea) relevantDocsArea.innerHTML = '';
+            const pdfFallbackMsg = document.getElementById('pdfViewerFallbackMessage');
+            if(pdfFallbackMsg) pdfFallbackMsg.classList.add('hidden');
         }
         async function submitPOChanges(isApproval) {
             const appToken = localStorage.getItem('app_token');
@@ -1248,16 +1263,13 @@
             poDataForRegen.job_number = document.getElementById('editJobNumber').value;
             poDataForRegen.project_name = document.getElementById('editProjectName').value;
             
-            // IMPORTANT: For regeneration, the backend needs the *original, persistent* Dropbox paths for backup docs,
-            // not the temporary https:// links that might be in `editBackupDocsPaths.value` if it was populated for display.
-            // The backend will re-fetch the _Data.json which contains these persistent paths.
-            // So, we can send an empty array or the current value of editBackupDocsPaths (which might be https links).
-            // The backend `regenerate_po_endpoint` has been updated to re-fetch the _Data.json to get the correct persistent paths.
-            // We can still send the current value of `editBackupDocsPaths` as a hint, but backend logic will prioritize re-fetched original paths.
+            // For regeneration, backend should re-fetch the _Data.json for persistent backup paths.
+            // So, what we send here for 'backup_document_original_dropbox_paths' is less critical for re-download,
+            // but we should still send what the form has. The backend handles getting the correct persistent paths.
             try {
                 poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]");
             } catch (e) {
-                poDataForRegen.backup_document_original_dropbox_paths = []; // Send empty if parsing fails
+                poDataForRegen.backup_document_original_dropbox_paths = []; 
                 console.error("Error parsing backup_document_original_dropbox_paths for regeneration submission:", e);
             }
 
