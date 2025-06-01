@@ -508,7 +508,7 @@
             console.log("handleGetStartedClick called with plan:", plan);
             if (isAuthenticated && currentUser) {
                 console.log("User already authenticated. Proceeding to create new PO batch.");
-                promptForDropboxToken();
+                promptForDropboxToken(); // This was the missing function call
             } else {
                 console.log("User not authenticated. Initiating Google Sign-In.");
                 signInWithGoogle();
@@ -637,7 +637,7 @@
                     signInWithGoogle();
                 }
             }
-            updateActiveTabButton(tabName); // Pass tabName
+            updateActiveTabButton(tabName);
 
             if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
                 const mobileMenu = document.getElementById('mobileMenu');
@@ -647,8 +647,73 @@
             }
         }
 
-        function updateActiveTabButton(activeTabName) { // Ensure parameter is named consistently
-            if (typeof activeTabName !== 'string') { // Defensive check
+        // RE-ADDED promptForDropboxToken function
+        function promptForDropboxToken() {
+            if (!isAuthenticated) {
+                alert("Please sign in first to create a new PO batch.");
+                return;
+            }
+            document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
+            document.getElementById('processingSection').style.display = 'block';
+            document.getElementById('step0_token_input').classList.remove('hidden');
+            document.getElementById('step1_configure_job').classList.add('hidden');
+            document.getElementById('step2_processing_docs').classList.add('hidden');
+            document.getElementById('progressSection').classList.remove('expanded');
+            document.getElementById('inputJobNumber').value = '';
+            document.getElementById('inputProjectName').value = '';
+            updateJobContextDisplay_Processing("N/A", "N/A");
+            updateActiveStepIndicator('token');
+            updateActiveTabButton('processingSection'); // Pass the target tab name
+        }
+
+        function updateActiveStepIndicator(activeStepName) {
+            const indicators = {
+                'token': document.getElementById('tokenStepIndicator').querySelector('div'),
+                'configure': document.getElementById('configureStepIndicator').querySelector('div'),
+                'process': document.getElementById('processDocsStepIndicator').querySelector('div')
+            };
+            const activeClass = 'bg-cyan-600 text-white';
+            const inactiveClass = 'bg-slate-300 text-slate-500';
+            const completedClass = 'bg-green-500 text-white';
+
+            for (const step in indicators) {
+                indicators[step].className = `w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg mb-2 sm:mb-3 transition-all duration-300 ${inactiveClass}`;
+                if (step === 'token') indicators[step].innerHTML = '1';
+                if (step === 'configure') indicators[step].innerHTML = '2';
+                if (step === 'process') indicators[step].innerHTML = '3';
+            }
+
+            if (activeStepName === 'token') {
+                indicators.token.className = indicators.token.className.replace(inactiveClass, activeClass);
+            } else if (activeStepName === 'configure') {
+                indicators.token.className = indicators.token.className.replace(inactiveClass, completedClass);
+                indicators.token.innerHTML = '✓';
+                indicators.configure.className = indicators.configure.className.replace(inactiveClass, activeClass);
+            } else if (activeStepName === 'process') {
+                indicators.token.className = indicators.token.className.replace(inactiveClass, completedClass);
+                indicators.token.innerHTML = '✓';
+                indicators.configure.className = indicators.configure.className.replace(inactiveClass, completedClass);
+                indicators.configure.innerHTML = '✓';
+                indicators.process.className = indicators.process.className.replace(inactiveClass, activeClass);
+            }
+        }
+
+        function submitDropboxToken() {
+            const token = document.getElementById('dropboxAccessTokenInput').value.trim();
+            if (!token) {
+                alert("Please enter your Dropbox Access Token.");
+                return;
+            }
+            dropboxAccessToken = token;
+            console.log("Dropbox Token Submitted:", dropboxAccessToken ? "Token Present" : "Token Missing/Empty");
+
+            document.getElementById('step0_token_input').classList.add('hidden');
+            document.getElementById('step1_configure_job').classList.remove('hidden');
+            updateActiveStepIndicator('configure');
+        }
+
+        function updateActiveTabButton(activeTabName) {
+            if (typeof activeTabName !== 'string') {
                 console.warn("updateActiveTabButton called with invalid activeTabName:", activeTabName);
                 return;
             }
@@ -1017,6 +1082,14 @@
                 return;
             }
 
+            if (!dropboxAccessToken) { // Crucial check for proxy URLs
+                alert("Error: Dropbox session token is missing. Cannot view documents.");
+                if (pdfViewerIframe) pdfViewerIframe.src = 'about:blank';
+                if (relevantDocsDisplayArea) relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: Dropbox session token missing.</p>';
+                if (pdfViewerFallbackMessage) pdfViewerFallbackMessage.classList.remove('hidden');
+                return;
+            }
+            
             pdfViewerFallbackMessage.classList.add('hidden');
 
             if (contentType === 'pdf') {
@@ -1028,15 +1101,10 @@
                 viewRelevantDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
 
                 let pdfSrc = 'about:blank';
+                // This field should now contain the *actual* Dropbox path from the backend
                 const actualDropboxPathForMainPDF = poDataForDisplay.generated_draft_po_pdf_path_dropbox;
+                console.log("Attempting to view main PO PDF. Actual Dropbox Path:", actualDropboxPathForMainPDF);
 
-                if (!dropboxAccessToken) { // Check if dropboxAccessToken is available
-                    console.error("Dropbox access token is missing. Cannot construct proxy URL.");
-                    alert("Error: Dropbox session token missing. Cannot view PDF.");
-                    pdfViewerFallbackMessage.classList.remove('hidden');
-                    pdfViewerIframe.src = pdfSrc; // which is about:blank
-                    return;
-                }
 
                 if (actualDropboxPathForMainPDF && typeof actualDropboxPathForMainPDF === 'string' && actualDropboxPathForMainPDF.startsWith("/")) {
                     pdfSrc = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(actualDropboxPathForMainPDF)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
@@ -1057,13 +1125,10 @@
                 viewPoPdfButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Loading relevant documents...</p>';
 
-                if (!dropboxAccessToken) {
-                    console.error("Dropbox access token is missing. Cannot construct proxy URLs for relevant docs.");
-                    relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: Dropbox session token missing. Cannot view documents.</p>';
-                    return;
-                }
-
+                // These paths should be the *actual* Dropbox paths
                 const relevantDocActualPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
+                console.log("Relevant doc actual paths for proxy:", relevantDocActualPaths);
+
                 if (relevantDocActualPaths.length > 0) {
                     let contentHtml = '';
                     for (const actualPath of relevantDocActualPaths) {
@@ -1078,7 +1143,7 @@
                              let downloadDisplayLink = typeof actualPath === 'string' ? actualPath : "Invalid Path";
                              contentHtml += `<div class="doc-item">
                                                 <p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>
-                                                <p class="text-xs text-red-500">Cannot generate preview link for this item.</p>
+                                                <p class="text-xs text-red-500">Cannot generate preview link for this item (invalid path).</p>
                                                 <a href="${downloadDisplayLink}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Attempt Download</a>
                                             </div>`;
                              continue;
@@ -1088,6 +1153,7 @@
                         contentHtml += `<p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>`;
 
                         if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
+                             // The /view-pdf proxy endpoint needs to handle Content-Type for images to embed them
                              contentHtml += `<img src="${viewableLinkViaProxy}" alt="${fileDetails.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
                              contentHtml += `<p style="display:none;" class="text-xs text-red-500">Image preview failed. <a href="${viewableLinkViaProxy}" target="_blank" class="text-cyan-600 hover:underline">Download Image</a></p>`;
                         } else if (ext === '.pdf') {
