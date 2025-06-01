@@ -36,11 +36,71 @@
         .btn-primary:hover, .btn-accent:hover {
             background-color: #0891B2;
         }
-        .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; /* A4 Aspect Ratio */ }
-        .iframe-container iframe { position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none; }
+        
+        /* Modal Layout Adjustments */
+        .review-modal-content-area {
+            display: flex;
+            /* Default to column for smaller screens, row for larger */
+            flex-direction: column; 
+            min-height: 60vh; 
+            max-height: 75vh; 
+        }
+        @media (min-width: 1024px) { /* lg breakpoint in Tailwind */
+            .review-modal-content-area {
+                flex-direction: row;
+            }
+        }
 
+
+        #pdfDisplayArea, #relevantDocsDisplayArea {
+            flex: 1 1 100%; /* Full width on small screens */
+            height: 100%; 
+            overflow: hidden; /* Parent handles scroll if needed by its content */
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            #pdfDisplayArea, #relevantDocsDisplayArea {
+                flex: 1 1 60%; 
+                padding-right: 1rem; 
+            }
+        }
+
+
+        .review-modal-form-container {
+            width: 100%; /* Full width on small screens */
+            display: flex;
+            flex-direction: column;
+            overflow-y: hidden; 
+            height: 100%; 
+        }
+         @media (min-width: 1024px) { /* lg breakpoint */
+            .review-modal-form-container {
+                 flex: 1 1 40%;
+                 padding-left: 1rem; /* Add padding if it was removed from PDF area */
+            }
+        }
+
+        .review-modal-form-scrollable-content {
+            flex-grow: 1;
+            overflow-y: auto; 
+            padding-right: 0.5rem; 
+            padding-bottom: 1rem; 
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%; 
+            padding-top: 0; 
+        }
+        .iframe-container iframe {
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+        
         .relevant-docs-viewer {
-            height: 100%;
+            height: 100%; 
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -68,22 +128,12 @@
         .relevant-docs-viewer .doc-item p {
             margin-bottom: 0.25rem;
         }
-
-
-        .review-modal-content-area {
-            min-height: 60vh;
-            max-height: 70vh;
-            display: flex;
-            flex-direction: column;
-        }
         .review-modal-fixed-buttons {
-            position: sticky;
-            bottom: 0;
-            background-color: white;
             padding-top: 1rem;
             padding-bottom: 1.5rem;
             border-top: 1px solid #e2e8f0;
-            margin-top: auto;
+            margin-top: auto; 
+            background-color: white; 
         }
     </style>
 </head>
@@ -146,6 +196,7 @@
         </header>
 
         <main class="flex-1">
+            <!-- Hero Section -->
             <section id="heroSection" class="bg-white py-16 lg:py-20">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -191,6 +242,7 @@
                 </div>
             </section>
 
+            <!-- Features Section -->
             <section id="featuresSection" class="py-20 bg-slate-100 hidden">
                  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -240,6 +292,7 @@
                 </div>
             </section>
 
+            <!-- Pricing Section -->
             <section id="pricingSection" class="py-20 bg-white hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -289,6 +342,7 @@
                 </div>
             </section>
 
+            <!-- Processing Section -->
             <section id="processingSection" class="bg-slate-100 py-16 lg:py-20 hidden">
                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 max-w-4xl mx-auto">
@@ -355,6 +409,7 @@
                 </div>
             </section>
 
+            <!-- Purchase Orders Section -->
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center mb-8">
@@ -397,54 +452,66 @@
         </footer>
     </div>
 
-    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100]">
-        <div class="bg-white rounded-2xl p-6 md:p-8 max-w-6xl w-11/12 md:w-full mx-auto flex flex-col max-h-[95vh] overflow-hidden">
-            <div class="flex justify-between items-center mb-4 flex-shrink-0">
-                <h3 id="reviewModalTitle" class="po-wizard-title-font text-2xl font-bold text-cyan-700">Review Purchase Order</h3>
-                <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><span class="material-icons-outlined text-2xl">close</span></button>
+    <!-- Review Modal -->
+    <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100] p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full mx-auto flex flex-col max-h-[95vh] overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-4 md:p-6 border-b border-slate-200 flex-shrink-0">
+                <h3 id="reviewModalTitle" class="po-wizard-title-font text-xl md:text-2xl font-bold text-cyan-700">Review Purchase Order</h3>
+                <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-full">
+                    <span class="material-icons-outlined text-2xl">close</span>
+                </button>
             </div>
 
-            <div class="flex items-center space-x-2 mb-4 flex-shrink-0 border-b pb-2">
-                <button id="viewPoPdfButton" onclick="showReviewContent('pdf', currentEditingPODataForModal)" class="btn-primary px-3 py-1.5 text-sm rounded-md">View PO PDF</button>
+            <!-- Modal Tabs -->
+            <div class="p-4 md:px-6 md:pt-4 md:pb-2 border-b border-slate-200 flex-shrink-0">
+                <button id="viewPoPdfButton" onclick="showReviewContent('pdf', currentEditingPODataForModal)" class="btn-primary px-3 py-1.5 text-sm rounded-md mr-2">View PO PDF</button>
                 <button id="viewRelevantDocsButton" onclick="showReviewContent('relevantDocs', currentEditingPODataForModal)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 text-sm rounded-md">View Relevant Documents</button>
             </div>
 
-            <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8 flex-grow overflow-y-auto review-modal-content-area">
-                <div id="pdfDisplayArea" class="w-full lg:w-1/2 iframe-container">
+            <!-- Modal Content Area (Side-by-Side on lg screens) -->
+            <div class="review-modal-content-area flex-grow lg:flex-row p-4 md:p-6">
+                <!-- Left Side: PDF/Document Viewer -->
+                <div id="pdfDisplayArea" class="w-full lg:w-3/5 xl:w-2/3 iframe-container mb-4 lg:mb-0 lg:mr-4">
                     <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
-                    <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads or try the "View Relevant Documents" tab.</p>
+                    <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads.</p>
                 </div>
-                <div id="relevantDocsDisplayArea" class="w-full lg:w-1/2 relevant-docs-viewer hidden">
+                <div id="relevantDocsDisplayArea" class="w-full lg:w-3/5 xl:w-2/3 relevant-docs-viewer hidden mb-4 lg:mb-0 lg:mr-4">
                     <p class="text-center text-slate-500">Loading relevant documents...</p>
                 </div>
 
-                <div class="w-full lg:w-1/2 lg:max-h-full overflow-y-auto pr-2">
-                    <form id="reviewForm" class="space-y-4">
-                        <input type="hidden" id="editPoIdOnGrid"><input type="hidden" id="editOriginalPoPackageFilename"><input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths">
-                        <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500" readonly></div>
-                        <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                        <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
-                        <div class="grid grid-cols-2 gap-4"><div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div><div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div></div>
-                         <div class="grid grid-cols-2 gap-4"><div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div></div>
-                        <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                        <h4 class="text-md font-semibold text-cyan-700 pt-2">Line Items:</h4>
-                        <div id="editLineItemsContainer" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-md border-cyan-200"></div>
-                        <button type="button" onclick="addLineItemField()" class="text-sm text-cyan-600 hover:text-cyan-800">+ Add Line Item</button>
-                        <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                        <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
-                        <input type="hidden" id="editJobNumber" name="job_number"><input type="hidden" id="editProjectName" name="project_name">
-                    </form>
+                <!-- Right Side: Form & Buttons -->
+                <div class="review-modal-form-container w-full lg:w-2/5 xl:w-1/3">
+                    <div class="review-modal-form-scrollable-content">
+                        <form id="reviewForm" class="space-y-4">
+                            <input type="hidden" id="editPoIdOnGrid"><input type="hidden" id="editOriginalPoPackageFilename"><input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths">
+                            <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500" readonly></div>
+                            <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
+                            <div class="grid grid-cols-2 gap-4"><div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div><div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div></div>
+                             <div class="grid grid-cols-2 gap-4"><div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div></div>
+                            <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <h4 class="text-md font-semibold text-cyan-700 pt-2">Line Items:</h4>
+                            <div id="editLineItemsContainer" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-md border-cyan-200"></div>
+                            <button type="button" onclick="addLineItemField()" class="text-sm text-cyan-600 hover:text-cyan-800">+ Add Line Item</button>
+                            <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
+                            <input type="hidden" id="editJobNumber" name="job_number"><input type="hidden" id="editProjectName" name="project_name">
+                        </form>
+                    </div>
+                    <div class="review-modal-fixed-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                        <button onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">Save Changes & Regenerate PO</button>
+                        <button onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium">Approve PO</button>
+                        <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium">Cancel</button>
+                    </div>
                 </div>
-            </div>
-            <div class="review-modal-fixed-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-auto pt-4 flex-shrink-0">
-                <button onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">Save Changes & Regenerate PO</button>
-                <button onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium">Approve PO (Future)</button>
-                <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Paste the FULL JavaScript content from the previous corrected version here.
+        // Ensure promptForDropboxToken is defined and showReviewContent uses the backend proxy logic.
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
 
         let isAuthenticated = false;
@@ -508,7 +575,7 @@
             console.log("handleGetStartedClick called with plan:", plan);
             if (isAuthenticated && currentUser) {
                 console.log("User already authenticated. Proceeding to create new PO batch.");
-                promptForDropboxToken(); // This was the missing function call
+                promptForDropboxToken();
             } else {
                 console.log("User not authenticated. Initiating Google Sign-In.");
                 signInWithGoogle();
@@ -615,9 +682,9 @@
             }
         }
 
-        function showTab(tabName) {
+        function showTab(activeTabName) { 
             const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
-            const sectionId = tabName.endsWith('Section') ? tabName : tabName + 'Section';
+            const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
 
             if (protectedTabs.includes(sectionId) && !isAuthenticated) {
                 alert('Please sign in to access this feature.');
@@ -637,7 +704,7 @@
                     signInWithGoogle();
                 }
             }
-            updateActiveTabButton(tabName);
+            updateActiveTabButton(activeTabName); 
 
             if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
                 const mobileMenu = document.getElementById('mobileMenu');
@@ -646,8 +713,7 @@
                 }
             }
         }
-
-        // RE-ADDED promptForDropboxToken function
+        
         function promptForDropboxToken() {
             if (!isAuthenticated) {
                 alert("Please sign in first to create a new PO batch.");
@@ -663,8 +729,9 @@
             document.getElementById('inputProjectName').value = '';
             updateJobContextDisplay_Processing("N/A", "N/A");
             updateActiveStepIndicator('token');
-            updateActiveTabButton('processingSection'); // Pass the target tab name
+            updateActiveTabButton('processingSection');
         }
+
 
         function updateActiveStepIndicator(activeStepName) {
             const indicators = {
@@ -866,8 +933,15 @@
                     }
                     const data = await response.json();
                     let currentStepMessage = data.current_step || data.status;
-                    if (data.status === 'PROGRESS' && data.result && data.result.vendor_name) { currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`; }
-                    else if (data.status === 'PROGRESS' && data.result && data.result.current_step) { currentStepMessage = data.result.current_step; }
+                    // Check if vendor_name is already in current_step to avoid duplication
+                    // Ensure data.current_step is a string before calling .includes()
+                    if (data.status === 'PROGRESS' && data.result && data.result.vendor_name && 
+                        typeof data.current_step === 'string' && !data.current_step.includes(data.result.vendor_name)) { 
+                        currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`;
+                    } else if (data.status === 'PROGRESS' && data.result && data.result.current_step) { // Fallback if vendor_name isn't directly available
+                         currentStepMessage = data.result.current_step;
+                    }
+
                     updateProgressUI(data.progress_percent, currentStepMessage);
                     if (data.status === 'SUCCESS') { clearInterval(statusPollInterval); updateProgressUI(100, "Processing complete! POs generated."); if(stageSpinner) stageSpinner.style.display = 'none'; showTab('purchaseOrders'); }
                     else if (data.status === 'FAILURE') { clearInterval(statusPollInterval); const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); updateProgressUI(null, `Processing failed: ${failureDetails}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
@@ -1082,28 +1156,27 @@
                 return;
             }
 
-            if (!dropboxAccessToken) { // Crucial check for proxy URLs
-                alert("Error: Dropbox session token is missing. Cannot view documents.");
+             if (!dropboxAccessToken) {
+                alert("Error: Dropbox session token missing. Cannot view documents.");
                 if (pdfViewerIframe) pdfViewerIframe.src = 'about:blank';
                 if (relevantDocsDisplayArea) relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: Dropbox session token missing.</p>';
-                if (pdfViewerFallbackMessage) pdfViewerFallbackMessage.classList.remove('hidden');
+                if(pdfViewerFallbackMessage) pdfViewerFallbackMessage.classList.remove('hidden');
                 return;
             }
-            
+
             pdfViewerFallbackMessage.classList.add('hidden');
 
             if (contentType === 'pdf') {
                 pdfDisplayArea.classList.remove('hidden');
-                relevantDocsDisplayArea.classList.add('hidden');
+                relevantDocsDisplayArea.classList.add('hidden'); // Ensure this is hidden
                 viewPoPdfButton.classList.add('btn-primary');
                 viewPoPdfButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 viewRelevantDocsButton.classList.remove('btn-primary');
                 viewRelevantDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
 
                 let pdfSrc = 'about:blank';
-                // This field should now contain the *actual* Dropbox path from the backend
                 const actualDropboxPathForMainPDF = poDataForDisplay.generated_draft_po_pdf_path_dropbox;
-                console.log("Attempting to view main PO PDF. Actual Dropbox Path:", actualDropboxPathForMainPDF);
+                console.log("Attempting to view main PO PDF. Actual Dropbox Path from poDataForDisplay:", actualDropboxPathForMainPDF);
 
 
                 if (actualDropboxPathForMainPDF && typeof actualDropboxPathForMainPDF === 'string' && actualDropboxPathForMainPDF.startsWith("/")) {
@@ -1117,7 +1190,7 @@
                 pdfViewerIframe.src = pdfSrc;
 
             } else if (contentType === 'relevantDocs') {
-                pdfDisplayArea.classList.add('hidden');
+                pdfDisplayArea.classList.add('hidden'); // Ensure this is hidden
                 relevantDocsDisplayArea.classList.remove('hidden');
                 viewRelevantDocsButton.classList.add('btn-primary');
                 viewRelevantDocsButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
@@ -1125,7 +1198,6 @@
                 viewPoPdfButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Loading relevant documents...</p>';
 
-                // These paths should be the *actual* Dropbox paths
                 const relevantDocActualPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
                 console.log("Relevant doc actual paths for proxy:", relevantDocActualPaths);
 
@@ -1153,7 +1225,6 @@
                         contentHtml += `<p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>`;
 
                         if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-                             // The /view-pdf proxy endpoint needs to handle Content-Type for images to embed them
                              contentHtml += `<img src="${viewableLinkViaProxy}" alt="${fileDetails.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
                              contentHtml += `<p style="display:none;" class="text-xs text-red-500">Image preview failed. <a href="${viewableLinkViaProxy}" target="_blank" class="text-cyan-600 hover:underline">Download Image</a></p>`;
                         } else if (ext === '.pdf') {
@@ -1251,13 +1322,25 @@
             }
 
             if (poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => item.description || item.amount ); }
+            
+            let regenerationUrl = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+            let successMessage = 'PO successfully regenerated and updated!';
+
             if (isApproval) {
-                alert("PO Approval functionality is planned for a future update. For now, saving changes.");
+                console.log("Attempting to approve PO:", poDataForRegen.po_number);
+                // For now, we'll use a different endpoint for approval or add a flag
+                // Let's assume for now that "approving" also means regenerating with an "Approved" status.
+                // The backend /regenerate-po would need to be enhanced to handle an 'is_approved' flag.
+                // Or, we can call a dedicated /approve-po endpoint first, then regenerate if needed.
+                // For this iteration, let's simulate by adding a note and calling regenerate.
+                poDataForRegen.additional_notes = (poDataForRegen.additional_notes || "") + "\nPO APPROVED by " + (currentUser ? currentUser.displayName : "User") + " on " + new Date().toLocaleDateString();
+                poDataForRegen.status = "Approved"; // Add a status field
+                successMessage = 'PO successfully Approved and updated!';
             }
-            console.log("Submitting PO Data for Regeneration:", poDataForRegen);
+
+            console.log("Submitting PO Data:", poDataForRegen);
             try {
-                const url = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
-                const response = await fetch(url, {
+                const response = await fetch(regenerationUrl, { // Using the same regeneration URL for now
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1268,12 +1351,23 @@
                 if (response.status === 401) { signOut(); alert("Session expired. Please sign in."); return; }
                 if (response.status === 400) {
                     const errorData = await response.json();
-                    alert(`Error regenerating PO: ${errorData.detail || "Bad request."}`); return;
+                    alert(`Error processing PO: ${errorData.detail || "Bad request."}`); return;
                 }
-                if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to regenerate PO: ${response.statusText}`); }
-                alert('PO successfully ' + (isApproval ? 'approved (simulated) and' : '') + ' regenerated and updated!');
+                if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to process PO: ${response.statusText}`); }
+                
+                const updatedPOInfo = await response.json();
+
+                const indexToUpdate = allFetchedPOs.findIndex(po => po.po_id_on_grid === updatedPOInfo.po_id_on_grid);
+                if (indexToUpdate !== -1) {
+                    allFetchedPOs[indexToUpdate] = updatedPOInfo;
+                } else { // Should not happen if regenerating existing
+                    allFetchedPOs.push(updatedPOInfo);
+                }
+                renderPOGrid(allFetchedPOs); 
+
+
+                alert(successMessage);
                 closeReviewModal();
-                fetchGeneratedPOs();
             } catch (error) { console.error('Error submitting PO changes:', error); alert(`Error: ${error.message}`); }
         }
         document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
