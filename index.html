@@ -36,104 +36,122 @@
         .btn-primary:hover, .btn-accent:hover {
             background-color: #0891B2;
         }
-        
+
         /* Modal Layout Adjustments */
+        .review-modal-shell { /* Outer shell for the modal content */
+            display: flex;
+            flex-direction: column;
+            max-h-[95vh]; /* Overall max height */
+            width: 100%;
+        }
+
         .review-modal-content-area {
             display: flex;
-            /* Default to column for smaller screens, row for larger */
-            flex-direction: column; 
-            min-height: 60vh; 
-            max-height: 75vh; 
+            flex-direction: column; /* Stack viewer and form on small screens */
+            flex-grow: 1; /* Allow this area to grow and fill space */
+            overflow: hidden; /* Prevent this container from scrolling; inner parts will scroll */
         }
         @media (min-width: 1024px) { /* lg breakpoint in Tailwind */
             .review-modal-content-area {
-                flex-direction: row;
+                flex-direction: row; /* Side-by-side for larger screens */
             }
         }
 
-
+        /* PDF/Document Viewer Area */
         #pdfDisplayArea, #relevantDocsDisplayArea {
-            flex: 1 1 100%; /* Full width on small screens */
-            height: 100%; 
-            overflow: hidden; /* Parent handles scroll if needed by its content */
+            flex-shrink: 0; /* Prevent shrinking on small screens when stacked */
+            width: 100%;    /* Full width when stacked */
         }
-        @media (min-width: 1024px) { /* lg breakpoint */
+        @media (min-width: 1024px) {
             #pdfDisplayArea, #relevantDocsDisplayArea {
-                flex: 1 1 60%; 
-                padding-right: 1rem; 
+                flex: 1 1 60%; /* Viewer takes 60% width on large screens */
+                max-width: 60%; /* Explicit max width */
+                height: auto; /* Let content determine height, or set fixed if needed */
+                min-height: 400px; /* Minimum height for viewer */
+                padding-right: 1rem; /* Space between viewer and form */
             }
-        }
-
-
-        .review-modal-form-container {
-            width: 100%; /* Full width on small screens */
-            display: flex;
-            flex-direction: column;
-            overflow-y: hidden; 
-            height: 100%; 
-        }
-         @media (min-width: 1024px) { /* lg breakpoint */
-            .review-modal-form-container {
-                 flex: 1 1 40%;
-                 padding-left: 1rem; /* Add padding if it was removed from PDF area */
-            }
-        }
-
-        .review-modal-form-scrollable-content {
-            flex-grow: 1;
-            overflow-y: auto; 
-            padding-right: 0.5rem; 
-            padding-bottom: 1rem; 
         }
 
         .iframe-container {
             position: relative;
             width: 100%;
-            height: 100%; 
-            padding-top: 0; 
+            height: 0; /* Set height to 0 for padding-top trick */
+            padding-top: 141.42%; /* A4 Aspect Ratio for PDF like appearance */
+            border: 1px solid #e2e8f0; /* Add a border for clarity */
+            background-color: #f9fafb; /* Light background for empty iframe */
         }
-        .iframe-container iframe {
+        .iframe-container.image-viewer { /* For images in relevant docs */
+             padding-top: 75%; /* Or some other aspect ratio appropriate for images */
+        }
+        .iframe-container iframe, .iframe-container img { /* img added for relevant docs */
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             width: 100%; height: 100%;
             border: none;
+            object-fit: contain; /* For images to fit well */
         }
-        
+
+
+        /* Relevant Documents Viewer Specifics */
         .relevant-docs-viewer {
-            height: 100%; 
-            overflow-y: auto;
+            height: 100%; /* Fill its flex container space */
+            overflow-y: auto; /* Allow scrolling if content overflows */
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            padding: 1rem;
+            padding: 0.5rem; /* Reduced padding slightly */
             border: 1px solid #e2e8f0;
             border-radius: 0.5rem;
             background-color: #f9fafb;
         }
-        .relevant-docs-viewer img {
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-         .relevant-docs-viewer .doc-item {
+        .relevant-docs-viewer .doc-item {
             padding: 0.75rem;
             border: 1px solid #e2e8f0;
             border-radius: 0.375rem;
             background-color: #ffffff;
             box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
         }
-        .relevant-docs-viewer .doc-item p {
-            margin-bottom: 0.25rem;
+        .relevant-docs-viewer .doc-item p { margin-bottom: 0.25rem; }
+        .relevant-docs-viewer .doc-item img {
+            max-width: 100%; height: auto; border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block; margin-bottom: 0.5rem;
+        }
+        .relevant-docs-viewer .doc-item .iframe-container { /* Specific iframe container for relevant docs */
+            padding-top: 100%; /* Adjust as needed, e.g., for portrait PDF */
+            margin-bottom: 0.5rem;
+        }
+
+
+        /* Form Area on the Right */
+        .review-modal-form-container {
+            flex-shrink: 0; /* Prevent shrinking on small screens */
+            width: 100%;    /* Full width when stacked */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Parent handles its own overflow context */
+            margin-top: 1rem; /* Space when stacked */
+        }
+        @media (min-width: 1024px) {
+            .review-modal-form-container {
+                flex: 1 1 40%; /* Form takes 40% on large screens */
+                max-width: 40%;
+                height: auto; /* Let its content determine height */
+                margin-top: 0;
+                padding-left: 1rem; /* Space from viewer */
+            }
+        }
+        .review-modal-form-scrollable-content {
+            flex-grow: 1; /* Takes available space above buttons */
+            overflow-y: auto; /* This part scrolls */
+            padding-right: 0.5rem; /* Space for scrollbar */
         }
         .review-modal-fixed-buttons {
+            flex-shrink: 0; /* Prevent buttons from shrinking */
             padding-top: 1rem;
-            padding-bottom: 1.5rem;
+            padding-bottom: 1.5rem; /* Adjusted from px-0 pb-0 */
             border-top: 1px solid #e2e8f0;
-            margin-top: auto; 
-            background-color: white; 
+            margin-top: auto; /* Pushes to bottom of form container */
+            background-color: white;
         }
     </style>
 </head>
@@ -454,7 +472,7 @@
 
     <!-- Review Modal -->
     <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100] p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full mx-auto flex flex-col max-h-[95vh] overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full mx-auto flex flex-col max-h-[95vh] review-modal-shell">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-4 md:p-6 border-b border-slate-200 flex-shrink-0">
                 <h3 id="reviewModalTitle" class="po-wizard-title-font text-xl md:text-2xl font-bold text-cyan-700">Review Purchase Order</h3>
@@ -470,18 +488,18 @@
             </div>
 
             <!-- Modal Content Area (Side-by-Side on lg screens) -->
-            <div class="review-modal-content-area flex-grow lg:flex-row p-4 md:p-6">
+            <div class="review-modal-content-area flex-grow p-4 md:p-6">
                 <!-- Left Side: PDF/Document Viewer -->
-                <div id="pdfDisplayArea" class="w-full lg:w-3/5 xl:w-2/3 iframe-container mb-4 lg:mb-0 lg:mr-4">
+                <div id="pdfDisplayArea" class="iframe-container mb-4 lg:mb-0"> 
                     <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
                     <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads.</p>
                 </div>
-                <div id="relevantDocsDisplayArea" class="w-full lg:w-3/5 xl:w-2/3 relevant-docs-viewer hidden mb-4 lg:mb-0 lg:mr-4">
+                <div id="relevantDocsDisplayArea" class="relevant-docs-viewer hidden mb-4 lg:mb-0"> 
                     <p class="text-center text-slate-500">Loading relevant documents...</p>
                 </div>
 
                 <!-- Right Side: Form & Buttons -->
-                <div class="review-modal-form-container w-full lg:w-2/5 xl:w-1/3">
+                <div class="review-modal-form-container">
                     <div class="review-modal-form-scrollable-content">
                         <form id="reviewForm" class="space-y-4">
                             <input type="hidden" id="editPoIdOnGrid"><input type="hidden" id="editOriginalPoPackageFilename"><input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths">
@@ -510,8 +528,6 @@
     </div>
 
     <script>
-        // Paste the FULL JavaScript content from the previous corrected version here.
-        // Ensure promptForDropboxToken is defined and showReviewContent uses the backend proxy logic.
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
 
         let isAuthenticated = false;
@@ -682,7 +698,7 @@
             }
         }
 
-        function showTab(activeTabName) { 
+        function showTab(activeTabName) {
             const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
             const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
 
@@ -704,7 +720,7 @@
                     signInWithGoogle();
                 }
             }
-            updateActiveTabButton(activeTabName); 
+            updateActiveTabButton(activeTabName);
 
             if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
                 const mobileMenu = document.getElementById('mobileMenu');
@@ -933,15 +949,13 @@
                     }
                     const data = await response.json();
                     let currentStepMessage = data.current_step || data.status;
-                    // Check if vendor_name is already in current_step to avoid duplication
-                    // Ensure data.current_step is a string before calling .includes()
-                    if (data.status === 'PROGRESS' && data.result && data.result.vendor_name && 
-                        typeof data.current_step === 'string' && !data.current_step.includes(data.result.vendor_name)) { 
-                        currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`;
-                    } else if (data.status === 'PROGRESS' && data.result && data.result.current_step) { // Fallback if vendor_name isn't directly available
-                         currentStepMessage = data.result.current_step;
+                     if (!(data.status === 'PROGRESS' && data.result && data.result.vendor_name && typeof data.current_step === 'string' && data.current_step.toLowerCase().includes(data.result.vendor_name.toLowerCase()))) {
+                        if (data.status === 'PROGRESS' && data.result && data.result.vendor_name) {
+                            currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`;
+                        } else if (data.status === 'PROGRESS' && data.result && data.result.current_step && !data.current_step) {
+                             currentStepMessage = data.result.current_step;
+                        }
                     }
-
                     updateProgressUI(data.progress_percent, currentStepMessage);
                     if (data.status === 'SUCCESS') { clearInterval(statusPollInterval); updateProgressUI(100, "Processing complete! POs generated."); if(stageSpinner) stageSpinner.style.display = 'none'; showTab('purchaseOrders'); }
                     else if (data.status === 'FAILURE') { clearInterval(statusPollInterval); const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); updateProgressUI(null, `Processing failed: ${failureDetails}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
@@ -1168,7 +1182,7 @@
 
             if (contentType === 'pdf') {
                 pdfDisplayArea.classList.remove('hidden');
-                relevantDocsDisplayArea.classList.add('hidden'); // Ensure this is hidden
+                relevantDocsDisplayArea.classList.add('hidden'); 
                 viewPoPdfButton.classList.add('btn-primary');
                 viewPoPdfButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 viewRelevantDocsButton.classList.remove('btn-primary');
@@ -1190,7 +1204,7 @@
                 pdfViewerIframe.src = pdfSrc;
 
             } else if (contentType === 'relevantDocs') {
-                pdfDisplayArea.classList.add('hidden'); // Ensure this is hidden
+                pdfDisplayArea.classList.add('hidden'); 
                 relevantDocsDisplayArea.classList.remove('hidden');
                 viewRelevantDocsButton.classList.add('btn-primary');
                 viewRelevantDocsButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
@@ -1304,64 +1318,67 @@
                 signOut(); return;
             }
              if (!dropboxAccessToken) {
-                alert("Dropbox session token is missing for regeneration. Please go through the 'Connect to Dropbox' step again for the current job.");
+                alert("Dropbox session token is missing for regeneration/approval. Please go through the 'Connect to Dropbox' step again for the current job.");
                 promptForDropboxToken();
                 return;
             }
-            const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForRegen = {};
-            formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = []; } while (poDataForRegen.aggregated_line_items.length <= index) { poDataForRegen.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForRegen.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForRegen.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForRegen[key] = value === 'true'; } else { poDataForRegen[key] = value; } } });
-            poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
-            poDataForRegen.job_number = document.getElementById('editJobNumber').value;
-            poDataForRegen.project_name = document.getElementById('editProjectName').value;
-
-            try {
-                poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]");
-            } catch (e) {
-                poDataForRegen.backup_document_original_dropbox_paths = [];
-                console.error("Error parsing backup_document_original_dropbox_paths for regeneration submission:", e);
+            const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForBackend = {};
+            formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForBackend.aggregated_line_items) { poDataForBackend.aggregated_line_items = []; } while (poDataForBackend.aggregated_line_items.length <= index) { poDataForBackend.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForBackend.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForBackend.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForBackend[key] = value === 'true'; } else { poDataForBackend[key] = value; } } });
+            poDataForBackend.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
+            poDataForBackend.job_number = document.getElementById('editJobNumber').value;
+            poDataForBackend.project_name = document.getElementById('editProjectName').value;
+            
+            // Get original persistent paths for backup docs (these were stored from currentEditingPODataForModal)
+            // The backend will use these original paths for re-download if needed.
+            if(currentEditingPODataForModal && currentEditingPODataForModal.backup_document_original_dropbox_paths) {
+                 poDataForBackend.backup_document_original_dropbox_paths = currentEditingPODataForModal.backup_document_original_dropbox_paths.filter(p => typeof p === 'string' && p.startsWith("/"));
+            } else {
+                 poDataForBackend.backup_document_original_dropbox_paths = [];
             }
 
-            if (poDataForRegen.aggregated_line_items) { poDataForRegen.aggregated_line_items = poDataForRegen.aggregated_line_items.filter(item => item.description || item.amount ); }
+
+            if (poDataForBackend.aggregated_line_items) { poDataForBackend.aggregated_line_items = poDataForBackend.aggregated_line_items.filter(item => item.description || item.amount ); }
             
-            let regenerationUrl = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+            let endpointUrl = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
             let successMessage = 'PO successfully regenerated and updated!';
+            let requestBody = { po_data_to_regenerate: poDataForBackend };
+
 
             if (isApproval) {
-                console.log("Attempting to approve PO:", poDataForRegen.po_number);
-                // For now, we'll use a different endpoint for approval or add a flag
-                // Let's assume for now that "approving" also means regenerating with an "Approved" status.
-                // The backend /regenerate-po would need to be enhanced to handle an 'is_approved' flag.
-                // Or, we can call a dedicated /approve-po endpoint first, then regenerate if needed.
-                // For this iteration, let's simulate by adding a note and calling regenerate.
-                poDataForRegen.additional_notes = (poDataForRegen.additional_notes || "") + "\nPO APPROVED by " + (currentUser ? currentUser.displayName : "User") + " on " + new Date().toLocaleDateString();
-                poDataForRegen.status = "Approved"; // Add a status field
-                successMessage = 'PO successfully Approved and updated!';
+                console.log("Attempting to approve PO:", poDataForBackend.po_number);
+                endpointUrl = `${API_BASE_URL}/approve-po/${poDataForBackend.job_number}/${poDataForBackend.po_number}?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                // The /approve-po endpoint might only need the PO ID, or it might take update data.
+                // For now, assuming it can handle the same data structure as regenerate for simplicity,
+                // and will set the "status" field internally on the backend.
+                poDataForBackend.status = "Approved"; // For optimistic UI update
+                requestBody = { po_data_to_update_with_approval: poDataForBackend }; 
+                successMessage = 'PO successfully Approved and status updated!';
             }
 
-            console.log("Submitting PO Data:", poDataForRegen);
+            console.log("Submitting PO Data to:", endpointUrl, "with body:", requestBody);
             try {
-                const response = await fetch(regenerationUrl, { // Using the same regeneration URL for now
+                const response = await fetch(endpointUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${appToken}`
                     },
-                    body: JSON.stringify({ po_data_to_regenerate: poDataForRegen })
+                    body: JSON.stringify(requestBody)
                 });
                 if (response.status === 401) { signOut(); alert("Session expired. Please sign in."); return; }
-                if (response.status === 400) {
-                    const errorData = await response.json();
-                    alert(`Error processing PO: ${errorData.detail || "Bad request."}`); return;
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({detail: `HTTP error ${response.status}`}));
+                    alert(`Error processing PO: ${errorData.detail || response.statusText}`);
+                    return;
                 }
-                if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.detail || `Failed to process PO: ${response.statusText}`); }
                 
                 const updatedPOInfo = await response.json();
 
                 const indexToUpdate = allFetchedPOs.findIndex(po => po.po_id_on_grid === updatedPOInfo.po_id_on_grid);
                 if (indexToUpdate !== -1) {
                     allFetchedPOs[indexToUpdate] = updatedPOInfo;
-                } else { // Should not happen if regenerating existing
-                    allFetchedPOs.push(updatedPOInfo);
+                } else { 
+                    allFetchedPOs.push(updatedPOInfo); 
                 }
                 renderPOGrid(allFetchedPOs); 
 
