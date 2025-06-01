@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <title>PO Wizard - Film Production Invoice Processing</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
         body {
@@ -38,7 +39,7 @@
         .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 141.42%; /* A4 Aspect Ratio */ }
         .iframe-container iframe { position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none; }
 
-        .relevant-docs-viewer { /* Renamed from backup-docs-viewer */
+        .relevant-docs-viewer {
             height: 100%;
             overflow-y: auto;
             display: flex;
@@ -49,12 +50,12 @@
             border-radius: 0.5rem;
             background-color: #f9fafb;
         }
-        .relevant-docs-viewer img { /* Renamed from backup-docs-viewer */
+        .relevant-docs-viewer img {
             max-width: 100%;
             height: auto;
             border: 1px solid #ccc;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: block; /* Ensure img is block for proper layout */
+            display: block;
             margin-bottom: 0.5rem;
         }
          .relevant-docs-viewer .doc-item {
@@ -71,7 +72,7 @@
 
         .review-modal-content-area {
             min-height: 60vh;
-            max-height: 70vh; 
+            max-height: 70vh;
             display: flex;
             flex-direction: column;
         }
@@ -411,7 +412,7 @@
             <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8 flex-grow overflow-y-auto review-modal-content-area">
                 <div id="pdfDisplayArea" class="w-full lg:w-1/2 iframe-container">
                     <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
-                    <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads.</p>
+                    <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads or try the "View Relevant Documents" tab.</p>
                 </div>
                 <div id="relevantDocsDisplayArea" class="w-full lg:w-1/2 relevant-docs-viewer hidden">
                     <p class="text-center text-slate-500">Loading relevant documents...</p>
@@ -703,7 +704,7 @@
                 return;
             }
             dropboxAccessToken = token;
-            console.log("Dropbox Token Submitted:", dropboxAccessToken ? "Token Present" : "Token Missing/Empty"); // Log if token is present
+            console.log("Dropbox Token Submitted:", dropboxAccessToken ? "Token Present" : "Token Missing/Empty");
 
             document.getElementById('step0_token_input').classList.add('hidden');
             document.getElementById('step1_configure_job').classList.remove('hidden');
@@ -713,7 +714,7 @@
         function updateActiveTabButton(activeTabName) {
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             let targetButtonText = "";
-            const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
+            const sectionId = activeTabName.endsWith('Section') ? tabName : tabName + 'Section';
 
             if (sectionId === 'heroSection') targetButtonText = null;
             else if (sectionId === 'featuresSection') targetButtonText = 'Features';
@@ -983,6 +984,7 @@
             card.innerHTML = `<img src="assets/POWizard.png" alt="PO Preview" class="w-full h-32 object-contain p-2 bg-white"> <div class="p-4 md:p-6"><div class="flex flex-col h-full"><div class="flex justify-between items-start mb-3"><h4 class="text-md md:text-lg font-semibold text-cyan-700">${po.po_number}</h4><span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}<span>${statusDisplay}</span></span></div><p class="text-sm text-slate-700 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p><p class="text-lg md:text-xl font-bold text-cyan-700 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p><p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p><div class="mt-auto flex space-x-2"><button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button></div></div></div>`;
             return card;
         }
+
         async function openReviewModal(poIdOnGrid) {
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
@@ -995,11 +997,11 @@
                 return;
             }
             console.log("Opening review for PO ID on Grid:", poIdOnGrid);
-            const poDataToReview = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
+            const poDataFromGrid = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid);
 
-            if (poDataToReview && poDataToReview.full_po_data_for_review) {
-                currentEditingPODataForModal = poDataToReview.full_po_data_for_review;
-                console.log("Using pre-fetched full_po_data_for_review for modal.");
+            if (poDataFromGrid && poDataFromGrid.full_po_data_for_review) {
+                currentEditingPODataForModal = poDataFromGrid.full_po_data_for_review;
+                console.log("Using pre-fetched full_po_data_for_review for modal:", currentEditingPODataForModal);
             } else {
                  try {
                     console.log(`Fetching full data for PO: Job ${currentJobNumberContext}, PO ${poIdOnGrid} using Dropbox token.`);
@@ -1018,8 +1020,9 @@
                     }
                     currentEditingPODataForModal = await response.json();
                     console.log("Fetched full_po_data_for_review for modal:", currentEditingPODataForModal);
+
                     const indexInAllPOs = allFetchedPOs.findIndex(p => p.po_id_on_grid === poIdOnGrid);
-                    if (indexInAllPOs !== -1) {
+                    if (indexInAllPOs !== -1 && allFetchedPOs[indexInAllPOs]) {
                         allFetchedPOs[indexInAllPOs].full_po_data_for_review = currentEditingPODataForModal;
                     }
 
@@ -1061,11 +1064,11 @@
 
         async function showReviewContent(contentType, poDataForDisplay) {
             const pdfDisplayArea = document.getElementById('pdfDisplayArea');
-            const relevantDocsDisplayArea = document.getElementById('relevantDocsDisplayArea'); // Renamed
+            const relevantDocsDisplayArea = document.getElementById('relevantDocsDisplayArea');
             const pdfViewerIframe = document.getElementById('pdfViewer');
             const pdfViewerFallbackMessage = document.getElementById('pdfViewerFallbackMessage');
             const viewPoPdfButton = document.getElementById('viewPoPdfButton');
-            const viewRelevantDocsButton = document.getElementById('viewRelevantDocsButton'); // Renamed ID
+            const viewRelevantDocsButton = document.getElementById('viewRelevantDocsButton');
 
             if (!poDataForDisplay) {
                 console.error("showReviewContent called without poDataForDisplay.");
@@ -1073,8 +1076,8 @@
                 if (relevantDocsDisplayArea) relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: PO data not available.</p>';
                 return;
             }
-            
-            pdfViewerFallbackMessage.classList.add('hidden'); // Hide fallback by default
+
+            pdfViewerFallbackMessage.classList.add('hidden');
 
             if (contentType === 'pdf') {
                 pdfDisplayArea.classList.remove('hidden');
@@ -1085,45 +1088,27 @@
                 viewRelevantDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
 
                 let pdfSrc = 'about:blank';
-                if (poDataForDisplay.generated_draft_po_pdf_path_dropbox) {
-                    let dbxLink = poDataForDisplay.generated_draft_po_pdf_path_dropbox;
-                    console.log("Raw PO PDF link from backend:", dbxLink);
+                const actualDropboxPathForMainPDF = poDataForDisplay.generated_draft_po_pdf_path_dropbox;
 
-                    if (typeof dbxLink === 'string' && dbxLink.startsWith("https://")) {
-                        // Check if it's a Dropbox share link that needs ?raw=1
-                        if ((dbxLink.includes("dropbox.com/s/") || dbxLink.includes("dropbox.com/scl/fi/")) &&
-                            !dbxLink.includes("raw=1") && !dbxLink.includes("dl=1")) {
-                            
-                            const urlParts = dbxLink.split('?');
-                            pdfSrc = urlParts[0] + "?raw=1";
-                            if (urlParts.length > 1) {
-                                const otherParams = urlParts[1].split('&').filter(p => !p.startsWith('dl=') && !p.startsWith('rlkey=')); // rlkey can also interfere
-                                if(otherParams.length > 0) pdfSrc += "&" + otherParams.join('&');
-                            }
-                            console.log("Converted PO PDF shared link to raw:", pdfSrc);
-                        } else {
-                            pdfSrc = dbxLink; // Assume it's a temporary direct link or already raw
-                             console.log("Using PO PDF link as is (temp or already raw):", pdfSrc);
-                        }
-                    } else if (typeof dbxLink === 'string' && dbxLink.startsWith("/")) {
-                        console.warn("Direct Dropbox path for main PO PDF, cannot embed directly:", dbxLink);
-                        alert("Cannot directly preview this PDF. The backend provided a direct path instead of a viewable link for the main PO.");
-                        pdfViewerFallbackMessage.classList.remove('hidden');
-                        pdfSrc = 'about:blank';
-                    } else {
-                        console.warn("Unknown or invalid Dropbox link format for main PO PDF:", dbxLink);
-                        alert("The link for the PO PDF is invalid or missing.");
-                        pdfViewerFallbackMessage.classList.remove('hidden');
-                        pdfSrc = 'about:blank';
-                    }
+                if (!dropboxAccessToken) {
+                    console.error("Dropbox access token is missing. Cannot construct proxy URL.");
+                    alert("Error: Dropbox session token missing. Cannot view PDF.");
+                    pdfViewerFallbackMessage.classList.remove('hidden');
+                    pdfViewerIframe.src = pdfSrc;
+                    return;
+                }
+
+                if (actualDropboxPathForMainPDF && typeof actualDropboxPathForMainPDF === 'string' && actualDropboxPathForMainPDF.startsWith("/")) {
+                    pdfSrc = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(actualDropboxPathForMainPDF)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                    console.log("Setting main PO PDF viewer src to backend proxy:", pdfSrc);
                 } else {
-                    console.warn("No Dropbox PDF path available for main PO.");
-                    alert("No PDF link available for this PO.");
+                    console.warn("Invalid or missing actual Dropbox path for main PO PDF:", actualDropboxPathForMainPDF);
+                    alert("Cannot display main PO PDF. Path is invalid or missing.");
                     pdfViewerFallbackMessage.classList.remove('hidden');
                 }
                 pdfViewerIframe.src = pdfSrc;
 
-            } else if (contentType === 'relevantDocs') { // Renamed from 'backups'
+            } else if (contentType === 'relevantDocs') {
                 pdfDisplayArea.classList.add('hidden');
                 relevantDocsDisplayArea.classList.remove('hidden');
                 viewRelevantDocsButton.classList.add('btn-primary');
@@ -1132,56 +1117,46 @@
                 viewPoPdfButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
                 relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Loading relevant documents...</p>';
 
-                const relevantDocPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
-                if (relevantDocPaths.length > 0) {
-                    let contentHtml = '';
-                    for (const path of relevantDocPaths) {
-                        let viewableLink = path;
-                        let isEmbeddable = false;
-                        const fileDetails = Path(path); 
-                        const ext = fileDetails.suffix.toLowerCase();
+                if (!dropboxAccessToken) {
+                    console.error("Dropbox access token is missing. Cannot construct proxy URLs for relevant docs.");
+                    relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: Dropbox session token missing. Cannot view documents.</p>';
+                    return;
+                }
 
-                        if (typeof viewableLink === 'string' && viewableLink.startsWith("https://")) {
-                            isEmbeddable = true;
-                            if ((viewableLink.includes("dropbox.com/s/") || viewableLink.includes("dropbox.com/scl/fi/")) &&
-                                !viewableLink.includes("raw=1") && !viewableLink.includes("dl=1")) {
-                                const urlParts = viewableLink.split('?');
-                                viewableLink = urlParts[0] + "?raw=1";
-                                if (urlParts.length > 1) {
-                                     const otherParams = urlParts[1].split('&').filter(p => !p.startsWith('dl=')&& !p.startsWith('rlkey='));
-                                     if(otherParams.length > 0) viewableLink += "&" + otherParams.join('&');
-                                }
-                                console.log("Converted relevant doc shared link to raw:", viewableLink);
-                            } else {
-                                console.log("Using relevant doc link as is (temp or already raw):", viewableLink);
-                            }
-                        } else if (typeof viewableLink === 'string' && viewableLink.startsWith("/")) {
-                            isEmbeddable = false; // Cannot embed direct paths
-                            console.warn("Direct Dropbox path for relevant document:", viewableLink);
+                const relevantDocActualPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
+                if (relevantDocActualPaths.length > 0) {
+                    let contentHtml = '';
+                    for (const actualPath of relevantDocActualPaths) {
+                        const fileDetails = Path(actualPath);
+                        const ext = fileDetails.suffix.toLowerCase();
+                        let viewableLinkViaProxy = '';
+
+                        if (typeof actualPath === 'string' && actualPath.startsWith("/")) {
+                            viewableLinkViaProxy = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(actualPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
                         } else {
-                             isEmbeddable = false;
-                             console.warn("Unknown relevant document link format:", viewableLink);
+                             console.warn("Invalid actual Dropbox path for relevant document:", actualPath);
+                             let downloadDisplayLink = typeof actualPath === 'string' ? actualPath : "Invalid Path";
+                             contentHtml += `<div class="doc-item">
+                                                <p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>
+                                                <p class="text-xs text-red-500">Cannot generate preview link for this item.</p>
+                                                <a href="${downloadDisplayLink}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Attempt Download</a>
+                                            </div>`;
+                             continue;
                         }
-                        
+
                         contentHtml += `<div class="doc-item">`;
                         contentHtml += `<p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>`;
 
-                        if (isEmbeddable) {
-                            if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-                                contentHtml += `<img src="${viewableLink}" alt="${fileDetails.name}">`;
-                            } else if (ext === '.pdf') {
-                                contentHtml += `<div class="iframe-container my-2"><iframe src="${viewableLink}" title="${fileDetails.name}"></iframe></div>`;
-                                contentHtml += `<p class="text-xs text-slate-500 text-center">If PDF doesn't display, it may have started downloading.</p>`;
-                            } else {
-                                contentHtml += `<a href="${viewableLink}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">View/Download File (Unknown Type)</a>`;
-                            }
+                        if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
+                             // For images, the /view-pdf proxy will serve them if it handles image Content-Types
+                             contentHtml += `<img src="${viewableLinkViaProxy}" alt="${fileDetails.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
+                             contentHtml += `<p style="display:none;" class="text-xs text-red-500">Image preview failed. <a href="${viewableLinkViaProxy}" target="_blank" class="text-cyan-600 hover:underline">Download Image</a></p>`;
+                        } else if (ext === '.pdf') {
+                            contentHtml += `<div class="iframe-container my-2"><iframe src="${viewableLinkViaProxy}" title="${fileDetails.name}"></iframe></div>`;
+                            contentHtml += `<p class="text-xs text-slate-500 text-center">If PDF doesn't display, try downloading.</p>`;
+                            contentHtml += `<a href="${viewableLinkViaProxy}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Download PDF</a>`;
                         } else {
-                            contentHtml += `<p class="text-xs text-red-500">Preview not available.</p>`;
-                            if (typeof path === 'string' && path.startsWith("/")) { // Only offer Dropbox link if it's an actual path
-                                contentHtml += `<a href="https://www.dropbox.com/home${path}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Open in Dropbox (requires login)</a>`;
-                            } else {
-                                contentHtml += `<a href="${path}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Download File</a>`;
-                            }
+                            contentHtml += `<a href="${viewableLinkViaProxy}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Download File (${ext || 'Unknown Type'})</a>`;
                         }
                         contentHtml += `</div>`;
                     }
@@ -1202,20 +1177,20 @@
                     const url = new URL(filepathOrUrl);
                     const pathnameParts = url.pathname.split('/');
                     nameToParse = pathnameParts[pathnameParts.length - 1];
-                } catch (e) { 
+                } catch (e) {
                     const parts = filepathOrUrl.split(/[\\/]/);
                     nameToParse = parts[parts.length - 1];
                 }
-            } else { 
+            } else {
                  const parts = filepathOrUrl.split(/[\\/]/);
                  nameToParse = parts[parts.length - 1];
             }
 
             nameToParse = nameToParse || 'unknown_file';
-            const name = decodeURIComponent(nameToParse); 
+            const name = decodeURIComponent(nameToParse);
             const dotIndex = name.lastIndexOf('.');
             const stem = dotIndex > -1 ? name.substring(0, dotIndex) : name;
-            const suffix = dotIndex > -1 ? name.substring(dotIndex).toLowerCase() : ''; 
+            const suffix = dotIndex > -1 ? name.substring(dotIndex).toLowerCase() : '';
             return { name, stem, suffix };
         };
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
@@ -1236,7 +1211,7 @@
             document.getElementById('editTotalAmount').value = total.toFixed(2);
         }
         function closeReviewModal() {
-            currentEditingPODataForModal = null; 
+            currentEditingPODataForModal = null;
             document.getElementById('reviewModal').classList.add('hidden');
             document.getElementById('reviewModal').classList.remove('flex');
             const pdfViewer = document.getElementById('pdfViewer');
@@ -1262,14 +1237,11 @@
             poDataForRegen.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
             poDataForRegen.job_number = document.getElementById('editJobNumber').value;
             poDataForRegen.project_name = document.getElementById('editProjectName').value;
-            
-            // For regeneration, backend should re-fetch the _Data.json for persistent backup paths.
-            // So, what we send here for 'backup_document_original_dropbox_paths' is less critical for re-download,
-            // but we should still send what the form has. The backend handles getting the correct persistent paths.
+
             try {
                 poDataForRegen.backup_document_original_dropbox_paths = JSON.parse(document.getElementById('editBackupDocsPaths').value || "[]");
             } catch (e) {
-                poDataForRegen.backup_document_original_dropbox_paths = []; 
+                poDataForRegen.backup_document_original_dropbox_paths = [];
                 console.error("Error parsing backup_document_original_dropbox_paths for regeneration submission:", e);
             }
 
