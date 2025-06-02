@@ -13,6 +13,7 @@
         body {
             background-color: #F8FAFC;
             font-family: 'Inter', 'Noto Sans', sans-serif;
+            font-size: 0.95rem; /* Slightly smaller base font for the body */
         }
         .po-wizard-title-font {
             font-family: 'Poppins', sans-serif;
@@ -34,9 +35,9 @@
 
         .tab-button.active { background: #06B6D4; color: white; }
         .settings-tab-button.active {
-            border-color: #06B6D4; /* Tailwind cyan-500 */
+            border-color: #06B6D4; 
             color: #06B6D4;
-            background-color: #ecfeff; /* Tailwind cyan-50 */
+            background-color: #ecfeff; 
         }
         .settings-tab-content { display: none; }
         .settings-tab-content.active { display: block; }
@@ -50,127 +51,138 @@
             background-color: #0891B2;
         }
         .btn-primary:disabled, .btn-accent:disabled {
-            background-color: #94a3b8; /* slate-400 */
+            background-color: #94a3b8; 
             cursor: not-allowed;
         }
 
 
         /* Modal Layout Adjustments */
-        .review-modal-shell { /* Outer shell for the modal content */
+        .review-modal-shell { 
             display: flex;
             flex-direction: column;
-            max-h-[95vh]; /* Overall max height */
+            max-h-[95vh]; 
             width: 100%;
         }
 
         .review-modal-content-area {
             display: flex;
-            flex-direction: column; /* Stack viewer and form on small screens */
-            flex-grow: 1; /* Allow this area to grow and fill space */
-            overflow: hidden; /* Prevent this container from scrolling; inner parts will scroll */
+            flex-direction: column; 
+            flex-grow: 1; 
+            overflow: hidden; 
         }
-        @media (min-width: 1024px) { /* lg breakpoint in Tailwind */
+        @media (min-width: 1280px) { /* xl breakpoint for wider modal content */
             .review-modal-content-area {
-                flex-direction: row; /* Side-by-side for larger screens */
+                flex-direction: row; 
+            }
+            #pdfDisplayArea { 
+                flex: 0 0 55%; /* PDF viewer takes 55% */
+                max-width: 55%; 
+            }
+            .review-modal-form-container {
+                flex: 0 0 45%; /* Form takes 45% */
+                max-width: 45%;
+            }
+        }
+         @media (min-width: 1024px) and (max-width: 1279px) { /* lg breakpoint */
+            .review-modal-content-area {
+                flex-direction: row;
+            }
+            #pdfDisplayArea {
+                flex: 0 0 50%; 
+                max-width: 50%;
+            }
+            .review-modal-form-container {
+                flex: 0 0 50%;
+                max-width: 50%;
             }
         }
 
-        /* PDF/Document Viewer Area */
-        #pdfDisplayArea, #relevantDocsDisplayArea {
-            flex-shrink: 0; /* Prevent shrinking on small screens when stacked */
-            width: 100%;    /* Full width when stacked */
+
+        #pdfDisplayArea { 
+            flex-shrink: 0; 
+            width: 100%;    
         }
         @media (min-width: 1024px) {
-            #pdfDisplayArea, #relevantDocsDisplayArea {
-                flex: 1 1 60%; /* Viewer takes 60% width on large screens */
-                max-width: 60%; /* Explicit max width */
-                height: auto; /* Let content determine height, or set fixed if needed */
-                min-height: 400px; /* Minimum height for viewer */
-                padding-right: 1rem; /* Space between viewer and form */
+            #pdfDisplayArea {
+                height: auto; 
+                min-height: 400px; 
+                padding-right: 1rem; 
             }
         }
 
         .iframe-container {
             position: relative;
             width: 100%;
-            height: 0; /* Set height to 0 for padding-top trick */
-            padding-top: 141.42%; /* A4 Aspect Ratio for PDF like appearance */
-            border: 1px solid #e2e8f0; /* Add a border for clarity */
-            background-color: #f9fafb; /* Light background for empty iframe */
+            height: 0; 
+            padding-top: 141.42%; 
+            border: 1px solid #e2e8f0; 
+            background-color: #f9fafb; 
         }
-        .iframe-container.image-viewer { /* For images in relevant docs */
-             padding-top: 75%; /* Or some other aspect ratio appropriate for images */
-        }
-        .iframe-container iframe, .iframe-container img { /* img added for relevant docs */
+        .iframe-container iframe { 
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             width: 100%; height: 100%;
             border: none;
-            object-fit: contain; /* For images to fit well */
         }
 
-
-        /* Relevant Documents Viewer Specifics */
-        .relevant-docs-viewer {
-            height: 100%; /* Fill its flex container space */
-            overflow-y: auto; /* Allow scrolling if content overflows */
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 0.5rem; /* Reduced padding slightly */
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            background-color: #f9fafb;
-        }
-        .relevant-docs-viewer .doc-item {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            background-color: #ffffff;
-            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
-        }
-        .relevant-docs-viewer .doc-item p { margin-bottom: 0.25rem; }
-        .relevant-docs-viewer .doc-item img {
-            max-width: 100%; height: auto; border: 1px solid #ccc;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block; margin-bottom: 0.5rem;
-        }
-        .relevant-docs-viewer .doc-item .iframe-container { /* Specific iframe container for relevant docs */
-            padding-top: 100%; /* Adjust as needed, e.g., for portrait PDF */
-            margin-bottom: 0.5rem;
-        }
-
-
-        /* Form Area on the Right */
         .review-modal-form-container {
-            flex-shrink: 0; /* Prevent shrinking on small screens */
-            width: 100%;    /* Full width when stacked */
+            flex-shrink: 0; 
+            width: 100%;    
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Parent handles its own overflow context */
-            margin-top: 1rem; /* Space when stacked */
+            overflow: hidden; 
+            margin-top: 1rem; 
         }
         @media (min-width: 1024px) {
             .review-modal-form-container {
-                flex: 1 1 40%; /* Form takes 40% on large screens */
-                max-width: 40%;
-                height: auto; /* Let its content determine height */
+                height: auto; 
                 margin-top: 0;
-                padding-left: 1rem; /* Space from viewer */
+                padding-left: 1rem; 
             }
         }
         .review-modal-form-scrollable-content {
-            flex-grow: 1; /* Takes available space above buttons */
-            overflow-y: auto; /* This part scrolls */
-            padding-right: 0.5rem; /* Space for scrollbar */
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding-right: 0.5rem; 
+            font-size: 0.875rem; /* Smaller font for form content */
         }
+        .review-modal-form-scrollable-content label {
+            font-size: 0.8rem; /* Even smaller for labels */
+            margin-bottom: 0.125rem; /* Tighter spacing */
+        }
+        .review-modal-form-scrollable-content input,
+        .review-modal-form-scrollable-content textarea,
+        .review-modal-form-scrollable-content select {
+            font-size: 0.875rem; /* Smaller font for form inputs */
+            padding: 0.4rem 0.6rem; /* Adjust padding */
+        }
+        #editLineItemsContainer .grid { /* Target line item rows specifically */
+            margin-bottom: 0.25rem; /* Tighter spacing between line item rows */
+        }
+        #editLineItemsContainer input {
+             font-size: 0.75rem; /* Specific smaller size for line items */
+             padding: 0.25rem 0.4rem; /* Tighter padding for line items */
+        }
+        #editLineItemsContainer button { /* Smaller remove button */
+            padding: 0.1rem 0.25rem;
+            font-size: 0.7rem;
+        }
+
+
         .review-modal-fixed-buttons {
-            flex-shrink: 0; /* Prevent buttons from shrinking */
-            padding-top: 1rem;
-            padding-bottom: 1.5rem; 
+            flex-shrink: 0; 
+            padding-top: 0.75rem; /* Reduced padding */
+            padding-bottom: 1rem; /* Reduced padding */
             border-top: 1px solid #e2e8f0;
-            margin-top: auto; /* Pushes to bottom of form container */
+            margin-top: auto; 
             background-color: white;
         }
+        .review-modal-fixed-buttons button {
+            font-size: 0.875rem; /* Smaller text for buttons */
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+        }
+
         .loading-spinner-small {
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-left-color: #ffffff;
@@ -181,42 +193,44 @@
             display: inline-block;
             margin-left: 8px;
         }
+        .loading-spinner-large { 
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #ffffff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.2s linear infinite;
+        }
          @keyframes spin { to { transform: rotate(360deg); } }
 
-         /* Styling for PO card checkbox */
         .po-card-checkbox-area {
             position: absolute;
             top: 8px;
             right: 8px;
-            z-index: 10; /* Ensure it's above other card content */
+            z-index: 10; 
         }
         .po-card-checkbox-area input[type="checkbox"] {
             width: 20px;
             height: 20px;
             cursor: pointer;
         }
-        /* Styling for Loading Animation Video */
         #loadingAnimationVideo {
-            width: 100%; /* Make it take full width of its container */
-            max-width: 320px; /* Max width to keep it reasonable, adjust as needed */
-            height: auto; /* Maintain aspect ratio */
+            width: 100%; 
+            max-width: 320px; 
+            height: auto; 
             margin-left: auto;
             margin-right: auto;
-            margin-bottom: 1rem; /* Space below video before progress bar */
-            display: block; /* Ensure it behaves as a block for margin auto to work */
+            margin-bottom: 0.5rem; /* Reduced space below video */
+            display: block; 
         }
-        /* Hero section image styling - remove border, shadow, adjust size */
         .hero-comparison-image {
-            width: 80%; /* Make image smaller than full width of parent */
-            max-width: 300px; /* Max width for the images */
-            height: auto; /* Maintain aspect ratio */
+            width: 80%; 
+            max-width: 260px; 
+            height: auto; 
             margin-left: auto;
             margin-right: auto;
-            margin-bottom: 1.5rem; /* Space below the image, increased a bit */
-            /* border-radius: 0.75rem; REMOVED */
-            /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); REMOVED */
+            margin-bottom: 1rem; 
         }
-        /* User dropdown menu */
         .dropdown { position: relative; display: inline-block; }
         .dropdown-content {
             display: none;
@@ -224,22 +238,72 @@
             background-color: #ffffff;
             min-width: 160px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 100; /* Ensure it's above other content */
-            right: 0; /* Align to the right */
-            border-radius: 0.375rem; /* rounded-md */
-            border: 1px solid #e2e8f0; /* slate-200 */
+            z-index: 100; 
+            right: 0; 
+            border-radius: 0.375rem; 
+            border: 1px solid #e2e8f0; 
         }
         .dropdown-content button {
-            color: #374151; /* slate-700 */
+            color: #374151; 
             padding: 10px 14px;
             text-decoration: none;
             display: block;
             width: 100%;
             text-align: left;
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem; 
         }
-        .dropdown-content button:hover { background-color: #f3f4f6; /* slate-100 */ }
+        .dropdown-content button:hover { background-color: #f3f4f6; }
         .dropdown:hover .dropdown-content { display: block; }
+
+        #actionOverlayModal {
+            display: none; 
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.8); /* slate-900 with opacity */
+            z-index: 200; 
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        #actionOverlayModal.active {
+            display: flex;
+        }
+        .action-overlay-content {
+            background-color: #ffffff; 
+            color: #1e293b; /* slate-800 */
+            padding: 2rem;
+            border-radius: 0.5rem; 
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            min-width: 300px;
+            max-width: 90vw;
+        }
+         .action-overlay-content .loading-spinner-large { /* Use Tailwind colors for consistency if possible */
+            border-left-color: #06B6D4; /* cyan-500 */
+            margin: 0 auto 1rem auto; /* Center spinner */
+        }
+        .action-overlay-content p {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+        .action-overlay-content .error-message {
+            color: #ef4444; /* Tailwind red-500 */
+            font-weight: 500;
+        }
+         .action-overlay-content .success-message {
+            color: #10b981; /* Tailwind green-500 */
+            font-weight: 500;
+        }
+        .action-overlay-content button.close-overlay-btn {
+            margin-top: 1.5rem;
+            background-color: #64748b; /* slate-500 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+        }
+         .action-overlay-content button.close-overlay-btn:hover {
+            background-color: #475569; /* slate-600 */
+        }
 
     </style>
 </head>
@@ -293,7 +357,7 @@
                     <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Features</button>
                     <button onclick="showTab('pricing'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Pricing</button>
                     <button onclick="showTab('purchaseOrders'); toggleMobileMenu();" id="mobileProcessingNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">My POs / Process</button>
-                    <button onclick="showTab('settings'); toggleMobileMenu();" id="mobileSettingsNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base hidden">Settings</button> <!-- Hidden initially -->
+                    <button onclick="showTab('settings'); toggleMobileMenu();" id="mobileSettingsNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base hidden">Settings</button> 
                     <hr class="my-2"/>
                     <div id="authActionsUnauthenticated_mobile">
                         <button onclick="signInWithGoogle(); toggleMobileMenu();" class="block w-full text-center btn-primary px-3 py-3 rounded-lg font-medium text-base">
@@ -325,17 +389,15 @@
                         <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto mb-16">
                             <div class="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
                                 <img src="assets/before.png" alt="The old way of processing POs" class="hero-comparison-image">
-                                <!-- Removed icon -->
-                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4 mt-4">The Old Way</h3>
-                                <ul class="text-slate-700 space-y-2 text-left">
+                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4 mt-2">The Old Way</h3>
+                                <ul class="text-slate-700 space-y-2 text-left text-sm">
                                     <li>• Hours manually entering vendor data</li><li>• Hunting through receipts and invoices</li><li>• Formatting POs one by one</li><li>• Missing deadlines for production companies</li><li>• Losing track of expenses</li>
                                 </ul>
                             </div>
                             <div class="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
                                 <img src="assets/after.png" alt="The PO Wizard way of processing POs" class="hero-comparison-image">
-                                 <!-- Removed icon -->
-                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4 mt-4">The PO Wizard Way</h3>
-                                <ul class="text-slate-700 space-y-2 text-left">
+                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4 mt-2">The PO Wizard Way</h3>
+                                <ul class="text-slate-700 space-y-2 text-left text-sm">
                                     <li>• AI scans all your documents automatically</li><li>• Extracts vendor info, amounts, dates</li><li>• Generates professional POs instantly</li><li>• Ready for production company submission</li><li>• Complete audit trail maintained</li>
                                 </ul>
                             </div>
@@ -359,7 +421,7 @@
                 </div>
             </section>
 
-            <!-- Features Section (unchanged) -->
+            <!-- Features Section -->
             <section id="featuresSection" class="py-20 bg-slate-100 hidden">
                  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -409,7 +471,7 @@
                 </div>
             </section>
 
-            <!-- Pricing Section (unchanged) -->
+            <!-- Pricing Section -->
             <section id="pricingSection" class="py-20 bg-white hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -667,10 +729,9 @@
         </footer>
     </div>
 
-    <!-- Review Modal (Unchanged from your previous working version) -->
+    <!-- Review Modal -->
     <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100] p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full mx-auto flex flex-col max-h-[95vh] review-modal-shell">
-            <!-- Modal Header -->
+        <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full mx-auto flex flex-col max-h-[95vh] review-modal-shell">
             <div class="flex justify-between items-center p-4 md:p-6 border-b border-slate-200 flex-shrink-0">
                 <h3 id="reviewModalTitle" class="po-wizard-title-font text-xl md:text-2xl font-bold text-cyan-700">Review Purchase Order</h3>
                 <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-full">
@@ -678,77 +739,75 @@
                 </button>
             </div>
 
-            <!-- Modal Tabs -->
-            <div class="p-4 md:px-6 md:pt-4 md:pb-2 border-b border-slate-200 flex-shrink-0">
-                <button id="viewPoPdfButton" onclick="showReviewContent('pdf', currentEditingPODataForModal)" class="btn-primary px-3 py-1.5 text-sm rounded-md mr-2">View PO PDF</button>
-                <button id="viewRelevantDocsButton" onclick="showReviewContent('relevantDocs', currentEditingPODataForModal)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 text-sm rounded-md">View Relevant Documents</button>
-            </div>
-
-            <!-- Modal Content Area (Side-by-Side on lg screens) -->
+            <!-- Modal Content Area -->
             <div class="review-modal-content-area flex-grow p-4 md:p-6">
-                <!-- Left Side: PDF/Document Viewer -->
                 <div id="pdfDisplayArea" class="iframe-container mb-4 lg:mb-0"> 
                     <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
                     <p id="pdfViewerFallbackMessage" class="text-xs text-slate-500 mt-1 text-center hidden">If PDF doesn't display, it may have started downloading. Check your browser downloads.</p>
                 </div>
-                <div id="relevantDocsDisplayArea" class="relevant-docs-viewer hidden mb-4 lg:mb-0"> 
-                    <p class="text-center text-slate-500">Loading relevant documents...</p>
-                </div>
-
-                <!-- Right Side: Form & Buttons -->
                 <div class="review-modal-form-container">
                     <div class="review-modal-form-scrollable-content">
-                        <form id="reviewForm" class="space-y-4">
+                        <form id="reviewForm" class="space-y-3">
                             <input type="hidden" id="editPoIdOnGrid"><input type="hidden" id="editOriginalPoPackageFilename"><input type="hidden" id="editBackupDocsPaths" name="backup_document_original_dropbox_paths">
-                            <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500" readonly></div>
-                            <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                            <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label for="editVendorPhone" class="block text-sm font-medium text-slate-700 mb-1">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                                <div><label for="editVendorContact" class="block text-sm font-medium text-slate-700 mb-1">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div><label for="editPoNumber" class="block text-xs font-medium text-slate-700 mb-0.5">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500" readonly></div>
+                            <div><label for="editVendor" class="block text-xs font-medium text-slate-700 mb-0.5">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div><label for="editVendorAddress" class="block text-xs font-medium text-slate-700 mb-0.5">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label for="editVendorPhone" class="block text-xs font-medium text-slate-700 mb-0.5">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editVendorContact" class="block text-xs font-medium text-slate-700 mb-0.5">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
                             </div>
-                             <div class="grid grid-cols-2 gap-4">
-                                <div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                                <div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                             <div class="grid grid-cols-2 gap-3">
+                                <div><label for="editVendorTIN" class="block text-xs font-medium text-slate-700 mb-0.5">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editPoDate" class="block text-xs font-medium text-slate-700 mb-0.5">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
                             </div>
-                             <div class="grid grid-cols-2 gap-4">
-                                <div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="true">Yes</option><option value="false">No</option></select></div>
-                                <div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
+                             <div class="grid grid-cols-2 gap-3">
+                                <div><label for="editHasW9" class="block text-xs font-medium text-slate-700 mb-0.5">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="true">Yes</option><option value="false">No</option></select></div>
+                                <div><label for="editIsIncorp" class="block text-xs font-medium text-slate-700 mb-0.5">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label for="editPaymentMethod" class="block text-sm font-medium text-slate-700 mb-1">Payment Method</label><input type="text" id="editPaymentMethod" name="payment_method_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                                <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label for="editPaymentMethod" class="block text-xs font-medium text-slate-700 mb-0.5">Payment Method</label><input type="text" id="editPaymentMethod" name="payment_method_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editInvoiceRef" class="block text-xs font-medium text-slate-700 mb-0.5">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
                             </div>
                             <h4 class="text-md font-semibold text-cyan-700 pt-2">Line Items:</h4>
-                            <div id="editLineItemsContainer" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-md border-cyan-200"></div>
+                            <div id="editLineItemsContainer" class="space-y-1"></div> <!-- Reduced space-y for tighter line items -->
                             <button type="button" onclick="addLineItemField()" class="text-sm text-cyan-600 hover:text-cyan-800">+ Add Line Item</button>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label for="editTaxAmount" class="block text-sm font-medium text-slate-700 mb-1">Tax Amount ($)</label><input type="text" id="editTaxAmount" name="tax_amount" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
-                                <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label for="editTaxAmount" class="block text-xs font-medium text-slate-700 mb-0.5">Tax Amount ($)</label><input type="text" id="editTaxAmount" name="tax_amount" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editTotalAmount" class="block text-xs font-medium text-slate-700 mb-0.5">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
                             </div>
-                            <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
+                            <div><label for="editAdditionalNotes" class="block text-xs font-medium text-slate-700 mb-0.5">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
                             <input type="hidden" id="editJobNumber" name="job_number"><input type="hidden" id="editProjectName" name="project_name">
                              <input type="hidden" id="editUserEmail" name="user_email"> 
                         </form>
                     </div>
                     <div class="review-modal-fixed-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                        <button id="reviewModalSaveChangesButton" onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">
+                        <button id="reviewModalSaveChangesButton" onclick="submitPOChanges(false)" class="flex-1 btn-primary font-medium">
                             Save Changes
                             <span class="loading-spinner-small hidden"></span>
                         </button>
-                        <button id="reviewModalApproveButton" onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium">
+                        <button id="reviewModalApproveButton" onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium">
                             Approve PO
                              <span class="loading-spinner-small hidden"></span>
                         </button>
-                        <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium">Cancel</button>
+                        <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium">Cancel</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Action Overlay Modal -->
+    <div id="actionOverlayModal">
+        <div class="action-overlay-content">
+            <div id="actionOverlaySpinner" class="loading-spinner-large"></div>
+            <p id="actionOverlayMessage">Processing...</p>
+            <button id="actionOverlayCloseButton" onclick="closeActionOverlay()" class="hidden close-overlay-btn">Close</button>
+        </div>
+    </div>
+
+
     <script>
-        const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1'; // Replace if different
+        const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1'; 
 
         let isAuthenticated = false;
         let currentJobNumberContext = "";
@@ -761,6 +820,12 @@
         let currentEditingPODataForModal = null; 
         let selectedPOIds = new Set();
 
+        const actionOverlayModal = getElem('actionOverlayModal');
+        const actionOverlaySpinner = getElem('actionOverlaySpinner');
+        const actionOverlayMessage = getElem('actionOverlayMessage');
+        const actionOverlayCloseButton = getElem('actionOverlayCloseButton');
+
+
         // --- DOM Element Functions ---
         function getElem(id) { return document.getElementById(id); }
 
@@ -768,7 +833,7 @@
         function updateAuthUI() {
             const unauthDesktop = getElem('authActionsUnauthenticated_desktop');
             const authDesktop = getElem('authActionsAuthenticated_desktop');
-            const userDisplayDesktopBtn = getElem('userDisplayName_desktop'); // This is the button for the dropdown
+            const userDisplayDesktopBtn = getElem('userDisplayName_desktop'); 
             const unauthMobile = getElem('authActionsUnauthenticated_mobile');
             const authMobile = getElem('authActionsAuthenticated_mobile');
             const userDisplayMobile = getElem('userDisplayName_mobile');
@@ -780,15 +845,14 @@
             if (isAuthenticated && currentUser) {
                 unauthDesktop.classList.add('hidden');
                 authDesktop.classList.remove('hidden');
-                authDesktop.classList.add('flex'); // Make sure flex is applied
-                // Update the button text for the dropdown, not a separate span
+                authDesktop.classList.add('flex'); 
                 userDisplayDesktopBtn.childNodes[0].nodeValue = `Welcome, ${currentUser.displayName}! `;
 
 
                 unauthMobile.classList.add('hidden');
                 authMobile.classList.remove('hidden');
-                authMobile.style.display = 'flex'; // Ensure it's flex
-                authMobile.classList.add('flex-col', 'space-y-2'); // Add classes if not present
+                authMobile.style.display = 'flex'; 
+                authMobile.classList.add('flex-col', 'space-y-2'); 
                 userDisplayMobile.textContent = `Welcome, ${currentUser.displayName}!`;
 
                 procNavButton.textContent = 'My POs';
@@ -937,7 +1001,7 @@
                 history.pushState("", document.title, window.location.pathname + window.location.search);
             }
         }
-        // --- Tab and Settings Tab Navigation ---
+        
         function showTab(activeTabName) {
             const protectedTabs = ['processingSection', 'purchaseOrdersSection', 'settingsSection'];
             const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
@@ -952,7 +1016,7 @@
                 if (sectionId === 'purchaseOrdersSection') {
                      alert('Please connect to Dropbox to view or process Purchase Orders.');
                 }
-                promptForDropboxToken(); // This will switch to processingSection and show token input
+                promptForDropboxToken(); 
                 return;
             }
 
@@ -974,7 +1038,7 @@
                 }
             } else if (sectionId === 'settingsSection') {
                 populateSettingsForm();
-                showSettingsTab('profile'); // Default to profile tab
+                showSettingsTab('profile'); 
             }
             updateActiveTabButton(activeTabName);
 
@@ -1081,7 +1145,6 @@
             else if (sectionId === 'featuresSection') targetButtonText = 'Features';
             else if (sectionId === 'pricingSection') targetButtonText = 'Pricing';
             else if (sectionId === 'settingsSection') {
-                // No main nav button for settings, it's in dropdown
                 targetButtonText = null; 
             }
             else if (sectionId === 'purchaseOrdersSection' || sectionId === 'processingSection') {
@@ -1535,50 +1598,20 @@
             if (currentEditingPODataForModal.aggregated_line_items && currentEditingPODataForModal.aggregated_line_items.length > 0) {
                 currentEditingPODataForModal.aggregated_line_items.forEach((item, index) => { addLineItemField(item); });
             } else {
-                addLineItemField();
+                addLineItemField(); // Add a blank one if none exist
             }
-            showReviewContent('pdf', currentEditingPODataForModal);
-            getElem('reviewModal').classList.remove('hidden');
-            getElem('reviewModal').classList.add('flex');
-        }
-
-        async function showReviewContent(contentType, poDataForDisplay) {
-            const pdfDisplayArea = getElem('pdfDisplayArea');
-            const relevantDocsDisplayArea = getElem('relevantDocsDisplayArea');
+            // Default to showing PDF, as tabs are removed
             const pdfViewerIframe = getElem('pdfViewer');
             const pdfViewerFallbackMessage = getElem('pdfViewerFallbackMessage');
-            const viewPoPdfButton = getElem('viewPoPdfButton');
-            const viewRelevantDocsButton = getElem('viewRelevantDocsButton');
-
-            if (!poDataForDisplay) {
-                console.error("showReviewContent called without poDataForDisplay.");
-                if (pdfViewerIframe) pdfViewerIframe.src = 'about:blank';
-                if (relevantDocsDisplayArea) relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: PO data not available.</p>';
-                return;
-            }
-
-             if (!dropboxAccessToken) {
+            if (!dropboxAccessToken) {
                 alert("Error: Dropbox session token missing. Cannot view documents.");
                 if (pdfViewerIframe) pdfViewerIframe.src = 'about:blank';
-                if (relevantDocsDisplayArea) relevantDocsDisplayArea.innerHTML = '<p class="text-center text-red-500">Error: Dropbox session token missing.</p>';
                 if(pdfViewerFallbackMessage) pdfViewerFallbackMessage.classList.remove('hidden');
-                return;
-            }
-
-            pdfViewerFallbackMessage.classList.add('hidden');
-
-            if (contentType === 'pdf') {
-                pdfDisplayArea.classList.remove('hidden');
-                relevantDocsDisplayArea.classList.add('hidden'); 
-                viewPoPdfButton.classList.add('btn-primary');
-                viewPoPdfButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-                viewRelevantDocsButton.classList.remove('btn-primary');
-                viewRelevantDocsButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-
+            } else {
+                 pdfViewerFallbackMessage.classList.add('hidden');
                 let pdfSrc = 'about:blank';
-                const actualDropboxPathForMainPDF = poDataForDisplay.generated_draft_po_pdf_path_dropbox;
-                console.log("Attempting to view main PO PDF. Actual Dropbox Path from poDataForDisplay:", actualDropboxPathForMainPDF);
-
+                const actualDropboxPathForMainPDF = currentEditingPODataForModal.generated_draft_po_pdf_path_dropbox;
+                console.log("Attempting to view main PO PDF. Actual Dropbox Path:", actualDropboxPathForMainPDF);
 
                 if (actualDropboxPathForMainPDF && typeof actualDropboxPathForMainPDF === 'string' && actualDropboxPathForMainPDF.startsWith("/")) {
                     pdfSrc = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(actualDropboxPathForMainPDF)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
@@ -1588,61 +1621,17 @@
                     alert("Cannot display main PO PDF. Path is invalid or missing.");
                     pdfViewerFallbackMessage.classList.remove('hidden');
                 }
-                pdfViewerIframe.src = pdfSrc;
-
-            } else if (contentType === 'relevantDocs') {
-                pdfDisplayArea.classList.add('hidden'); 
-                relevantDocsDisplayArea.classList.remove('hidden');
-                viewRelevantDocsButton.classList.add('btn-primary');
-                viewRelevantDocsButton.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-                viewPoPdfButton.classList.remove('btn-primary');
-                viewPoPdfButton.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');
-                relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">Loading relevant documents...</p>';
-
-                const relevantDocActualPaths = poDataForDisplay.backup_document_original_dropbox_paths || [];
-                console.log("Relevant doc actual paths for proxy:", relevantDocActualPaths);
-
-                if (relevantDocActualPaths.length > 0) {
-                    let contentHtml = '';
-                    for (const actualPath of relevantDocActualPaths) {
-                        const fileDetails = Path(actualPath);
-                        const ext = fileDetails.suffix.toLowerCase();
-                        let viewableLinkViaProxy = '';
-
-                        if (typeof actualPath === 'string' && actualPath.startsWith("/")) {
-                            viewableLinkViaProxy = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(actualPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
-                        } else {
-                             console.warn("Invalid actual Dropbox path for relevant document:", actualPath);
-                             let downloadDisplayLink = typeof actualPath === 'string' ? actualPath : "Invalid Path";
-                             contentHtml += `<div class="doc-item">
-                                                <p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>
-                                                <p class="text-xs text-red-500">Cannot generate preview link for this item (invalid path).</p>
-                                                <a href="${downloadDisplayLink}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Attempt Download</a>
-                                            </div>`;
-                             continue;
-                        }
-
-                        contentHtml += `<div class="doc-item">`;
-                        contentHtml += `<p class="font-medium text-sm truncate" title="${fileDetails.name}">${fileDetails.name}</p>`;
-
-                        if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-                             contentHtml += `<img src="${viewableLinkViaProxy}" alt="${fileDetails.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
-                             contentHtml += `<p style="display:none;" class="text-xs text-red-500">Image preview failed. <a href="${viewableLinkViaProxy}" target="_blank" class="text-cyan-600 hover:underline">Download Image</a></p>`;
-                        } else if (ext === '.pdf') {
-                            contentHtml += `<div class="iframe-container my-2"><iframe src="${viewableLinkViaProxy}" title="${fileDetails.name}"></iframe></div>`;
-                            contentHtml += `<p class="text-xs text-slate-500 text-center">If PDF doesn't display, try downloading.</p>`;
-                            contentHtml += `<a href="${viewableLinkViaProxy}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Download PDF</a>`;
-                        } else {
-                            contentHtml += `<a href="${viewableLinkViaProxy}" target="_blank" class="text-xs text-cyan-600 hover:underline block mt-1">Download File (${ext || 'Unknown Type'})</a>`;
-                        }
-                        contentHtml += `</div>`;
-                    }
-                    relevantDocsDisplayArea.innerHTML = contentHtml || '<p class="text-center text-slate-500">No viewable relevant documents found or links could not be generated.</p>';
-                } else {
-                    relevantDocsDisplayArea.innerHTML = '<p class="text-center text-slate-500">No relevant documents associated with this PO.</p>';
-                }
+                if(pdfViewerIframe) pdfViewerIframe.src = pdfSrc;
             }
+
+
+            getElem('reviewModal').classList.remove('hidden');
+            getElem('reviewModal').classList.add('flex');
         }
+
+        // Removed showReviewContent function as it's no longer needed with tabs gone.
+        // PDF is now loaded directly in openReviewModal.
+
         const Path = (filepathOrUrl) => {
             let nameToParse = filepathOrUrl;
             if (typeof filepathOrUrl !== 'string') {
@@ -1672,8 +1661,8 @@
         };
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
             const container = getElem('editLineItemsContainer'); const index = container.children.length;
-            const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
-            div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
+            const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-1 items-center'; // Reduced gap
+            div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-center focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-right line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-right line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700">Remove</button>`;
             container.appendChild(div); div.querySelectorAll('.line-item-calc').forEach(input => { input.addEventListener('input', updateTotalAmountFromLines); });
             updateTotalAmountFromLines();
         }
@@ -1693,19 +1682,35 @@
             getElem('reviewModal').classList.remove('flex');
             const pdfViewer = getElem('pdfViewer');
             if (pdfViewer) pdfViewer.src = 'about:blank';
-            const relevantDocsArea = getElem('relevantDocsDisplayArea');
-            if(relevantDocsArea) relevantDocsArea.innerHTML = '';
             const pdfFallbackMsg = getElem('pdfViewerFallbackMessage');
             if(pdfFallbackMsg) pdfFallbackMsg.classList.add('hidden');
         }
+
+        function showActionOverlay(message, isError = false, showCloseButton = false) {
+            actionOverlayMessage.textContent = message;
+            actionOverlayMessage.className = isError ? 'error-message' : (message.toLowerCase().includes("success") || message.toLowerCase().includes("approved") ? 'success-message' : '');
+            
+            if (isError || showCloseButton) {
+                actionOverlaySpinner.classList.add('hidden');
+                actionOverlayCloseButton.classList.remove('hidden');
+            } else {
+                actionOverlaySpinner.classList.remove('hidden');
+                actionOverlayCloseButton.classList.add('hidden');
+            }
+            actionOverlayModal.classList.add('active');
+        }
+
+        function hideActionOverlay() {
+            actionOverlayModal.classList.remove('active');
+        }
+        if(actionOverlayCloseButton) actionOverlayCloseButton.addEventListener('click', hideActionOverlay);
+
 
         async function submitPOChanges(isApproval) {
             const appToken = localStorage.getItem('app_token');
             const saveChangesButton = getElem('reviewModalSaveChangesButton');
             const approveButton = getElem('reviewModalApproveButton');
-            const saveSpinner = saveChangesButton.querySelector('.loading-spinner-small');
-            const approveSpinner = approveButton.querySelector('.loading-spinner-small');
-
+            
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
                 signOut(); return;
@@ -1716,14 +1721,8 @@
                 return;
             }
 
-            if (isApproval) {
-                approveButton.disabled = true;
-                if(approveSpinner) approveSpinner.classList.remove('hidden');
-            } else {
-                saveChangesButton.disabled = true;
-                 if(saveSpinner) saveSpinner.classList.remove('hidden');
-            }
-            saveChangesButton.disabled = true;
+            showActionOverlay(isApproval ? "Approving PO..." : "Saving changes...");
+            saveChangesButton.disabled = true; // Disable both during processing
             approveButton.disabled = true;
 
 
@@ -1781,12 +1780,12 @@
             }
             
             let endpointUrl = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
-            let successMessage = 'PO successfully saved and regenerated!';
+            let successBaseMessage = 'PO Changes Saved Successfully!';
             
             if (isApproval) {
                 console.log("Attempting to approve PO:", poDataForBackend.po_number);
                 poDataForBackend.status = "Approved"; 
-                successMessage = 'PO successfully Approved and status updated!';
+                successBaseMessage = 'PO Approved and Updated!';
             } else {
                  poDataForBackend.status = "Regenerated"; 
             }
@@ -1803,14 +1802,19 @@
                     },
                     body: JSON.stringify(requestBody)
                 });
-                if (response.status === 401) { signOut(); alert("Session expired. Please sign in."); return; }
+                if (response.status === 401) { 
+                    signOut(); 
+                    showActionOverlay("Session expired. Please sign in again.", true, true);
+                    return; 
+                }
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({detail: `HTTP error ${response.status}`}));
-                    alert(`Error processing PO: ${errorData.detail || response.statusText}`);
+                    showActionOverlay(`Error processing PO: ${errorData.detail || response.statusText}`, true, true);
                     return;
                 }
                 
                 const updatedPOInfo = await response.json();
+                showActionOverlay(successBaseMessage, false, false); // Show success, no close button yet
 
                 const indexToUpdate = allFetchedPOs.findIndex(po => po.po_id_on_grid === updatedPOInfo.po_id_on_grid);
                 if (indexToUpdate !== -1) {
@@ -1819,20 +1823,22 @@
                     allFetchedPOs.push(updatedPOInfo); 
                 }
                 renderPOGrid(allFetchedPOs); 
-                alert(successMessage);
-                closeReviewModal();
+                
+                setTimeout(() => {
+                    hideActionOverlay();
+                    closeReviewModal();
+                }, 1500); // Auto-close after 1.5 seconds
+                
             } catch (error) { 
                 console.error('Error submitting PO changes:', error); 
-                alert(`Error: ${error.message}`); 
+                showActionOverlay(`Error: ${error.message}`, true, true);
             } finally {
                 saveChangesButton.disabled = false;
                 approveButton.disabled = false;
-                if(saveSpinner) saveSpinner.classList.add('hidden');
-                if(approveSpinner) approveSpinner.classList.add('hidden');
             }
         }
 
-        // --- PO Card Checkbox and Batch Actions ---
+        // --- PO Card Checkbox and Batch Actions (logic largely unchanged) ---
         function handlePOCheckboxChange(checkbox) {
             const poId = checkbox.dataset.poId;
             const cardElement = getElem(`po-card-${poId}`);
@@ -1909,7 +1915,9 @@
             }
             
             const approveBtn = getElem('approveSelectedButton');
-            if(approveBtn) approveBtn.disabled = true;
+            if(approveBtn) approveBtn.disabled = true; // Disable batch approve button
+            showActionOverlay(`Approving ${selectedPOIds.size} PO(s)...`);
+
             let successCount = 0;
             let errorCount = 0;
 
@@ -1945,7 +1953,6 @@
                     }
                 }
 
-
                 const payload = { po_data_to_regenerate: poDataToApprove };
                 try {
                     const response = await fetch(`${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`, {
@@ -1968,7 +1975,14 @@
                     errorCount++;
                 }
             }
-            alert(`${successCount} PO(s) approved. ${errorCount} PO(s) failed to approve.`);
+            
+            if(errorCount > 0) {
+                showActionOverlay(`${successCount} PO(s) approved. ${errorCount} PO(s) failed. Check console.`, true, true);
+            } else {
+                showActionOverlay(`${successCount} PO(s) successfully approved!`, false, false);
+                setTimeout(hideActionOverlay, 1500);
+            }
+
             selectedPOIds.clear();
             renderPOGrid(allFetchedPOs); 
             updateBatchActionButtons();
@@ -1987,6 +2001,8 @@
 
             const deleteBtn = getElem('deleteSelectedButton');
             if(deleteBtn) deleteBtn.disabled = true;
+            showActionOverlay(`Deleting ${selectedPOIds.size} PO(s)...`);
+
             let successCount = 0;
             let errorCount = 0;
 
@@ -2017,7 +2033,14 @@
                     errorCount++;
                 }
             }
-            alert(`${successCount} PO(s) deletion request(s) sent. ${errorCount} PO(s) failed to send delete request. Please refresh to see changes.`);
+            
+            if(errorCount > 0) {
+                showActionOverlay(`${successCount} PO(s) deletion request(s) sent. ${errorCount} failed. Check console. Refresh to see changes.`, true, true);
+            } else {
+                 showActionOverlay(`${successCount} PO(s) deletion request(s) sent. Refresh to see changes.`, false, false);
+                 setTimeout(hideActionOverlay, 1500);
+            }
+            
             if (successCount > 0) { 
                 fetchGeneratedPOs(); 
             } else {
@@ -2025,6 +2048,35 @@
                 updateBatchActionButtons();
             }
             if(deleteBtn) deleteBtn.disabled = false;
+        }
+
+        // --- Settings Page Specific Logic ---
+        function populateSettingsForm() {
+            if (currentUser) {
+                getElem('settingsFullName').value = currentUser.displayName || '';
+                getElem('settingsCompanyName').value = localStorage.getItem('user_companyName') || '';
+                getElem('settingsAddress').value = localStorage.getItem('user_address') || '';
+            }
+            const currentDbxToken = sessionStorage.getItem('dropbox_access_token');
+            getElem('settingsDropboxToken').value = ''; // Clear it for new input
+            if(currentDbxToken) {
+                getElem('settingsDropboxToken').placeholder = "Token active (••••••••) - Enter new token to update";
+            } else {
+                getElem('settingsDropboxToken').placeholder = "No active token - Enter token here";
+            }
+        }
+
+        function updateDropboxTokenFromSettings() {
+            const newToken = getElem('settingsDropboxToken').value.trim();
+            if (!newToken) {
+                alert("Please enter a new Dropbox Access Token.");
+                return;
+            }
+            dropboxAccessToken = newToken;
+            sessionStorage.setItem('dropbox_access_token', newToken);
+            alert("Dropbox token updated for this session. You may need to re-fetch POs if you were on that page, or re-initiate processing if you were in that flow.");
+            getElem('settingsDropboxToken').value = ''; 
+            getElem('settingsDropboxToken').placeholder = "Token active (••••••••) - Enter new token to update";
         }
 
 
@@ -2059,38 +2111,6 @@
             }
             renderPOGrid(filteredPOs);
         }
-
-        // --- Settings Page Specific Logic ---
-        function populateSettingsForm() {
-            if (currentUser) {
-                getElem('settingsFullName').value = currentUser.displayName || '';
-                // In a real app, you'd fetch these from a backend user profile store
-                getElem('settingsCompanyName').value = localStorage.getItem('user_companyName') || '';
-                getElem('settingsAddress').value = localStorage.getItem('user_address') || '';
-            }
-            const currentDbxToken = sessionStorage.getItem('dropbox_access_token');
-            if(currentDbxToken) {
-                getElem('settingsDropboxToken').placeholder = "Token active (••••••••)";
-            } else {
-                getElem('settingsDropboxToken').placeholder = "No active token";
-            }
-        }
-
-        function updateDropboxTokenFromSettings() {
-            const newToken = getElem('settingsDropboxToken').value.trim();
-            if (!newToken) {
-                alert("Please enter a new Dropbox Access Token.");
-                return;
-            }
-            // Basic validation (not a real check, just ensures it's not empty)
-            dropboxAccessToken = newToken;
-            sessionStorage.setItem('dropbox_access_token', newToken);
-            alert("Dropbox token updated for this session. You may need to re-fetch POs if you were on that page.");
-            getElem('settingsDropboxToken').value = ''; // Clear input
-            getElem('settingsDropboxToken').placeholder = "Token active (••••••••)";
-        }
-
-
     </script>
 </body>
 </html>
