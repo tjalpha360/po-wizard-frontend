@@ -26,6 +26,11 @@
         .pdf-preview { background: #ffffff; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
         .pdf-preview:hover { border-color: #06B6D4; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .pdf-preview.approved { border-color: #34d399; background: #f0fdf4; }
+        .pdf-preview.selected-card {
+            box-shadow: 0 0 0 2px #06B6D4, 0 4px 12px rgba(0,0,0,0.1); /* Cyan outline */
+            border-color: #06B6D4;
+        }
+
 
         .tab-button.active { background: #06B6D4; color: white; }
         .btn-primary, .btn-accent {
@@ -36,6 +41,11 @@
         .btn-primary:hover, .btn-accent:hover {
             background-color: #0891B2;
         }
+        .btn-primary:disabled, .btn-accent:disabled {
+            background-color: #94a3b8; /* slate-400 */
+            cursor: not-allowed;
+        }
+
 
         /* Modal Layout Adjustments */
         .review-modal-shell { /* Outer shell for the modal content */
@@ -148,10 +158,40 @@
         .review-modal-fixed-buttons {
             flex-shrink: 0; /* Prevent buttons from shrinking */
             padding-top: 1rem;
-            padding-bottom: 1.5rem; /* Adjusted from px-0 pb-0 */
+            padding-bottom: 1.5rem; 
             border-top: 1px solid #e2e8f0;
             margin-top: auto; /* Pushes to bottom of form container */
             background-color: white;
+        }
+        .loading-spinner-small {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-left-color: #ffffff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+         @keyframes spin { to { transform: rotate(360deg); } }
+
+         /* Styling for PO card checkbox */
+        .po-card-checkbox-area {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10; /* Ensure it's above other card content */
+        }
+        .po-card-checkbox-area input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        /* Styling for Loading Animation Video */
+        #loadingAnimationVideo {
+            max-width: 250px; /* Adjust as needed */
+            max-height: 250px; /* Adjust as needed */
+            margin: 1rem auto; /* Center it and add some space */
         }
     </style>
 </head>
@@ -405,7 +445,15 @@
                         </div>
 
                         <div id="step2_processing_docs" class="step-content hidden">
-                             <div class="text-center mb-8"><div class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"><span class="material-icons-outlined text-green-700 text-3xl">auto_awesome</span></div>
+                             <div class="text-center mb-8">
+                                 <!-- Loading Animation Video -->
+                                <video id="loadingAnimationVideo" class="hidden" autoplay loop muted playsinline>
+                                    <source src="assets/loading_animation.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div id="processingIconContainer" class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                    <span class="material-icons-outlined text-green-700 text-3xl">auto_awesome</span>
+                                </div>
                                 <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Processing Documents...</h3>
                                 <p class="text-slate-600 max-w-lg mx-auto mb-8" id="processingStatusText">AI is scanning your Dropbox folder, extracting data, and generating purchase orders. This may take several minutes depending on the number of documents.</p>
                             </div>
@@ -430,15 +478,30 @@
             <!-- Purchase Orders Section -->
             <section id="purchaseOrdersSection" class="py-16 bg-white hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between items-center mb-8">
-                        <div><h3 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-2">My Purchase Orders</h3><p class="text-slate-600" id="currentJobDisplayPOs_dashboard">Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p></div>
-                        <div class="flex items-center space-x-4">
-                            <span id="poCount" class="text-sm text-slate-600">0 POs Generated</span>
-                            <button onclick="promptForDropboxToken()" class="btn-primary px-4 py-2 rounded-lg font-medium text-sm">
-                                <span class="flex items-center space-x-2"><span class="material-icons-outlined text-sm">add_circle_outline</span><span>New PO Batch</span></span>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                        <div>
+                            <h3 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-2">My Purchase Orders</h3>
+                            <p class="text-slate-600" id="currentJobDisplayPOs_dashboard">Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                            <span id="poCount" class="text-sm text-slate-600 whitespace-nowrap">0 POs Generated</span>
+                            <button onclick="promptForDropboxToken()" class="btn-primary px-4 py-2 rounded-lg font-medium text-sm w-full sm:w-auto">
+                                <span class="flex items-center justify-center space-x-2"><span class="material-icons-outlined text-sm">add_circle_outline</span><span>New PO Batch</span></span>
                             </button>
                         </div>
                     </div>
+
+                    <!-- Batch Action Buttons - Initially hidden -->
+                    <div id="batchActionControls" class="mb-6 p-4 bg-slate-100 rounded-lg shadow hidden">
+                        <p class="text-sm text-slate-700 mb-2"><span id="selectedPoCount">0</span> PO(s) selected.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="downloadSelectedButton" onclick="handleDownloadSelected()" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-3 rounded-md shadow-sm disabled:opacity-50" disabled>Download Selected</button>
+                            <button id="approveSelectedButton" onclick="handleApproveSelected()" class="bg-green-500 hover:bg-green-600 text-white text-sm font-medium py-2 px-3 rounded-md shadow-sm disabled:opacity-50" disabled>Approve Selected</button>
+                            <button id="deleteSelectedButton" onclick="handleDeleteSelected()" class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-2 px-3 rounded-md shadow-sm disabled:opacity-50" disabled>Delete Selected</button>
+                        </div>
+                    </div>
+
+
                     <div class="bg-slate-100 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center space-x-4"><select id="filterStatus" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="approved">Approved</option></select><input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"></div>
                         <div class="flex items-center space-x-2"><span class="text-sm text-slate-600">Sort by:</span><select id="sortPOs" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-cyan-500 focus:border-cyan-500"><option value="date">Date Created</option><option value="vendor">Vendor Name</option><option value="amount">Amount</option><option value="status">Status</option></select></div>
@@ -506,21 +569,43 @@
                             <div><label for="editPoNumber" class="block text-sm font-medium text-slate-700 mb-1">PO Number</label><input type="text" id="editPoNumber" name="po_number" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500" readonly></div>
                             <div><label for="editVendor" class="block text-sm font-medium text-slate-700 mb-1">Vendor Name</label><input type="text" id="editVendor" name="vendor_name" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
                             <div><label for="editVendorAddress" class="block text-sm font-medium text-slate-700 mb-1">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
-                            <div class="grid grid-cols-2 gap-4"><div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div><div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div></div>
-                             <div class="grid grid-cols-2 gap-4"><div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div></div>
-                            <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label for="editVendorPhone" class="block text-sm font-medium text-slate-700 mb-1">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editVendorContact" class="block text-sm font-medium text-slate-700 mb-1">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            </div>
+                             <div class="grid grid-cols-2 gap-4">
+                                <div><label for="editVendorTIN" class="block text-sm font-medium text-slate-700 mb-1">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editPoDate" class="block text-sm font-medium text-slate-700 mb-1">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            </div>
+                             <div class="grid grid-cols-2 gap-4">
+                                <div><label for="editHasW9" class="block text-sm font-medium text-slate-700 mb-1">W9 on File?</label><select id="editHasW9" name="has_w9_document" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="true">Yes</option><option value="false">No</option></select></div>
+                                <div><label for="editIsIncorp" class="block text-sm font-medium text-slate-700 mb-1">Incorporated?</label><select id="editIsIncorp" name="is_incorp_on_w9" class="w-full form-select focus:ring-cyan-500 focus:border-cyan-500"><option value="Unknown">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label for="editPaymentMethod" class="block text-sm font-medium text-slate-700 mb-1">Payment Method</label><input type="text" id="editPaymentMethod" name="payment_method_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editInvoiceRef" class="block text-sm font-medium text-slate-700 mb-1">Invoice Reference(s)</label><input type="text" id="editInvoiceRef" name="invoice_reference_from_po" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            </div>
                             <h4 class="text-md font-semibold text-cyan-700 pt-2">Line Items:</h4>
                             <div id="editLineItemsContainer" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-md border-cyan-200"></div>
                             <button type="button" onclick="addLineItemField()" class="text-sm text-cyan-600 hover:text-cyan-800">+ Add Line Item</button>
-                            <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label for="editTaxAmount" class="block text-sm font-medium text-slate-700 mb-1">Tax Amount ($)</label><input type="text" id="editTaxAmount" name="tax_amount" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                                <div><label for="editTotalAmount" class="block text-sm font-medium text-slate-700 mb-1">Total Amount ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" class="w-full form-input focus:ring-cyan-500 focus:border-cyan-500"></div>
+                            </div>
                             <div><label for="editAdditionalNotes" class="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label><textarea id="editAdditionalNotes" name="additional_notes" rows="2" class="w-full form-textarea focus:ring-cyan-500 focus:border-cyan-500"></textarea></div>
                             <input type="hidden" id="editJobNumber" name="job_number"><input type="hidden" id="editProjectName" name="project_name">
+                             <input type="hidden" id="editUserEmail" name="user_email"> 
                         </form>
                     </div>
                     <div class="review-modal-fixed-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                        <!-- MODIFIED BUTTON TEXT AND ONCLICK -->
-                        <button onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">Save Changes</button>
-                        <button onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium">Approve PO</button>
+                        <button id="reviewModalSaveChangesButton" onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">
+                            Save Changes
+                            <span class="loading-spinner-small hidden"></span>
+                        </button>
+                        <button id="reviewModalApproveButton" onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium">
+                            Approve PO
+                             <span class="loading-spinner-small hidden"></span>
+                        </button>
                         <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium">Cancel</button>
                     </div>
                 </div>
@@ -537,10 +622,13 @@
         let dropboxAccessToken = "";
         let currentOpenPOTaskId = null;
         let statusPollInterval = null;
-        let allFetchedPOs = [];
+        let allFetchedPOs = []; 
         let currentUser = null;
-        let currentEditingPODataForModal = null;
+        let currentEditingPODataForModal = null; 
+        let selectedPOIds = new Set();
 
+
+        // --- Authentication and UI ---
         function updateAuthUI() {
             const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
             const authDesktop = document.getElementById('authActionsAuthenticated_desktop');
@@ -609,18 +697,20 @@
             localStorage.removeItem('app_token');
             localStorage.removeItem('user_displayName');
             localStorage.removeItem('user_email');
+            sessionStorage.removeItem('dropbox_access_token'); 
+            dropboxAccessToken = ""; 
+
             isAuthenticated = false;
             currentUser = null;
             currentJobNumberContext = "";
             currentProjectNameContext = "";
-            dropboxAccessToken = "";
             allFetchedPOs = [];
             updateAuthUI();
             showTab('hero');
             if (document.getElementById('mobileMenu') && !document.getElementById('mobileMenu').classList.contains('hidden')) {
                 toggleMobileMenu();
             }
-            console.log("User signed out.");
+            console.log("User signed out, Dropbox token cleared.");
         }
 
         async function fetchUserDetails(token) {
@@ -631,7 +721,7 @@
                 if (!response.ok) {
                     if (response.status === 401) {
                         console.warn("fetchUserDetails: Token validation failed (401). Signing out.");
-                        signOut();
+                        signOut(); 
                     } else {
                         console.error(`fetchUserDetails: Failed to fetch user details: ${response.status} ${response.statusText}`);
                     }
@@ -661,6 +751,12 @@
                     localStorage.setItem('user_displayName', currentUser.displayName);
                     localStorage.setItem('user_email', currentUser.email);
                     console.log("User authenticated from localStorage token via /users/me:", currentUser);
+                    const storedDbxToken = sessionStorage.getItem('dropbox_access_token');
+                    if (storedDbxToken) {
+                        dropboxAccessToken = storedDbxToken;
+                        console.log("Retrieved Dropbox token from sessionStorage.");
+                    }
+
                 } else {
                     console.log("Token verification via /users/me failed or no user details returned. User remains signed out.");
                 }
@@ -705,20 +801,32 @@
 
             if (protectedTabs.includes(sectionId) && !isAuthenticated) {
                 alert('Please sign in to access this feature.');
+                signInWithGoogle(); 
                 return;
             }
+            
+            if (sectionId === 'purchaseOrdersSection' && isAuthenticated && !dropboxAccessToken) {
+                alert('Please connect to Dropbox to view or process Purchase Orders.');
+                promptForDropboxToken(); 
+                return; 
+            }
+
 
             document.querySelectorAll('main > section').forEach(section => section.style.display = 'none');
             const sectionElement = document.getElementById(sectionId);
             if (sectionElement) sectionElement.style.display = 'block';
 
-            if (sectionId === 'purchaseOrdersSection') {
+            if (sectionId === 'purchaseOrdersSection' && isAuthenticated && dropboxAccessToken) {
                 fetchGeneratedPOs();
             } else if (sectionId === 'processingSection') {
                 if (!dropboxAccessToken && isAuthenticated) {
-                    promptForDropboxToken();
-                } else if (!isAuthenticated) {
-                    signInWithGoogle();
+                    promptForDropboxToken(); 
+                } else if (isAuthenticated && dropboxAccessToken) {
+                    document.getElementById('step0_token_input').classList.add('hidden');
+                    document.getElementById('step1_configure_job').classList.remove('hidden');
+                    document.getElementById('step2_processing_docs').classList.add('hidden');
+                    document.getElementById('progressSection').classList.remove('expanded');
+                    updateActiveStepIndicator('configure');
                 }
             }
             updateActiveTabButton(activeTabName);
@@ -734,19 +842,24 @@
         function promptForDropboxToken() {
             if (!isAuthenticated) {
                 alert("Please sign in first to create a new PO batch.");
+                signInWithGoogle();
                 return;
             }
             document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
-            document.getElementById('processingSection').style.display = 'block';
+            const processingSec = document.getElementById('processingSection');
+            if (processingSec) processingSec.style.display = 'block';
+            
             document.getElementById('step0_token_input').classList.remove('hidden');
             document.getElementById('step1_configure_job').classList.add('hidden');
             document.getElementById('step2_processing_docs').classList.add('hidden');
             document.getElementById('progressSection').classList.remove('expanded');
+            
             document.getElementById('inputJobNumber').value = '';
             document.getElementById('inputProjectName').value = '';
-            updateJobContextDisplay_Processing("N/A", "N/A");
+            
+            updateJobContextDisplay_Processing("N/A", "N/A"); 
             updateActiveStepIndicator('token');
-            updateActiveTabButton('processingSection');
+            updateActiveTabButton('processingSection'); 
         }
 
 
@@ -788,7 +901,8 @@
                 alert("Please enter your Dropbox Access Token.");
                 return;
             }
-            dropboxAccessToken = token;
+            dropboxAccessToken = token; 
+            sessionStorage.setItem('dropbox_access_token', token); 
             console.log("Dropbox Token Submitted:", dropboxAccessToken ? "Token Present" : "Token Missing/Empty");
 
             document.getElementById('step0_token_input').classList.add('hidden');
@@ -891,13 +1005,22 @@
 
         async function startDocumentProcessing(sourcePath, outputPath) {
             updateProgressUI(0, "Initializing job submission...");
-            const stageSpinner = document.getElementById('stageSpinner'); if (stageSpinner) stageSpinner.style.display = 'block';
+            const stageSpinner = document.getElementById('stageSpinner'); 
+            const loadingAnimationVideo = document.getElementById('loadingAnimationVideo');
+            const processingIconContainer = document.getElementById('processingIconContainer');
+
+            if (stageSpinner) stageSpinner.style.display = 'block'; // Keep existing spinner logic
+            if (loadingAnimationVideo) loadingAnimationVideo.classList.remove('hidden');
+            if (processingIconContainer) processingIconContainer.classList.add('hidden');
+
 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
                 signOut();
                 if(stageSpinner) stageSpinner.style.display = 'none';
+                if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                if (processingIconContainer) processingIconContainer.classList.remove('hidden');
                 return;
             }
 
@@ -922,6 +1045,8 @@
                     signOut();
                     alert("Your session has expired. Please sign in again.");
                     if(stageSpinner) stageSpinner.style.display = 'none';
+                    if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                    if (processingIconContainer) processingIconContainer.classList.remove('hidden');
                     return;
                 }
                 if (!response.ok) {
@@ -932,12 +1057,21 @@
                 const data = await response.json(); currentOpenPOTaskId = data.task_id;
                 updateProgressUI(5, "Job submitted. Waiting for Celery worker...");
                 pollTaskStatus(currentOpenPOTaskId);
-            } catch (error) { console.error('Error starting processing:', error); updateProgressUI(0, `Error: ${error.message}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
+            } catch (error) { 
+                console.error('Error starting processing:', error); 
+                updateProgressUI(0, `Error: ${error.message}`, true); 
+                if(stageSpinner) stageSpinner.style.display = 'none'; 
+                if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                if (processingIconContainer) processingIconContainer.classList.remove('hidden');
+            }
         }
 
         function pollTaskStatus(taskId) {
             if (statusPollInterval) clearInterval(statusPollInterval);
             const stageSpinner = document.getElementById('stageSpinner');
+            const loadingAnimationVideo = document.getElementById('loadingAnimationVideo');
+            const processingIconContainer = document.getElementById('processingIconContainer');
+
             statusPollInterval = setInterval(async () => {
                 try {
                     const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
@@ -946,7 +1080,11 @@
                         try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
                         console.error(`Error fetching task status ${taskId}:`, errorDetail);
                         updateProgressUI(null, errorDetail, true);
-                        clearInterval(statusPollInterval); if(stageSpinner) stageSpinner.style.display = 'none'; return;
+                        clearInterval(statusPollInterval); 
+                        if(stageSpinner) stageSpinner.style.display = 'none'; 
+                        if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                        if (processingIconContainer) processingIconContainer.classList.remove('hidden');
+                        return;
                     }
                     const data = await response.json();
                     let currentStepMessage = data.current_step || data.status;
@@ -958,9 +1096,30 @@
                         }
                     }
                     updateProgressUI(data.progress_percent, currentStepMessage);
-                    if (data.status === 'SUCCESS') { clearInterval(statusPollInterval); updateProgressUI(100, "Processing complete! POs generated."); if(stageSpinner) stageSpinner.style.display = 'none'; showTab('purchaseOrders'); }
-                    else if (data.status === 'FAILURE') { clearInterval(statusPollInterval); const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); updateProgressUI(null, `Processing failed: ${failureDetails}`, true); if(stageSpinner) stageSpinner.style.display = 'none'; }
-                } catch (error) { console.error('Error polling task status:', error); updateProgressUI(null, "Error polling status. Check console.", true); clearInterval(statusPollInterval); if(stageSpinner) stageSpinner.style.display = 'none'; }
+                    if (data.status === 'SUCCESS') { 
+                        clearInterval(statusPollInterval); 
+                        updateProgressUI(100, "Processing complete! POs generated."); 
+                        if(stageSpinner) stageSpinner.style.display = 'none'; 
+                        if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                        if (processingIconContainer) processingIconContainer.classList.remove('hidden'); // Or show a success icon
+                        showTab('purchaseOrders'); 
+                    }
+                    else if (data.status === 'FAILURE') { 
+                        clearInterval(statusPollInterval); 
+                        const failureDetails = typeof data.result === 'string' ? data.result : JSON.stringify(data.result); 
+                        updateProgressUI(null, `Processing failed: ${failureDetails}`, true); 
+                        if(stageSpinner) stageSpinner.style.display = 'none'; 
+                        if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                        if (processingIconContainer) processingIconContainer.classList.remove('hidden');
+                    }
+                } catch (error) { 
+                    console.error('Error polling task status:', error); 
+                    updateProgressUI(null, "Error polling status. Check console.", true); 
+                    clearInterval(statusPollInterval); 
+                    if(stageSpinner) stageSpinner.style.display = 'none'; 
+                    if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+                    if (processingIconContainer) processingIconContainer.classList.remove('hidden');
+                }
             }, 3000);
         }
 
@@ -974,36 +1133,53 @@
             else if (stageTitle) { stageTitle.classList.remove('text-red-600'); stageTitle.classList.add('text-cyan-700');}
         }
 
-        function cancelProcessing() { if (statusPollInterval) clearInterval(statusPollInterval); console.log("Processing cancellation requested."); updateProgressUI(0, "Processing cancelled by user.", true); if(document.getElementById('stageSpinner')) document.getElementById('stageSpinner').style.display = 'none'; }
+        function cancelProcessing() { 
+            if (statusPollInterval) clearInterval(statusPollInterval); 
+            console.log("Processing cancellation requested."); 
+            updateProgressUI(0, "Processing cancelled by user.", true); 
+            const stageSpinner = document.getElementById('stageSpinner');
+            const loadingAnimationVideo = document.getElementById('loadingAnimationVideo');
+            const processingIconContainer = document.getElementById('processingIconContainer');
+            if(stageSpinner) stageSpinner.style.display = 'none';
+            if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
+            if (processingIconContainer) processingIconContainer.classList.remove('hidden');
+        }
 
         async function fetchGeneratedPOs() {
             const poGrid = document.getElementById('poGrid');
             const noPOsActionContainer = document.getElementById('noPOsActionContainer');
             const noPOsMessageEl = document.getElementById('noPOsMessage');
+            const batchActionControls = document.getElementById('batchActionControls');
 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
                 if (poGrid) poGrid.innerHTML = '';
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please sign in to view your Purchase Orders.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                if (batchActionControls) batchActionControls.classList.add('hidden');
                 updateJobContextDisplay_Dashboard("N/A", "N/A");
                 return;
             }
-            if (!dropboxAccessToken) {
+            if (!dropboxAccessToken) { 
                 console.warn("fetchGeneratedPOs: Dropbox Access Token not set for this session. User needs to connect to Dropbox first.");
                 if (poGrid) poGrid.innerHTML = '';
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'Please connect to Dropbox to view POs for this job.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                if (batchActionControls) batchActionControls.classList.add('hidden');
                 updateJobContextDisplay_Dashboard(currentJobNumberContext || "N/A", currentProjectNameContext || "N/A");
                 return;
             }
 
             updateJobContextDisplay_Dashboard(currentJobNumberContext, currentProjectNameContext);
+            selectedPOIds.clear(); 
+            updateBatchActionButtons(); 
 
             if (!poGrid) { console.error("CRITICAL UI Error: poGrid element not found!"); return; }
 
             poGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">Loading POs from Dropbox...</p>';
             if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
+            if (batchActionControls) batchActionControls.classList.add('hidden');
+
 
             if (!currentJobNumberContext) {
                 poGrid.innerHTML = '';
@@ -1047,8 +1223,10 @@
                     poGrid.innerHTML = '';
                     if (noPOsMessageEl) noPOsMessageEl.textContent = `No Purchase Orders found in Dropbox for Job: ${currentJobNumberContext}. Create a new batch or select another job.`;
                     if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                    if (batchActionControls) batchActionControls.classList.add('hidden');
                 } else {
                     if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
+                    if (batchActionControls) batchActionControls.classList.remove('hidden'); 
                     renderPOGrid(allFetchedPOs);
                 }
             } catch (error) {
@@ -1056,6 +1234,7 @@
                 poGrid.innerHTML = '';
                 if (noPOsMessageEl) noPOsMessageEl.textContent = `Error loading POs: ${error.message}. Try creating a new batch.`;
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
+                if (batchActionControls) batchActionControls.classList.add('hidden');
             }
         }
         function renderPOGrid(posToRender) {
@@ -1067,15 +1246,40 @@
             if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
             posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
         }
+        
         function createPOCard(po) {
-            const card = document.createElement('div'); card.id = `po-${po.po_id_on_grid}`;
+            const card = document.createElement('div');
+            card.id = `po-card-${po.po_id_on_grid}`; 
             const isApproved = po.status && po.status.toLowerCase().includes('approved');
-            card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''} bg-white`;
+            card.className = `pdf-preview rounded-xl overflow-hidden ${isApproved ? 'approved' : ''} bg-white relative`; 
+            
             let statusDisplay = po.status || 'Unknown';
             let statusColorClass = 'bg-yellow-100 text-yellow-800';
             if (isApproved) { statusColorClass = 'bg-green-100 text-green-800'; }
             else if (po.status && po.status.toLowerCase().includes('error')) { statusColorClass = 'bg-red-100 text-red-800';}
-            card.innerHTML = `<img src="assets/POWizard.png" alt="PO Preview" class="w-full h-32 object-contain p-2 bg-white"> <div class="p-4 md:p-6"><div class="flex flex-col h-full"><div class="flex justify-between items-start mb-3"><h4 class="text-md md:text-lg font-semibold text-cyan-700">${po.po_number}</h4><span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}<span>${statusDisplay}</span></span></div><p class="text-sm text-slate-700 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p><p class="text-lg md:text-xl font-bold text-cyan-700 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p><p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p><div class="mt-auto flex space-x-2"><button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button></div></div></div>`;
+
+            card.innerHTML = `
+                <div class="po-card-checkbox-area">
+                    <input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)" class="form-checkbox h-5 w-5 text-cyan-600 border-slate-300 rounded focus:ring-cyan-500">
+                </div>
+                <img src="assets/POWizard.png" alt="PO Preview" class="w-full h-32 object-contain p-2 bg-white"> 
+                <div class="p-4 md:p-6">
+                    <div class="flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-3">
+                            <h4 class="text-md md:text-lg font-semibold text-cyan-700">${po.po_number}</h4>
+                            <span class="px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${statusColorClass}">
+                                ${isApproved ? '<span class="material-icons-outlined text-sm">check</span>' : ''}
+                                <span>${statusDisplay}</span>
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-700 mb-1 truncate" title="${po.vendor_name}">${po.vendor_name}</p>
+                        <p class="text-lg md:text-xl font-bold text-cyan-700 mb-1">${po.total_amount.startsWith('$') ? po.total_amount : '$'+po.total_amount}</p>
+                        <p class="text-xs md:text-sm text-slate-500 mb-3">Date: ${po.po_date}</p>
+                        <div class="mt-auto flex space-x-2">
+                            <button onclick="openReviewModal('${po.po_id_on_grid}')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 px-3 rounded-lg font-medium text-sm transition-colors">Review / Edit</button>
+                        </div>
+                    </div>
+                </div>`;
             return card;
         }
 
@@ -1109,7 +1313,7 @@
                         alert(`Error fetching PO details: ${errorData.detail || "Bad request."}`); return;
                     }
                     if (!response.ok) {
-                        const errorDetail = await response.json();
+                        const errorDetail = await response.json().catch(() => ({detail: `HTTP Error ${response.status}`}));
                         alert(`Error fetching PO details: ${errorDetail.detail || response.statusText}`); return;
                     }
                     currentEditingPODataForModal = await response.json();
@@ -1133,16 +1337,22 @@
             document.getElementById('editPoNumber').value = currentEditingPODataForModal.po_number;
             document.getElementById('editVendor').value = currentEditingPODataForModal.vendor_name;
             document.getElementById('editVendorAddress').value = currentEditingPODataForModal.vendor_address || '';
+            document.getElementById('editVendorPhone').value = currentEditingPODataForModal.vendor_phone || ''; 
+            document.getElementById('editVendorContact').value = currentEditingPODataForModal.vendor_contact || ''; 
             document.getElementById('editVendorTIN').value = currentEditingPODataForModal.vendor_tin || '';
             document.getElementById('editPoDate').value = currentEditingPODataForModal.po_date;
             document.getElementById('editHasW9').value = String(currentEditingPODataForModal.has_w9_document || false);
             document.getElementById('editIsIncorp').value = currentEditingPODataForModal.is_incorp_on_w9 || 'Unknown';
+            document.getElementById('editPaymentMethod').value = currentEditingPODataForModal.payment_method_from_po || 'Credit Card'; 
             document.getElementById('editInvoiceRef').value = currentEditingPODataForModal.invoice_reference_from_po || '';
+            document.getElementById('editTaxAmount').value = currentEditingPODataForModal.tax_amount || '0.00'; 
             document.getElementById('editTotalAmount').value = (currentEditingPODataForModal.total_vendor_amount_str || "").replace('$', '');
             document.getElementById('editAdditionalNotes').value = currentEditingPODataForModal.additional_notes || '';
             document.getElementById('editJobNumber').value = currentEditingPODataForModal.job_number;
             document.getElementById('editProjectName').value = currentEditingPODataForModal.project_name;
+            document.getElementById('editUserEmail').value = currentEditingPODataForModal.user_email || (currentUser ? currentUser.email : '');
             document.getElementById('editBackupDocsPaths').value = JSON.stringify(currentEditingPODataForModal.backup_document_original_dropbox_paths || []);
+
 
             const lineItemsContainer = document.getElementById('editLineItemsContainer');
             lineItemsContainer.innerHTML = '';
@@ -1313,9 +1523,13 @@
             if(pdfFallbackMsg) pdfFallbackMsg.classList.add('hidden');
         }
 
-        // MODIFIED submitPOChanges
         async function submitPOChanges(isApproval) {
             const appToken = localStorage.getItem('app_token');
+            const saveChangesButton = document.getElementById('reviewModalSaveChangesButton');
+            const approveButton = document.getElementById('reviewModalApproveButton');
+            const saveSpinner = saveChangesButton.querySelector('.loading-spinner-small');
+            const approveSpinner = approveButton.querySelector('.loading-spinner-small');
+
             if (!isAuthenticated || !appToken) {
                 alert("Authentication error. Please sign in again.");
                 signOut(); return;
@@ -1325,6 +1539,19 @@
                 promptForDropboxToken();
                 return;
             }
+
+            if (isApproval) {
+                approveButton.disabled = true;
+                if(approveSpinner) approveSpinner.classList.remove('hidden');
+            } else {
+                saveChangesButton.disabled = true;
+                 if(saveSpinner) saveSpinner.classList.remove('hidden');
+            }
+            // Disable both to prevent double submission while one is processing
+            saveChangesButton.disabled = true;
+            approveButton.disabled = true;
+
+
             const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForBackend = {};
             formData.forEach((value, key) => { 
                 if (key.startsWith('line_items[')) { 
@@ -1347,7 +1574,7 @@
                 } else { 
                     if (key === 'has_w9_document') { 
                         poDataForBackend[key] = value === 'true'; 
-                    } else if (key !== 'backup_document_original_dropbox_paths') { // Exclude this from direct form data
+                    } else if (key !== 'backup_document_original_dropbox_paths') { 
                          poDataForBackend[key] = value; 
                     }
                 } 
@@ -1355,8 +1582,8 @@
             poDataForBackend.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
             poDataForBackend.job_number = document.getElementById('editJobNumber').value;
             poDataForBackend.project_name = document.getElementById('editProjectName').value;
+            poDataForBackend.user_email = document.getElementById('editUserEmail').value; 
             
-            // Get original persistent paths for backup docs from the hidden input
             const backupPathsJson = document.getElementById('editBackupDocsPaths').value;
             try {
                  poDataForBackend.backup_document_original_dropbox_paths = JSON.parse(backupPathsJson || "[]").filter(p => typeof p === 'string' && p.startsWith("/"));
@@ -1365,16 +1592,8 @@
                 poDataForBackend.backup_document_original_dropbox_paths = [];
             }
 
-
             if (poDataForBackend.aggregated_line_items) { 
                 poDataForBackend.aggregated_line_items = poDataForBackend.aggregated_line_items.filter(item => item && (item.description || item.amount )); 
-            }
-            
-            // User email should be part of the currentEditingPODataForModal or currentUser
-            if (currentEditingPODataForModal && currentEditingPODataForModal.user_email) {
-                poDataForBackend.user_email = currentEditingPODataForModal.user_email;
-            } else if (currentUser && currentUser.email) {
-                poDataForBackend.user_email = currentUser.email;
             }
             
             let endpointUrl = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
@@ -1382,16 +1601,10 @@
             
             if (isApproval) {
                 console.log("Attempting to approve PO:", poDataForBackend.po_number);
-                poDataForBackend.status = "Approved"; // Set status for approval
+                poDataForBackend.status = "Approved"; 
                 successMessage = 'PO successfully Approved and status updated!';
             } else {
-                // If not approving, remove status or set to a generic "regenerated" status
-                // This ensures that if "Approved" was previously set, it's cleared unless explicitly approving again.
-                // Or, the backend can handle this by only setting "Approved" if it's explicitly sent.
-                // For clarity, we can set it here. If the backend also sets it, it's fine.
-                if (poDataForBackend.status !== "Approved") { // Only overwrite if not already being approved
-                     poDataForBackend.status = "Regenerated"; // Or null, if backend handles default
-                }
+                 poDataForBackend.status = "Regenerated"; 
             }
 
             const requestBody = { po_data_to_regenerate: poDataForBackend };
@@ -1417,18 +1630,204 @@
 
                 const indexToUpdate = allFetchedPOs.findIndex(po => po.po_id_on_grid === updatedPOInfo.po_id_on_grid);
                 if (indexToUpdate !== -1) {
-                    allFetchedPOs[indexToUpdate] = updatedPOInfo; // Update the card data in the main list
+                    allFetchedPOs[indexToUpdate] = updatedPOInfo; 
                 } else { 
-                    allFetchedPOs.push(updatedPOInfo); // Or add if somehow it wasn't there
+                    allFetchedPOs.push(updatedPOInfo); 
                 }
-                renderPOGrid(allFetchedPOs); // Re-render the grid to reflect changes
-
+                renderPOGrid(allFetchedPOs); 
                 alert(successMessage);
                 closeReviewModal();
-            } catch (error) { console.error('Error submitting PO changes:', error); alert(`Error: ${error.message}`); }
+            } catch (error) { 
+                console.error('Error submitting PO changes:', error); 
+                alert(`Error: ${error.message}`); 
+            } finally {
+                saveChangesButton.disabled = false;
+                approveButton.disabled = false;
+                if(saveSpinner) saveSpinner.classList.add('hidden');
+                if(approveSpinner) approveSpinner.classList.add('hidden');
+            }
+        }
+
+        // --- PO Card Checkbox and Batch Actions ---
+        function handlePOCheckboxChange(checkbox) {
+            const poId = checkbox.dataset.poId;
+            const cardElement = document.getElementById(`po-card-${poId}`);
+            if (checkbox.checked) {
+                selectedPOIds.add(poId);
+                if (cardElement) cardElement.classList.add('selected-card');
+            } else {
+                selectedPOIds.delete(poId);
+                if (cardElement) cardElement.classList.remove('selected-card');
+            }
+            updateBatchActionButtons();
+        }
+
+        function updateBatchActionButtons() {
+            const count = selectedPOIds.size;
+            const selectedPoCountDisplay = document.getElementById('selectedPoCount');
+            const downloadBtn = document.getElementById('downloadSelectedButton');
+            const approveBtn = document.getElementById('approveSelectedButton');
+            const deleteBtn = document.getElementById('deleteSelectedButton');
+            const batchControlsDiv = document.getElementById('batchActionControls');
+
+
+            if (selectedPoCountDisplay) selectedPoCountDisplay.textContent = count;
+            const enabled = count > 0;
+
+            if(downloadBtn) downloadBtn.disabled = !enabled;
+            if(approveBtn) approveBtn.disabled = !enabled;
+            if(deleteBtn) deleteBtn.disabled = !enabled;
+            
+            if (batchControlsDiv) {
+                if (enabled) {
+                    batchControlsDiv.classList.remove('hidden');
+                } else {
+                    batchControlsDiv.classList.add('hidden');
+                }
+            }
+        }
+
+        async function handleDownloadSelected() {
+            if (selectedPOIds.size === 0) return;
+            if (!dropboxAccessToken) { alert("Dropbox token missing."); return; }
+
+            let openedWindows = 0;
+            selectedPOIds.forEach(poId => {
+                const poData = allFetchedPOs.find(p => p.po_id_on_grid === poId);
+                if (poData && poData.full_po_data_for_review && poData.full_po_data_for_review.generated_draft_po_pdf_path_dropbox) {
+                    const pdfPath = poData.full_po_data_for_review.generated_draft_po_pdf_path_dropbox;
+                    const url = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                    // Try to open, browser might block
+                    const newWindow = window.open(url, `_blank_po_${poId}`);
+                    if (newWindow) {
+                        openedWindows++;
+                    } else {
+                        console.warn(`Browser blocked pop-up for PO ID: ${poId}`);
+                    }
+                } else {
+                    console.warn(`Could not find PDF path for selected PO ID: ${poId}`);
+                }
+            });
+            if (openedWindows < selectedPOIds.size && selectedPOIds.size > 0) {
+                 alert(`${openedWindows}/${selectedPOIds.size} POs opened for download/viewing. Please check your browser's pop-up blocker if some didn't appear.`);
+            } else if (openedWindows > 0) {
+                 alert(`${openedWindows} PO(s) sent for download/viewing.`);
+            }
+        }
+
+        async function handleApproveSelected() {
+            if (selectedPOIds.size === 0) return;
+            if (!confirm(`Are you sure you want to approve ${selectedPOIds.size} selected PO(s)?`)) return;
+
+            const appToken = localStorage.getItem('app_token');
+            if (!isAuthenticated || !appToken || !dropboxAccessToken) {
+                alert("Authentication or Dropbox token error. Please re-authenticate.");
+                return;
+            }
+            
+            const approveBtn = document.getElementById('approveSelectedButton');
+            if(approveBtn) approveBtn.disabled = true;
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const poId of selectedPOIds) {
+                const poDataFull = allFetchedPOs.find(p => p.po_id_on_grid === poId)?.full_po_data_for_review;
+                if (!poDataFull) {
+                    console.error(`Full data not found for PO ${poId} during batch approve.`);
+                    errorCount++;
+                    continue;
+                }
+                
+                const poDataToApprove = { ...poDataFull };
+                poDataToApprove.status = "Approved";
+                poDataToApprove.user_email = String(poDataToApprove.user_email || (currentUser ? currentUser.email : 'unknown@example.com'));
+                if (poDataToApprove.vendor_email) {
+                    poDataToApprove.vendor_email = String(poDataToApprove.vendor_email);
+                }
+
+                const payload = { po_data_to_regenerate: poDataToApprove };
+                try {
+                    const response = await fetch(`${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        const updatedPOInfo = await response.json();
+                         const indexToUpdate = allFetchedPOs.findIndex(p => p.po_id_on_grid === updatedPOInfo.po_id_on_grid);
+                         if (indexToUpdate !== -1) allFetchedPOs[indexToUpdate] = updatedPOInfo;
+                        successCount++;
+                    } else {
+                        const errorDetail = await response.json().catch(() => ({ detail: `HTTP error ${response.status}` }));
+                        console.error(`Failed to approve PO ${poId}: ${errorDetail.detail}`);
+                        errorCount++;
+                    }
+                } catch (err) {
+                    console.error(`Error approving PO ${poId}:`, err);
+                    errorCount++;
+                }
+            }
+            alert(`${successCount} PO(s) approved. ${errorCount} PO(s) failed to approve.`);
+            selectedPOIds.clear();
+            renderPOGrid(allFetchedPOs); 
+            updateBatchActionButtons();
+            if(approveBtn) approveBtn.disabled = false;
+        }
+
+        async function handleDeleteSelected() {
+            if (selectedPOIds.size === 0) return;
+            if (!confirm(`Are you sure you want to PERMANENTLY DELETE ${selectedPOIds.size} selected PO(s) from Dropbox? This cannot be undone.`)) return;
+
+            const appToken = localStorage.getItem('app_token');
+             if (!isAuthenticated || !appToken || !dropboxAccessToken) {
+                alert("Authentication or Dropbox token error. Please re-authenticate.");
+                return;
+            }
+
+            const deleteBtn = document.getElementById('deleteSelectedButton');
+            if(deleteBtn) deleteBtn.disabled = true;
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const poId of selectedPOIds) {
+                 const poDataToDelete = allFetchedPOs.find(p => p.po_id_on_grid === poId);
+                 if (!poDataToDelete || !poDataToDelete.full_po_data_for_review || !poDataToDelete.full_po_data_for_review.job_number) {
+                     console.error(`Could not find job number for PO ID ${poId} to delete.`);
+                     errorCount++;
+                     continue;
+                 }
+                const jobNumberForDelete = poDataToDelete.full_po_data_for_review.job_number;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/delete-po/${jobNumberForDelete}/${poId}?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${appToken}` }
+                    });
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        const errorDetail = await response.json().catch(() => ({ detail: `HTTP error ${response.status}` }));
+                        console.error(`Failed to delete PO ${poId}: ${errorDetail.detail}`);
+                        errorCount++;
+                    }
+                } catch (err) {
+                    console.error(`Error deleting PO ${poId}:`, err);
+                    errorCount++;
+                }
+            }
+            alert(`${successCount} PO(s) deletion request(s) sent. ${errorCount} PO(s) failed to send delete request. Please refresh to see changes.`);
+            if (successCount > 0) { 
+                fetchGeneratedPOs(); 
+            } else {
+                selectedPOIds.clear();
+                updateBatchActionButtons();
+            }
+            if(deleteBtn) deleteBtn.disabled = false;
         }
 
 
+
+        // --- Filter and Sort (unchanged from your provided code) ---
         document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
