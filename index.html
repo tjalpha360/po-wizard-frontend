@@ -33,6 +33,14 @@
 
 
         .tab-button.active { background: #06B6D4; color: white; }
+        .settings-tab-button.active {
+            border-color: #06B6D4; /* Tailwind cyan-500 */
+            color: #06B6D4;
+            background-color: #ecfeff; /* Tailwind cyan-50 */
+        }
+        .settings-tab-content { display: none; }
+        .settings-tab-content.active { display: block; }
+
         .btn-primary, .btn-accent {
             background-color: #06B6D4;
             color: white;
@@ -189,20 +197,50 @@
         }
         /* Styling for Loading Animation Video */
         #loadingAnimationVideo {
-            width: 90%; /* Make it take most of the width of its container */
-            max-width: 400px; /* But not too large on very wide screens */
+            width: 100%; /* Make it take full width of its container */
+            max-width: 320px; /* Max width to keep it reasonable, adjust as needed */
             height: auto; /* Maintain aspect ratio */
-            margin: 0 auto 1rem auto; /* Center it and remove top/bottom padding from video element itself */
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1rem; /* Space below video before progress bar */
             display: block; /* Ensure it behaves as a block for margin auto to work */
         }
-        /* Hero section image styling */
+        /* Hero section image styling - remove border, shadow, adjust size */
         .hero-comparison-image {
-            width: 100%; /* Make image take full width of its parent box */
+            width: 80%; /* Make image smaller than full width of parent */
+            max-width: 300px; /* Max width for the images */
             height: auto; /* Maintain aspect ratio */
-            border-radius: 0.75rem; /* Equivalent to rounded-xl */
-            margin-bottom: 1rem; /* Space below the image */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.5rem; /* Space below the image, increased a bit */
+            /* border-radius: 0.75rem; REMOVED */
+            /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); REMOVED */
         }
+        /* User dropdown menu */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 100; /* Ensure it's above other content */
+            right: 0; /* Align to the right */
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .dropdown-content button {
+            color: #374151; /* slate-700 */
+            padding: 10px 14px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            font-size: 0.875rem; /* text-sm */
+        }
+        .dropdown-content button:hover { background-color: #f3f4f6; /* slate-100 */ }
+        .dropdown:hover .dropdown-content { display: block; }
+
     </style>
 </head>
 <body class="bg-slate-50 font-['Inter','Noto_Sans',sans-serif]">
@@ -230,8 +268,16 @@
                                 </button>
                             </div>
                             <div id="authActionsAuthenticated_desktop" class="hidden items-center space-x-3">
-                                <span id="userDisplayName_desktop" class="text-sm text-slate-700"></span>
-                                <button onclick="signOut()" class="px-3 py-2 rounded-lg text-sm lg:text-base text-slate-700 hover:text-cyan-600 hover:bg-cyan-50">Sign Out</button>
+                                <div class="dropdown">
+                                    <button id="userDisplayName_desktop" class="flex items-center text-sm text-slate-700 hover:text-cyan-600 focus:outline-none">
+                                        <!-- User display name will be here -->
+                                        <span class="material-icons-outlined text-base ml-1">arrow_drop_down</span>
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <button onclick="showTab('settings');">Settings</button>
+                                        <button onclick="signOut()">Sign Out</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -247,6 +293,7 @@
                     <button onclick="showTab('features'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Features</button>
                     <button onclick="showTab('pricing'); toggleMobileMenu();" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">Pricing</button>
                     <button onclick="showTab('purchaseOrders'); toggleMobileMenu();" id="mobileProcessingNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base">My POs / Process</button>
+                    <button onclick="showTab('settings'); toggleMobileMenu();" id="mobileSettingsNavButton" class="tab-button block px-3 py-3 rounded-lg text-slate-700 hover:text-cyan-700 hover:bg-cyan-50 text-left text-base hidden">Settings</button> <!-- Hidden initially -->
                     <hr class="my-2"/>
                     <div id="authActionsUnauthenticated_mobile">
                         <button onclick="signInWithGoogle(); toggleMobileMenu();" class="block w-full text-center btn-primary px-3 py-3 rounded-lg font-medium text-base">
@@ -278,16 +325,16 @@
                         <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto mb-16">
                             <div class="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
                                 <img src="assets/before.png" alt="The old way of processing POs" class="hero-comparison-image">
-                                <div class="text-red-500 mb-4 mt-4"><span class="material-icons-outlined text-4xl">warning</span></div>
-                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4">The Old Way</h3>
+                                <!-- Removed icon -->
+                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4 mt-4">The Old Way</h3>
                                 <ul class="text-slate-700 space-y-2 text-left">
                                     <li>• Hours manually entering vendor data</li><li>• Hunting through receipts and invoices</li><li>• Formatting POs one by one</li><li>• Missing deadlines for production companies</li><li>• Losing track of expenses</li>
                                 </ul>
                             </div>
                             <div class="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
                                 <img src="assets/after.png" alt="The PO Wizard way of processing POs" class="hero-comparison-image">
-                                <div class="text-green-500 mb-4 mt-4"><span class="material-icons-outlined text-4xl">auto_awesome</span></div>
-                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4">The PO Wizard Way</h3>
+                                 <!-- Removed icon -->
+                                <h3 class="po-wizard-title-font text-xl font-bold text-slate-800 mb-4 mt-4">The PO Wizard Way</h3>
                                 <ul class="text-slate-700 space-y-2 text-left">
                                     <li>• AI scans all your documents automatically</li><li>• Extracts vendor info, amounts, dates</li><li>• Generates professional POs instantly</li><li>• Ready for production company submission</li><li>• Complete audit trail maintained</li>
                                 </ul>
@@ -312,7 +359,7 @@
                 </div>
             </section>
 
-            <!-- Features Section -->
+            <!-- Features Section (unchanged) -->
             <section id="featuresSection" class="py-20 bg-slate-100 hidden">
                  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -362,7 +409,7 @@
                 </div>
             </section>
 
-            <!-- Pricing Section -->
+            <!-- Pricing Section (unchanged) -->
             <section id="pricingSection" class="py-20 bg-white hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -457,13 +504,12 @@
                         </div>
 
                         <div id="step2_processing_docs" class="step-content hidden">
-                             <div class="text-center mb-4"> <!-- Reduced bottom margin here -->
-                                <!-- Loading Animation Video -->
+                             <div class="text-center mb-4"> 
                                 <video id="loadingAnimationVideo" class="hidden" autoplay loop muted playsinline>
                                     <source src="assets/loading_animation.mp4" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
-                                <div id="processingIconContainer" class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"> <!-- This will be hidden when video shows -->
+                                <div id="processingIconContainer" class="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6"> 
                                     <span class="material-icons-outlined text-green-700 text-3xl">auto_awesome</span>
                                 </div>
                                 <h3 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-4">Processing Documents...</h3>
@@ -503,7 +549,6 @@
                         </div>
                     </div>
 
-                    <!-- Batch Action Buttons - Initially hidden -->
                     <div id="batchActionControls" class="mb-6 p-4 bg-slate-100 rounded-lg shadow hidden">
                         <p class="text-sm text-slate-700 mb-2"><span id="selectedPoCount">0</span> PO(s) selected.</p>
                         <div class="flex flex-wrap gap-2">
@@ -530,6 +575,83 @@
                     <div id="paginationControls" class="flex justify-center items-center space-x-4 mt-12 hidden"><button class="p-2 hover:bg-cyan-50 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_left</span></button><div class="flex space-x-1"><button class="px-3 py-2 bg-cyan-600 text-white rounded-lg">1</button></div><button class="p-2 hover:bg-cyan-50 rounded-lg transition-colors"><span class="material-icons-outlined">chevron_right</span></button></div>
                 </div>
             </section>
+
+            <!-- Settings Section -->
+            <section id="settingsSection" class="py-16 bg-white hidden">
+                <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="po-wizard-title-font text-3xl font-bold text-cyan-700 mb-8 text-center">Account Settings</h2>
+                    
+                    <div class="mb-6 border-b border-slate-200">
+                        <nav class="flex -mb-px space-x-6" aria-label="Tabs">
+                            <button onclick="showSettingsTab('profile')" data-tab="profile" class="settings-tab-button active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-cyan-600 hover:border-cyan-500">
+                                Profile
+                            </button>
+                            <button onclick="showSettingsTab('billing')" data-tab="billing" class="settings-tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-cyan-600 hover:border-cyan-500">
+                                Billing
+                            </button>
+                            <button onclick="showSettingsTab('dropbox')" data-tab="dropbox" class="settings-tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-cyan-600 hover:border-cyan-500">
+                                Dropbox
+                            </button>
+                             <button onclick="showSettingsTab('accountDanger')" data-tab="accountDanger" class="settings-tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-red-600 hover:border-red-500">
+                                Account Actions
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div id="settingsTabContent">
+                        <div id="profileSettingsTab" class="settings-tab-content active">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4">Profile Information</h3>
+                            <form id="profileSettingsForm" class="space-y-4">
+                                <div>
+                                    <label for="settingsFullName" class="block text-sm font-medium text-slate-700">Full Name</label>
+                                    <input type="text" id="settingsFullName" name="settingsFullName" placeholder="Your Full Name" class="mt-1 block w-full form-input">
+                                </div>
+                                <div>
+                                    <label for="settingsCompanyName" class="block text-sm font-medium text-slate-700">Company Name (Optional)</label>
+                                    <input type="text" id="settingsCompanyName" name="settingsCompanyName" placeholder="Your Company LLC" class="mt-1 block w-full form-input">
+                                </div>
+                                <div>
+                                    <label for="settingsAddress" class="block text-sm font-medium text-slate-700">Company Address (Optional)</label>
+                                    <textarea id="settingsAddress" name="settingsAddress" rows="3" placeholder="123 Production Way, Hollywood, CA" class="mt-1 block w-full form-textarea"></textarea>
+                                </div>
+                                <button type="button" onclick="alert('Save Profile - Not Implemented Yet')" class="btn-primary py-2 px-4 rounded-md">Save Profile</button>
+                            </form>
+                        </div>
+
+                        <div id="billingSettingsTab" class="settings-tab-content">
+                             <h3 class="text-xl font-semibold text-slate-800 mb-4">Billing Information</h3>
+                             <p class="text-slate-600">Manage your subscription and payment methods.</p>
+                             <div class="mt-4 p-4 bg-slate-100 rounded-md">
+                                <p class="font-medium">Current Plan: <span id="currentPlanDisplay" class="text-cyan-600">Pro Plan</span></p>
+                                <p class="text-sm text-slate-500">Next billing date: July 15, 2024</p>
+                                <button class="mt-3 text-sm text-cyan-600 hover:underline">Manage Subscription</button>
+                             </div>
+                             <p class="mt-6 text-slate-500 text-sm">Billing features are managed through our secure payment processor (Stripe - Placeholder).</p>
+                        </div>
+
+                        <div id="dropboxSettingsTab" class="settings-tab-content">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4">Dropbox Connection</h3>
+                            <p class="text-slate-600 mb-4">Update your Dropbox Access Token if it has expired or you need to reconnect.</p>
+                            <div>
+                                <label for="settingsDropboxToken" class="block text-sm font-medium text-slate-700">New Dropbox Access Token:</label>
+                                <input type="password" id="settingsDropboxToken" name="settingsDropboxToken" placeholder="Paste new token here" class="mt-1 block w-full form-input">
+                                <button type="button" onclick="updateDropboxTokenFromSettings()" class="mt-3 btn-primary py-2 px-4 rounded-md">Update Token</button>
+                                <p class="text-xs text-slate-500 mt-1">This token is stored in your browser's session storage for this session only.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="accountDangerSettingsTab" class="settings-tab-content">
+                            <h3 class="text-xl font-semibold text-red-600 mb-4">Danger Zone</h3>
+                            <div class="border border-red-300 rounded-md p-4">
+                                <h4 class="font-medium text-red-700">Deactivate Account</h4>
+                                <p class="text-sm text-slate-600 mt-1 mb-3">This action cannot be undone. All your data associated with PO Wizard will be scheduled for deletion according to our data retention policy.</p>
+                                <button type="button" onclick="alert('Deactivate Account - Not Implemented Yet. This would typically involve a confirmation step.')" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md">Deactivate My Account</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <footer class="bg-slate-800 text-slate-300">
@@ -545,7 +667,7 @@
         </footer>
     </div>
 
-    <!-- Review Modal -->
+    <!-- Review Modal (Unchanged from your previous working version) -->
     <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100] p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full mx-auto flex flex-col max-h-[95vh] review-modal-shell">
             <!-- Modal Header -->
@@ -626,12 +748,12 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
+        const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1'; // Replace if different
 
         let isAuthenticated = false;
         let currentJobNumberContext = "";
         let currentProjectNameContext = "";
-        let dropboxAccessToken = ""; // This will hold the user-provided or session-stored token
+        let dropboxAccessToken = ""; 
         let currentOpenPOTaskId = null;
         let statusPollInterval = null;
         let allFetchedPOs = []; 
@@ -639,34 +761,42 @@
         let currentEditingPODataForModal = null; 
         let selectedPOIds = new Set();
 
+        // --- DOM Element Functions ---
+        function getElem(id) { return document.getElementById(id); }
 
         // --- Authentication and UI ---
         function updateAuthUI() {
-            const unauthDesktop = document.getElementById('authActionsUnauthenticated_desktop');
-            const authDesktop = document.getElementById('authActionsAuthenticated_desktop');
-            const userDisplayDesktop = document.getElementById('userDisplayName_desktop');
-            const unauthMobile = document.getElementById('authActionsUnauthenticated_mobile');
-            const authMobile = document.getElementById('authActionsAuthenticated_mobile');
-            const userDisplayMobile = document.getElementById('userDisplayName_mobile');
-            const procNavButton = document.getElementById('processingNavButton');
-            const mobileProcNavButton = document.getElementById('mobileProcessingNavButton');
+            const unauthDesktop = getElem('authActionsUnauthenticated_desktop');
+            const authDesktop = getElem('authActionsAuthenticated_desktop');
+            const userDisplayDesktopBtn = getElem('userDisplayName_desktop'); // This is the button for the dropdown
+            const unauthMobile = getElem('authActionsUnauthenticated_mobile');
+            const authMobile = getElem('authActionsAuthenticated_mobile');
+            const userDisplayMobile = getElem('userDisplayName_mobile');
+            const procNavButton = getElem('processingNavButton');
+            const mobileProcNavButton = getElem('mobileProcessingNavButton');
+            const mobileSettingsNavButton = getElem('mobileSettingsNavButton');
+
 
             if (isAuthenticated && currentUser) {
                 unauthDesktop.classList.add('hidden');
                 authDesktop.classList.remove('hidden');
-                authDesktop.classList.add('flex');
-                userDisplayDesktop.textContent = `Welcome, ${currentUser.displayName}!`;
+                authDesktop.classList.add('flex'); // Make sure flex is applied
+                // Update the button text for the dropdown, not a separate span
+                userDisplayDesktopBtn.childNodes[0].nodeValue = `Welcome, ${currentUser.displayName}! `;
+
 
                 unauthMobile.classList.add('hidden');
                 authMobile.classList.remove('hidden');
-                authMobile.style.display = 'flex';
-                authMobile.classList.add('flex-col', 'space-y-2');
+                authMobile.style.display = 'flex'; // Ensure it's flex
+                authMobile.classList.add('flex-col', 'space-y-2'); // Add classes if not present
                 userDisplayMobile.textContent = `Welcome, ${currentUser.displayName}!`;
 
                 procNavButton.textContent = 'My POs';
                 mobileProcNavButton.textContent = 'My POs';
                 procNavButton.disabled = false;
                 mobileProcNavButton.disabled = false;
+                if(mobileSettingsNavButton) mobileSettingsNavButton.classList.remove('hidden');
+
             } else {
                 unauthDesktop.classList.remove('hidden');
                 authDesktop.classList.add('hidden');
@@ -680,6 +810,7 @@
                 mobileProcNavButton.textContent = 'My POs / Process';
                 procNavButton.disabled = true;
                 mobileProcNavButton.disabled = true;
+                if(mobileSettingsNavButton) mobileSettingsNavButton.classList.add('hidden');
             }
         }
 
@@ -697,11 +828,10 @@
                 console.log("User not authenticated. Initiating Google Sign-In.");
                 signInWithGoogle();
             }
-            // Close mobile menu if open
             if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
-                 const mobileMenu = document.getElementById('mobileMenu');
+                 const mobileMenu = getElem('mobileMenu');
                  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                    toggleMobileMenu(); // Assumes toggleMobileMenu also handles closing
+                    toggleMobileMenu();
                 }
             }
         }
@@ -719,9 +849,8 @@
             currentProjectNameContext = "";
             allFetchedPOs = [];
             updateAuthUI();
-            showTab('hero'); // Redirect to home on sign out
-            // Close mobile menu if open
-            if (document.getElementById('mobileMenu') && !document.getElementById('mobileMenu').classList.contains('hidden')) {
+            showTab('hero'); 
+            if (getElem('mobileMenu') && !getElem('mobileMenu').classList.contains('hidden')) {
                 toggleMobileMenu();
             }
             console.log("User signed out, Dropbox token cleared.");
@@ -746,7 +875,7 @@
                 return {
                     displayName: userData.full_name || userData.email.split('@')[0] || "User",
                     email: userData.email,
-                    app_token: token // Store app_token with user details
+                    app_token: token 
                 };
             } catch (error) {
                 console.error("fetchUserDetails: Error fetching user details:", error);
@@ -765,7 +894,6 @@
                     localStorage.setItem('user_displayName', currentUser.displayName);
                     localStorage.setItem('user_email', currentUser.email);
                     console.log("User authenticated from localStorage token via /users/me:", currentUser);
-                    // Check for sessionStorage Dropbox token
                     const storedDbxToken = sessionStorage.getItem('dropbox_access_token');
                     if (storedDbxToken) {
                         dropboxAccessToken = storedDbxToken;
@@ -774,7 +902,6 @@
 
                 } else {
                     console.log("Token verification via /users/me failed or no user details returned. User remains signed out.");
-                    // signOut(); // Ensure clean state if verification fails
                 }
             } else {
                 isAuthenticated = false;
@@ -785,118 +912,120 @@
         }
 
         async function handleAuthCallback() {
-            // Check for token in URL (from Google OAuth callback)
             if (window.location.hash && window.location.hash.startsWith('#token=')) {
                 const token = window.location.hash.substring('#token='.length);
                 localStorage.setItem('app_token', token);
                 console.log("Token received from URL callback. Fetching user details...");
 
-                // Fetch user details using this new token
                 const userDetails = await fetchUserDetails(token);
                 if (userDetails) {
                     isAuthenticated = true;
                     currentUser = userDetails;
-                    // Store some user details for convenience if needed, app_token is already stored
                     localStorage.setItem('user_displayName', currentUser.displayName);
                     localStorage.setItem('user_email', currentUser.email);
                     console.log("User successfully authenticated via callback:", currentUser);
                     updateAuthUI();
-                    // Clean the URL
                     history.pushState("", document.title, window.location.pathname + window.location.search);
-                    // Navigate to a relevant tab, e.g., purchase orders or processing
                     showTab('purchaseOrders'); 
                 } else {
                     console.error("Could not set up user after auth callback (fetchUserDetails returned null).");
-                    // Clean the URL even on failure
                     history.pushState("", document.title, window.location.pathname + window.location.search);
                 }
             } else if (window.location.hash && window.location.hash.startsWith('#auth_error=')){
-                // Handle auth errors from callback
                 const errorMsg = window.location.hash.substring('#auth_error='.length);
                 alert(`Google Sign-In Error: ${decodeURIComponent(errorMsg)}`);
                 history.pushState("", document.title, window.location.pathname + window.location.search);
             }
         }
-
+        // --- Tab and Settings Tab Navigation ---
         function showTab(activeTabName) {
-            const protectedTabs = ['processingSection', 'purchaseOrdersSection'];
+            const protectedTabs = ['processingSection', 'purchaseOrdersSection', 'settingsSection'];
             const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
 
             if (protectedTabs.includes(sectionId) && !isAuthenticated) {
                 alert('Please sign in to access this feature.');
-                signInWithGoogle(); 
+                signInWithGoogle();
                 return;
             }
-            
-            if (sectionId === 'purchaseOrdersSection' && isAuthenticated && !dropboxAccessToken) {
-                alert('Please connect to Dropbox to view or process Purchase Orders.');
-                promptForDropboxToken(); 
-                return; 
+
+            if ((sectionId === 'purchaseOrdersSection' || sectionId === 'processingSection') && isAuthenticated && !dropboxAccessToken) {
+                if (sectionId === 'purchaseOrdersSection') {
+                     alert('Please connect to Dropbox to view or process Purchase Orders.');
+                }
+                promptForDropboxToken(); // This will switch to processingSection and show token input
+                return;
             }
 
-
             document.querySelectorAll('main > section').forEach(section => section.style.display = 'none');
-            const sectionElement = document.getElementById(sectionId);
+            const sectionElement = getElem(sectionId);
             if (sectionElement) sectionElement.style.display = 'block';
 
             if (sectionId === 'purchaseOrdersSection' && isAuthenticated && dropboxAccessToken) {
                 fetchGeneratedPOs();
             } else if (sectionId === 'processingSection') {
                 if (!dropboxAccessToken && isAuthenticated) {
-                    promptForDropboxToken(); 
+                    promptForDropboxToken();
                 } else if (isAuthenticated && dropboxAccessToken) {
-                    document.getElementById('step0_token_input').classList.add('hidden');
-                    document.getElementById('step1_configure_job').classList.remove('hidden');
-                    document.getElementById('step2_processing_docs').classList.add('hidden');
-                    document.getElementById('progressSection').classList.remove('expanded');
+                    getElem('step0_token_input').classList.add('hidden');
+                    getElem('step1_configure_job').classList.remove('hidden');
+                    getElem('step2_processing_docs').classList.add('hidden');
+                    getElem('progressSection').classList.remove('expanded');
                     updateActiveStepIndicator('configure');
                 }
+            } else if (sectionId === 'settingsSection') {
+                populateSettingsForm();
+                showSettingsTab('profile'); // Default to profile tab
             }
             updateActiveTabButton(activeTabName);
 
-            // Close mobile menu if an item was clicked from it
             if (typeof event !== 'undefined' && event && event.target && event.target.closest('#mobileMenu')) {
-                const mobileMenu = document.getElementById('mobileMenu');
-                 if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                    toggleMobileMenu(); // Assumes toggleMobileMenu also handles closing
+                const mobileMenu = getElem('mobileMenu');
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    toggleMobileMenu();
                 }
             }
+        }
+        
+        function showSettingsTab(activeTabId) {
+            document.querySelectorAll('.settings-tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.settings-tab-button').forEach(btn => btn.classList.remove('active'));
+
+            const activeContent = getElem(activeTabId + 'SettingsTab');
+            if (activeContent) activeContent.classList.add('active');
+            
+            const activeButton = document.querySelector(`.settings-tab-button[data-tab="${activeTabId}"]`);
+            if (activeButton) activeButton.classList.add('active');
         }
         
         function promptForDropboxToken() {
             if (!isAuthenticated) {
                 alert("Please sign in first to create a new PO batch.");
-                signInWithGoogle(); // Redirect to sign-in
+                signInWithGoogle(); 
                 return;
             }
-            // Ensure only the processing section and its token input step are visible
             document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
-            const processingSec = document.getElementById('processingSection');
+            const processingSec = getElem('processingSection');
             if (processingSec) processingSec.style.display = 'block';
             
-            document.getElementById('step0_token_input').classList.remove('hidden');
-            document.getElementById('step1_configure_job').classList.add('hidden');
-            document.getElementById('step2_processing_docs').classList.add('hidden');
-            document.getElementById('progressSection').classList.remove('expanded');
+            getElem('step0_token_input').classList.remove('hidden');
+            getElem('step1_configure_job').classList.add('hidden');
+            getElem('step2_processing_docs').classList.add('hidden');
+            getElem('progressSection').classList.remove('expanded');
             
-            // Clear previous job info if starting a new batch flow
-            document.getElementById('inputJobNumber').value = '';
-            document.getElementById('inputProjectName').value = '';
-            // Optionally reset dropbox source/output paths or leave them
-            // document.getElementById('dropboxSourcePath').value = "/POWizardCompany/SourceDocs"; // Or some default
-            // document.getElementById('dropboxOutputPath').value = "/POWizardCompany/OutputPOs"; // Or some default
+            getElem('inputJobNumber').value = '';
+            getElem('inputProjectName').value = '';
             
-            updateJobContextDisplay_Processing("N/A", "N/A"); // Reset processing display
+            updateJobContextDisplay_Processing("N/A", "N/A"); 
             updateActiveStepIndicator('token');
-            updateActiveTabButton('processingSection'); // Ensure correct nav button is active
+            updateActiveTabButton('processingSection'); 
         }
 
 
         function updateActiveStepIndicator(activeStepName) {
             const indicators = {
-                'token': document.getElementById('tokenStepIndicator').querySelector('div'),
-                'configure': document.getElementById('configureStepIndicator').querySelector('div'),
-                'process': document.getElementById('processDocsStepIndicator').querySelector('div')
+                'token': getElem('tokenStepIndicator').querySelector('div'),
+                'configure': getElem('configureStepIndicator').querySelector('div'),
+                'process': getElem('processDocsStepIndicator').querySelector('div')
             };
             const activeClass = 'bg-cyan-600 text-white';
             const inactiveClass = 'bg-slate-300 text-slate-500';
@@ -925,17 +1054,17 @@
         }
 
         function submitDropboxToken() {
-            const token = document.getElementById('dropboxAccessTokenInput').value.trim();
+            const token = getElem('dropboxAccessTokenInput').value.trim();
             if (!token) {
                 alert("Please enter your Dropbox Access Token.");
                 return;
             }
-            dropboxAccessToken = token; // Store globally for the session
-            sessionStorage.setItem('dropbox_access_token', token); // Also store in sessionStorage
+            dropboxAccessToken = token; 
+            sessionStorage.setItem('dropbox_access_token', token); 
             console.log("Dropbox Token Submitted:", dropboxAccessToken ? "Token Present" : "Token Missing/Empty");
 
-            document.getElementById('step0_token_input').classList.add('hidden');
-            document.getElementById('step1_configure_job').classList.remove('hidden');
+            getElem('step0_token_input').classList.add('hidden');
+            getElem('step1_configure_job').classList.remove('hidden');
             updateActiveStepIndicator('configure');
         }
 
@@ -946,19 +1075,19 @@
             }
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             let targetButtonText = "";
-            // Determine the section ID correctly
             const sectionId = activeTabName.endsWith('Section') ? activeTabName : activeTabName + 'Section';
 
-            // Logic to find the corresponding button text
-            if (sectionId === 'heroSection') targetButtonText = null; // No nav button for hero usually
+            if (sectionId === 'heroSection') targetButtonText = null; 
             else if (sectionId === 'featuresSection') targetButtonText = 'Features';
             else if (sectionId === 'pricingSection') targetButtonText = 'Pricing';
+            else if (sectionId === 'settingsSection') {
+                // No main nav button for settings, it's in dropdown
+                targetButtonText = null; 
+            }
             else if (sectionId === 'purchaseOrdersSection' || sectionId === 'processingSection') {
-                // Both processing and purchaseOrders map to the "My POs / Process" or "My POs" button
-                targetButtonText = document.getElementById('processingNavButton').textContent.trim(); // Get current text
+                targetButtonText = getElem('processingNavButton').textContent.trim(); 
             }
 
-            // Apply 'active' class
             if (targetButtonText) {
                 document.querySelectorAll('#desktopMenu .tab-button, #mobileMenu .tab-button').forEach(btn => {
                     if (btn.textContent.trim() === targetButtonText) {
@@ -969,20 +1098,20 @@
         }
 
         function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            const menuButton = document.getElementById('mobileMenuButton');
+            const mobileMenu = getElem('mobileMenu');
+            const menuButton = getElem('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
             if (mobileMenu) mobileMenu.classList.toggle('hidden');
             if (menuIcon) {
                 menuIcon.textContent = mobileMenu.classList.contains('hidden') ? 'menu' : 'close';
             }
         }
-        const mobileMenuBtn = document.getElementById('mobileMenuButton');
+        const mobileMenuBtn = getElem('mobileMenuButton');
         if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
 
         function closeMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            const menuButton = document.getElementById('mobileMenuButton');
+            const mobileMenu = getElem('mobileMenu');
+            const menuButton = getElem('mobileMenuButton');
             const menuIcon = menuButton ? menuButton.querySelector('span') : null;
             if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
@@ -991,67 +1120,67 @@
         }
 
         function updateJobContextDisplay_Dashboard(jobNum, projName) {
-            const dispJobNum = document.getElementById('displayJobNumber_dashboard');
-            const dispProjName = document.getElementById('displayProjectName_dashboard');
+            const dispJobNum = getElem('displayJobNumber_dashboard');
+            const dispProjName = getElem('displayProjectName_dashboard');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
 
         function updateJobContextDisplay_Processing(jobNum, projName) {
-            const dispJobNum = document.getElementById('displayJobNumber_processing');
-            const dispProjName = document.getElementById('displayProjectName_processing');
+            const dispJobNum = getElem('displayJobNumber_processing');
+            const dispProjName = getElem('displayProjectName_processing');
             if(dispJobNum) dispJobNum.textContent = jobNum || "N/A";
             if(dispProjName) dispProjName.textContent = projName || "N/A";
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             console.log("DOMContentLoaded: Starting auth checks.");
-            await handleAuthCallback(); // Check for #token or #auth_error in URL first
-            await checkAuthOnLoad();   // Then check localStorage for existing token
-            showTab('hero'); // Default to hero section
+            await handleAuthCallback(); 
+            await checkAuthOnLoad();   
+            showTab('hero'); 
             console.log("DOMContentLoaded: Initial auth checks complete. isAuthenticated:", isAuthenticated);
         });
 
         // Processing Logic (Job Submission and Monitoring)
         function confirmPathsAndProceed() {
-            currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
-            currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
+            currentJobNumberContext = getElem('inputJobNumber').value.trim();
+            currentProjectNameContext = getElem('inputProjectName').value.trim();
 
-            const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
-            const outputPath = document.getElementById('dropboxOutputPath').value.trim();
+            const sourcePath = getElem('dropboxSourcePath').value.trim();
+            const outputPath = getElem('dropboxOutputPath').value.trim();
 
             if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath || !outputPath) {
                 alert("Job Number, Project Name, Dropbox Source Path, and Output Path are required."); return;
             }
-            if (!dropboxAccessToken) { // Check if Dropbox token is available
+            if (!dropboxAccessToken) { 
                 alert("Dropbox Access Token is missing. Please go back and provide it.");
-                promptForDropboxToken(); // Re-prompt if missing
+                promptForDropboxToken(); 
                 return;
             }
             updateJobContextDisplay_Processing(currentJobNumberContext, currentProjectNameContext);
 
-            document.getElementById('step1_configure_job').classList.add('hidden');
-            document.getElementById('step2_processing_docs').classList.remove('hidden');
-            const progressSect = document.getElementById('progressSection'); if(progressSect) progressSect.classList.add('expanded');
+            getElem('step1_configure_job').classList.add('hidden');
+            getElem('step2_processing_docs').classList.remove('hidden');
+            const progressSect = getElem('progressSection'); if(progressSect) progressSect.classList.add('expanded');
             updateActiveStepIndicator('process');
             startDocumentProcessing(sourcePath, outputPath);
         }
 
         async function startDocumentProcessing(sourcePath, outputPath) {
             updateProgressUI(0, "Initializing job submission...");
-            const stageSpinner = document.getElementById('stageSpinner'); 
-            const loadingAnimationVideo = document.getElementById('loadingAnimationVideo');
-            const processingIconContainer = document.getElementById('processingIconContainer');
+            const stageSpinner = getElem('stageSpinner'); 
+            const loadingAnimationVideo = getElem('loadingAnimationVideo');
+            const processingIconContainer = getElem('processingIconContainer');
 
-            if (stageSpinner) stageSpinner.style.display = 'block'; // Keep existing spinner logic
+            if (stageSpinner) stageSpinner.style.display = 'block'; 
             if (loadingAnimationVideo) loadingAnimationVideo.classList.remove('hidden');
             if (processingIconContainer) processingIconContainer.classList.add('hidden');
 
 
             const appToken = localStorage.getItem('app_token');
-            if (!isAuthenticated || !appToken) { // Check Google Auth
+            if (!isAuthenticated || !appToken) { 
                 alert("Authentication error. Please sign in again.");
-                signOut(); // Full sign out
+                signOut(); 
                 if(stageSpinner) stageSpinner.style.display = 'none';
                 if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
                 if (processingIconContainer) processingIconContainer.classList.remove('hidden');
@@ -1059,7 +1188,7 @@
             }
 
             const payload = {
-                dropbox_access_token: dropboxAccessToken, // Use the stored token
+                dropbox_access_token: dropboxAccessToken, 
                 dropbox_source_path: sourcePath,
                 dropbox_output_path: outputPath,
                 job_number_context: currentJobNumberContext,
@@ -1070,11 +1199,11 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${appToken}` // Google Auth token
+                        'Authorization': `Bearer ${appToken}` 
                     },
                     body: JSON.stringify(payload)
                 });
-                if (response.status === 401) { // Google Auth token expired/invalid
+                if (response.status === 401) { 
                     console.warn("Celery task submission failed (401). Signing out.");
                     signOut();
                     alert("Your session has expired. Please sign in again.");
@@ -1102,9 +1231,9 @@
 
         function pollTaskStatus(taskId) {
             if (statusPollInterval) clearInterval(statusPollInterval);
-            const stageSpinner = document.getElementById('stageSpinner');
-            const loadingAnimationVideo = document.getElementById('loadingAnimationVideo');
-            const processingIconContainer = document.getElementById('processingIconContainer');
+            const stageSpinner = getElem('stageSpinner');
+            const loadingAnimationVideo = getElem('loadingAnimationVideo');
+            const processingIconContainer = getElem('processingIconContainer');
 
             statusPollInterval = setInterval(async () => {
                 try {
@@ -1122,16 +1251,12 @@
                     }
                     const data = await response.json();
                     let currentStepMessage = data.current_step || data.status;
-                     // Refined logic for displaying vendor name if available in progress
-                     if (data.status === 'PROGRESS' && data.result && data.result.current_step && data.result.vendor_name) {
-                        // Prefer current_step from task.info if it already includes vendor_name logic from backend
-                        if (typeof data.result.current_step === 'string' && data.result.current_step.toLowerCase().includes(data.result.vendor_name.toLowerCase())) {
+                     if (!(data.status === 'PROGRESS' && data.result && data.result.vendor_name && typeof data.current_step === 'string' && data.current_step.toLowerCase().includes(data.result.vendor_name.toLowerCase()))) {
+                        if (data.status === 'PROGRESS' && data.result && data.result.vendor_name) {
+                            currentStepMessage = `${data.current_step}: ${data.result.vendor_name}`;
+                        } else if (data.status === 'PROGRESS' && data.result && data.result.current_step && !data.current_step) {
                              currentStepMessage = data.result.current_step;
-                        } else { // Fallback if backend's current_step is more generic
-                             currentStepMessage = `${data.result.current_step}: ${data.result.vendor_name}`;
                         }
-                    } else if (data.status === 'PROGRESS' && data.result && data.result.current_step) {
-                         currentStepMessage = data.result.current_step; // Use current_step from task.info.result
                     }
 
                     updateProgressUI(data.progress_percent, currentStepMessage);
@@ -1141,7 +1266,7 @@
                         updateProgressUI(100, "Processing complete! POs generated."); 
                         if(stageSpinner) stageSpinner.style.display = 'none'; 
                         if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
-                        if (processingIconContainer) processingIconContainer.classList.remove('hidden'); // Or show a success icon
+                        if (processingIconContainer) processingIconContainer.classList.remove('hidden'); 
                         showTab('purchaseOrders'); 
                     }
                     else if (data.status === 'FAILURE') { 
@@ -1164,8 +1289,8 @@
         }
 
         function updateProgressUI(percentage, statusText, isError = false) {
-            const progressFill = document.getElementById('progressFill'); const progressPercent = document.getElementById('progressPercent');
-            const stageTitle = document.getElementById('stageTitle'); const stageDescription = document.getElementById('stageDescription');
+            const progressFill = getElem('progressFill'); const progressPercent = getElem('progressPercent');
+            const stageTitle = getElem('stageTitle'); const stageDescription = getElem('stageDescription');
             if (percentage !== null && progressFill && progressPercent) { progressFill.style.width = percentage + '%'; progressPercent.textContent = percentage + '%'; }
             if(stageTitle) stageTitle.textContent = isError ? "Error" : "Status";
             if(stageDescription) stageDescription.textContent = statusText;
@@ -1177,9 +1302,9 @@
             if (statusPollInterval) clearInterval(statusPollInterval); 
             console.log("Processing cancellation requested."); 
             updateProgressUI(0, "Processing cancelled by user.", true); 
-            const stageSpinner = document.getElementById('stageSpinner');
-            const loadingAnimationVideo = document.getElementById('loadingAnimationVideo');
-            const processingIconContainer = document.getElementById('processingIconContainer');
+            const stageSpinner = getElem('stageSpinner');
+            const loadingAnimationVideo = getElem('loadingAnimationVideo');
+            const processingIconContainer = getElem('processingIconContainer');
             if(stageSpinner) stageSpinner.style.display = 'none';
             if (loadingAnimationVideo) loadingAnimationVideo.classList.add('hidden');
             if (processingIconContainer) processingIconContainer.classList.remove('hidden');
@@ -1187,10 +1312,10 @@
 
         // --- PO Listing, Review, Batch Actions ---
         async function fetchGeneratedPOs() {
-            const poGrid = document.getElementById('poGrid');
-            const noPOsActionContainer = document.getElementById('noPOsActionContainer');
-            const noPOsMessageEl = document.getElementById('noPOsMessage');
-            const batchActionControls = document.getElementById('batchActionControls');
+            const poGrid = getElem('poGrid');
+            const noPOsActionContainer = getElem('noPOsActionContainer');
+            const noPOsMessageEl = getElem('noPOsMessage');
+            const batchActionControls = getElem('batchActionControls');
 
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
@@ -1208,8 +1333,6 @@
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
                 if (batchActionControls) batchActionControls.classList.add('hidden');
                 updateJobContextDisplay_Dashboard(currentJobNumberContext || "N/A", currentProjectNameContext || "N/A");
-                // If user tries to access My POs without Dropbox token, guide them
-                // This is also handled by showTab, but an extra check here is fine.
                 promptForDropboxToken(); 
                 return;
             }
@@ -1229,7 +1352,7 @@
                 poGrid.innerHTML = '';
                 if (noPOsMessageEl) noPOsMessageEl.textContent = 'No active job selected. Please create a new PO batch.';
                 if (noPOsActionContainer) noPOsActionContainer.classList.remove('hidden');
-                const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `0 POs Generated`;
+                const poCountEl = getElem('poCount'); if(poCountEl) poCountEl.textContent = `0 POs Generated`;
                 allFetchedPOs = [];
                 return;
             }
@@ -1261,7 +1384,7 @@
                     throw new Error(errorDetail);
                 }
                 const data = await response.json(); allFetchedPOs = data.generated_pos || [];
-                const poCountEl = document.getElementById('poCount'); if(poCountEl) poCountEl.textContent = `${allFetchedPOs.length} POs Generated`;
+                const poCountEl = getElem('poCount'); if(poCountEl) poCountEl.textContent = `${allFetchedPOs.length} POs Generated`;
 
                 if (allFetchedPOs.length === 0) {
                     poGrid.innerHTML = '';
@@ -1282,18 +1405,17 @@
             }
         }
         function renderPOGrid(posToRender) {
-            const poGrid = document.getElementById('poGrid');
-            const noPOsActionContainer = document.getElementById('noPOsActionContainer');
+            const poGrid = getElem('poGrid');
+            const noPOsActionContainer = getElem('noPOsActionContainer');
             if (!poGrid) { console.error("renderPOGrid: poGrid element not found!"); return; }
             poGrid.innerHTML = '';
             if (!posToRender || posToRender.length === 0) { return; }
             if (noPOsActionContainer) noPOsActionContainer.classList.add('hidden');
             posToRender.forEach(po => { const card = createPOCard(po); poGrid.appendChild(card); });
-             // Ensure checkboxes reflect current selection state after re-render
             selectedPOIds.forEach(poId => {
-                const chk = document.getElementById(`chk-${poId}`);
+                const chk = getElem(`chk-${poId}`);
                 if (chk) chk.checked = true;
-                 const cardEl = document.getElementById(`po-card-${poId}`);
+                 const cardEl = getElem(`po-card-${poId}`);
                 if (cardEl) cardEl.classList.add('selected-card');
             });
             updateBatchActionButtons();
@@ -1385,30 +1507,30 @@
             }
             if (!currentEditingPODataForModal) { alert('Could not load data for this PO.'); return; }
 
-            document.getElementById('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPODataForModal.po_number}`;
-            document.getElementById('editPoIdOnGrid').value = poIdOnGrid;
-            document.getElementById('editOriginalPoPackageFilename').value = currentEditingPODataForModal.original_po_package_filename || '';
-            document.getElementById('editPoNumber').value = currentEditingPODataForModal.po_number;
-            document.getElementById('editVendor').value = currentEditingPODataForModal.vendor_name;
-            document.getElementById('editVendorAddress').value = currentEditingPODataForModal.vendor_address || '';
-            document.getElementById('editVendorPhone').value = currentEditingPODataForModal.vendor_phone || ''; 
-            document.getElementById('editVendorContact').value = currentEditingPODataForModal.vendor_contact || ''; 
-            document.getElementById('editVendorTIN').value = currentEditingPODataForModal.vendor_tin || '';
-            document.getElementById('editPoDate').value = currentEditingPODataForModal.po_date;
-            document.getElementById('editHasW9').value = String(currentEditingPODataForModal.has_w9_document || false);
-            document.getElementById('editIsIncorp').value = currentEditingPODataForModal.is_incorp_on_w9 || 'Unknown';
-            document.getElementById('editPaymentMethod').value = currentEditingPODataForModal.payment_method_from_po || 'Credit Card'; 
-            document.getElementById('editInvoiceRef').value = currentEditingPODataForModal.invoice_reference_from_po || '';
-            document.getElementById('editTaxAmount').value = currentEditingPODataForModal.tax_amount || '0.00'; 
-            document.getElementById('editTotalAmount').value = (currentEditingPODataForModal.total_vendor_amount_str || "").replace('$', '');
-            document.getElementById('editAdditionalNotes').value = currentEditingPODataForModal.additional_notes || '';
-            document.getElementById('editJobNumber').value = currentEditingPODataForModal.job_number;
-            document.getElementById('editProjectName').value = currentEditingPODataForModal.project_name;
-            document.getElementById('editUserEmail').value = currentEditingPODataForModal.user_email || (currentUser ? currentUser.email : '');
-            document.getElementById('editBackupDocsPaths').value = JSON.stringify(currentEditingPODataForModal.backup_document_original_dropbox_paths || []);
+            getElem('reviewModalTitle').textContent = `Review Purchase Order: ${currentEditingPODataForModal.po_number}`;
+            getElem('editPoIdOnGrid').value = poIdOnGrid;
+            getElem('editOriginalPoPackageFilename').value = currentEditingPODataForModal.original_po_package_filename || '';
+            getElem('editPoNumber').value = currentEditingPODataForModal.po_number;
+            getElem('editVendor').value = currentEditingPODataForModal.vendor_name;
+            getElem('editVendorAddress').value = currentEditingPODataForModal.vendor_address || '';
+            getElem('editVendorPhone').value = currentEditingPODataForModal.vendor_phone || ''; 
+            getElem('editVendorContact').value = currentEditingPODataForModal.vendor_contact || ''; 
+            getElem('editVendorTIN').value = currentEditingPODataForModal.vendor_tin || '';
+            getElem('editPoDate').value = currentEditingPODataForModal.po_date;
+            getElem('editHasW9').value = String(currentEditingPODataForModal.has_w9_document || false);
+            getElem('editIsIncorp').value = currentEditingPODataForModal.is_incorp_on_w9 || 'Unknown';
+            getElem('editPaymentMethod').value = currentEditingPODataForModal.payment_method_from_po || 'Credit Card'; 
+            getElem('editInvoiceRef').value = currentEditingPODataForModal.invoice_reference_from_po || '';
+            getElem('editTaxAmount').value = currentEditingPODataForModal.tax_amount || '0.00'; 
+            getElem('editTotalAmount').value = (currentEditingPODataForModal.total_vendor_amount_str || "").replace('$', '');
+            getElem('editAdditionalNotes').value = currentEditingPODataForModal.additional_notes || '';
+            getElem('editJobNumber').value = currentEditingPODataForModal.job_number;
+            getElem('editProjectName').value = currentEditingPODataForModal.project_name;
+            getElem('editUserEmail').value = currentEditingPODataForModal.user_email || (currentUser ? currentUser.email : '');
+            getElem('editBackupDocsPaths').value = JSON.stringify(currentEditingPODataForModal.backup_document_original_dropbox_paths || []);
 
 
-            const lineItemsContainer = document.getElementById('editLineItemsContainer');
+            const lineItemsContainer = getElem('editLineItemsContainer');
             lineItemsContainer.innerHTML = '';
             if (currentEditingPODataForModal.aggregated_line_items && currentEditingPODataForModal.aggregated_line_items.length > 0) {
                 currentEditingPODataForModal.aggregated_line_items.forEach((item, index) => { addLineItemField(item); });
@@ -1416,17 +1538,17 @@
                 addLineItemField();
             }
             showReviewContent('pdf', currentEditingPODataForModal);
-            document.getElementById('reviewModal').classList.remove('hidden');
-            document.getElementById('reviewModal').classList.add('flex');
+            getElem('reviewModal').classList.remove('hidden');
+            getElem('reviewModal').classList.add('flex');
         }
 
         async function showReviewContent(contentType, poDataForDisplay) {
-            const pdfDisplayArea = document.getElementById('pdfDisplayArea');
-            const relevantDocsDisplayArea = document.getElementById('relevantDocsDisplayArea');
-            const pdfViewerIframe = document.getElementById('pdfViewer');
-            const pdfViewerFallbackMessage = document.getElementById('pdfViewerFallbackMessage');
-            const viewPoPdfButton = document.getElementById('viewPoPdfButton');
-            const viewRelevantDocsButton = document.getElementById('viewRelevantDocsButton');
+            const pdfDisplayArea = getElem('pdfDisplayArea');
+            const relevantDocsDisplayArea = getElem('relevantDocsDisplayArea');
+            const pdfViewerIframe = getElem('pdfViewer');
+            const pdfViewerFallbackMessage = getElem('pdfViewerFallbackMessage');
+            const viewPoPdfButton = getElem('viewPoPdfButton');
+            const viewRelevantDocsButton = getElem('viewRelevantDocsButton');
 
             if (!poDataForDisplay) {
                 console.error("showReviewContent called without poDataForDisplay.");
@@ -1549,7 +1671,7 @@
             return { name, stem, suffix };
         };
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
-            const container = document.getElementById('editLineItemsContainer'); const index = container.children.length;
+            const container = getElem('editLineItemsContainer'); const index = container.children.length;
             const div = document.createElement('div'); div.className = 'grid grid-cols-10 gap-2 items-center';
             div.innerHTML = `<input type="text" name="line_items[${index}][description]" value="${item.description || ''}" placeholder="Description" class="col-span-4 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][budget_code]" value="${item.budget_code || ''}" placeholder="Budget Code" class="col-span-2 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][quantity]" value="${item.quantity || '1'}" placeholder="Qty" class="col-span-1 form-input text-sm p-1 focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][unit_price]" value="${item.unit_price || ''}" placeholder="Unit Price" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><input type="text" name="line_items[${index}][amount]" value="${item.amount || ''}" placeholder="Amount" class="col-span-1 form-input text-sm p-1 line-item-calc focus:ring-cyan-500 focus:border-cyan-500"><button type="button" onclick="removeLineItem(this)" class="col-span-1 text-red-500 hover:text-red-700 text-sm p-1">Remove</button>`;
             container.appendChild(div); div.querySelectorAll('.line-item-calc').forEach(input => { input.addEventListener('input', updateTotalAmountFromLines); });
@@ -1563,24 +1685,24 @@
                 const val = parseFloat((amountInput.value || "").replace('$', ''));
                 if (!isNaN(val)) { total += val; }
             });
-            document.getElementById('editTotalAmount').value = total.toFixed(2);
+            getElem('editTotalAmount').value = total.toFixed(2);
         }
         function closeReviewModal() {
             currentEditingPODataForModal = null;
-            document.getElementById('reviewModal').classList.add('hidden');
-            document.getElementById('reviewModal').classList.remove('flex');
-            const pdfViewer = document.getElementById('pdfViewer');
+            getElem('reviewModal').classList.add('hidden');
+            getElem('reviewModal').classList.remove('flex');
+            const pdfViewer = getElem('pdfViewer');
             if (pdfViewer) pdfViewer.src = 'about:blank';
-            const relevantDocsArea = document.getElementById('relevantDocsDisplayArea');
+            const relevantDocsArea = getElem('relevantDocsDisplayArea');
             if(relevantDocsArea) relevantDocsArea.innerHTML = '';
-            const pdfFallbackMsg = document.getElementById('pdfViewerFallbackMessage');
+            const pdfFallbackMsg = getElem('pdfViewerFallbackMessage');
             if(pdfFallbackMsg) pdfFallbackMsg.classList.add('hidden');
         }
 
         async function submitPOChanges(isApproval) {
             const appToken = localStorage.getItem('app_token');
-            const saveChangesButton = document.getElementById('reviewModalSaveChangesButton');
-            const approveButton = document.getElementById('reviewModalApproveButton');
+            const saveChangesButton = getElem('reviewModalSaveChangesButton');
+            const approveButton = getElem('reviewModalApproveButton');
             const saveSpinner = saveChangesButton.querySelector('.loading-spinner-small');
             const approveSpinner = approveButton.querySelector('.loading-spinner-small');
 
@@ -1605,7 +1727,7 @@
             approveButton.disabled = true;
 
 
-            const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForBackend = {};
+            const form = getElem('reviewForm'); const formData = new FormData(form); const poDataForBackend = {};
             formData.forEach((value, key) => { 
                 if (key.startsWith('line_items[')) { 
                     const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); 
@@ -1632,12 +1754,12 @@
                     }
                 } 
             });
-            poDataForBackend.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
-            poDataForBackend.job_number = document.getElementById('editJobNumber').value;
-            poDataForBackend.project_name = document.getElementById('editProjectName').value;
-            poDataForBackend.user_email = document.getElementById('editUserEmail').value; 
+            poDataForBackend.original_po_package_filename = getElem('editOriginalPoPackageFilename').value;
+            poDataForBackend.job_number = getElem('editJobNumber').value;
+            poDataForBackend.project_name = getElem('editProjectName').value;
+            poDataForBackend.user_email = getElem('editUserEmail').value; 
             
-            const backupPathsJson = document.getElementById('editBackupDocsPaths').value;
+            const backupPathsJson = getElem('editBackupDocsPaths').value;
             try {
                  poDataForBackend.backup_document_original_dropbox_paths = JSON.parse(backupPathsJson || "[]").filter(p => typeof p === 'string' && p.startsWith("/"));
             } catch (e) {
@@ -1649,13 +1771,8 @@
                 poDataForBackend.aggregated_line_items = poDataForBackend.aggregated_line_items.filter(item => item && (item.description || item.amount )); 
             }
             
-            // Ensure all expected fields for POGenerationService are present with defaults if not in form
             const defaultFields = {
-                vendor_phone: "N/A",
-                vendor_contact: "",
-                payment_method_from_po: "Credit Card",
-                tax_amount: "0.00",
-                additional_notes: ""
+                vendor_phone: "N/A", vendor_contact: "", payment_method_from_po: "Credit Card", tax_amount: "0.00", additional_notes: ""
             };
             for (const field in defaultFields) {
                 if (!(field in poDataForBackend) || poDataForBackend[field] === null || poDataForBackend[field] === undefined) {
@@ -1718,7 +1835,7 @@
         // --- PO Card Checkbox and Batch Actions ---
         function handlePOCheckboxChange(checkbox) {
             const poId = checkbox.dataset.poId;
-            const cardElement = document.getElementById(`po-card-${poId}`);
+            const cardElement = getElem(`po-card-${poId}`);
             if (checkbox.checked) {
                 selectedPOIds.add(poId);
                 if (cardElement) cardElement.classList.add('selected-card');
@@ -1731,11 +1848,11 @@
 
         function updateBatchActionButtons() {
             const count = selectedPOIds.size;
-            const selectedPoCountDisplay = document.getElementById('selectedPoCount');
-            const downloadBtn = document.getElementById('downloadSelectedButton');
-            const approveBtn = document.getElementById('approveSelectedButton');
-            const deleteBtn = document.getElementById('deleteSelectedButton');
-            const batchControlsDiv = document.getElementById('batchActionControls');
+            const selectedPoCountDisplay = getElem('selectedPoCount');
+            const downloadBtn = getElem('downloadSelectedButton');
+            const approveBtn = getElem('approveSelectedButton');
+            const deleteBtn = getElem('deleteSelectedButton');
+            const batchControlsDiv = getElem('batchActionControls');
 
 
             if (selectedPoCountDisplay) selectedPoCountDisplay.textContent = count;
@@ -1791,7 +1908,7 @@
                 return;
             }
             
-            const approveBtn = document.getElementById('approveSelectedButton');
+            const approveBtn = getElem('approveSelectedButton');
             if(approveBtn) approveBtn.disabled = true;
             let successCount = 0;
             let errorCount = 0;
@@ -1800,14 +1917,13 @@
                 const poDataFromList = allFetchedPOs.find(p => p.po_id_on_grid === poId);
                 let poDataFull = poDataFromList ? poDataFromList.full_po_data_for_review : null;
 
-                if (!poDataFull) { // If full data isn't in the list, fetch it
+                if (!poDataFull) { 
                     console.log(`Fetching full data for PO ${poId} before batch approve.`);
                     try {
                          const url = `${API_BASE_URL}/get-po-data-for-review/${currentJobNumberContext}/${poId}?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
                          const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appToken}` }});
                          if (!response.ok) throw new Error(`Failed to fetch PO ${poId} details for approval.`);
                          poDataFull = await response.json();
-                         // Update the allFetchedPOs array if needed
                          if(poDataFromList) poDataFromList.full_po_data_for_review = poDataFull;
                     } catch(fetchErr) {
                         console.error(`Error fetching PO ${poId} for approval:`, fetchErr);
@@ -1822,7 +1938,6 @@
                 if (poDataToApprove.vendor_email) {
                     poDataToApprove.vendor_email = String(poDataToApprove.vendor_email);
                 }
-                 // Ensure all expected fields for POGenerationService are present with defaults
                 const defaultFields = { vendor_phone: "N/A", vendor_contact: "", payment_method_from_po: "Credit Card", tax_amount: "0.00", additional_notes: "" };
                 for (const field in defaultFields) {
                     if (!(field in poDataToApprove) || poDataToApprove[field] === null || poDataToApprove[field] === undefined) {
@@ -1870,14 +1985,13 @@
                 return;
             }
 
-            const deleteBtn = document.getElementById('deleteSelectedButton');
+            const deleteBtn = getElem('deleteSelectedButton');
             if(deleteBtn) deleteBtn.disabled = true;
             let successCount = 0;
             let errorCount = 0;
 
             for (const poId of selectedPOIds) {
                  const poDataToDelete = allFetchedPOs.find(p => p.po_id_on_grid === poId);
-                 // For deletion, we only need job_number and po_number (poId is the po_number)
                  const jobNumberForDelete = poDataToDelete?.full_po_data_for_review?.job_number || currentJobNumberContext; 
                  
                  if (!jobNumberForDelete) {
@@ -1914,16 +2028,15 @@
         }
 
 
-
         // --- Filter and Sort ---
-        document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
-        document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
-        document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
+        getElem('filterStatus').addEventListener('change', applyFiltersAndSort);
+        getElem('filterVendorName').addEventListener('input', applyFiltersAndSort);
+        getElem('sortPOs').addEventListener('change', applyFiltersAndSort);
         function applyFiltersAndSort() {
             let filteredPOs = [...allFetchedPOs];
-            const statusFilter = document.getElementById('filterStatus').value;
-            const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
-            const sortBy = document.getElementById('sortPOs').value;
+            const statusFilter = getElem('filterStatus').value;
+            const vendorNameFilter = getElem('filterVendorName').value.toLowerCase();
+            const sortBy = getElem('sortPOs').value;
             if (statusFilter !== 'all') {
                 filteredPOs = filteredPOs.filter(po => po.status && po.status.toLowerCase().includes(statusFilter));
             }
@@ -1946,6 +2059,38 @@
             }
             renderPOGrid(filteredPOs);
         }
+
+        // --- Settings Page Specific Logic ---
+        function populateSettingsForm() {
+            if (currentUser) {
+                getElem('settingsFullName').value = currentUser.displayName || '';
+                // In a real app, you'd fetch these from a backend user profile store
+                getElem('settingsCompanyName').value = localStorage.getItem('user_companyName') || '';
+                getElem('settingsAddress').value = localStorage.getItem('user_address') || '';
+            }
+            const currentDbxToken = sessionStorage.getItem('dropbox_access_token');
+            if(currentDbxToken) {
+                getElem('settingsDropboxToken').placeholder = "Token active (••••••••)";
+            } else {
+                getElem('settingsDropboxToken').placeholder = "No active token";
+            }
+        }
+
+        function updateDropboxTokenFromSettings() {
+            const newToken = getElem('settingsDropboxToken').value.trim();
+            if (!newToken) {
+                alert("Please enter a new Dropbox Access Token.");
+                return;
+            }
+            // Basic validation (not a real check, just ensures it's not empty)
+            dropboxAccessToken = newToken;
+            sessionStorage.setItem('dropbox_access_token', newToken);
+            alert("Dropbox token updated for this session. You may need to re-fetch POs if you were on that page.");
+            getElem('settingsDropboxToken').value = ''; // Clear input
+            getElem('settingsDropboxToken').placeholder = "Token active (••••••••)";
+        }
+
+
     </script>
 </body>
 </html>
