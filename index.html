@@ -518,7 +518,8 @@
                         </form>
                     </div>
                     <div class="review-modal-fixed-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                        <button onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">Save Changes & Regenerate PO</button>
+                        <!-- MODIFIED BUTTON TEXT AND ONCLICK -->
+                        <button onclick="submitPOChanges(false)" class="flex-1 btn-primary py-3 px-6 rounded-xl font-medium">Save Changes</button>
                         <button onclick="submitPOChanges(true)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium">Approve PO</button>
                         <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-6 rounded-xl font-medium">Cancel</button>
                     </div>
@@ -1311,6 +1312,8 @@
             const pdfFallbackMsg = document.getElementById('pdfViewerFallbackMessage');
             if(pdfFallbackMsg) pdfFallbackMsg.classList.add('hidden');
         }
+
+        // MODIFIED submitPOChanges
         async function submitPOChanges(isApproval) {
             const appToken = localStorage.getItem('app_token');
             if (!isAuthenticated || !appToken) {
@@ -1323,37 +1326,75 @@
                 return;
             }
             const form = document.getElementById('reviewForm'); const formData = new FormData(form); const poDataForBackend = {};
-            formData.forEach((value, key) => { if (key.startsWith('line_items[')) { const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); if (match) { const index = parseInt(match[1]); const field = match[2]; if (!poDataForBackend.aggregated_line_items) { poDataForBackend.aggregated_line_items = []; } while (poDataForBackend.aggregated_line_items.length <= index) { poDataForBackend.aggregated_line_items.push({}); } if (field === 'amount' || field === 'unit_price') { poDataForBackend.aggregated_line_items[index][field] = String(value).replace('$', ''); } else { poDataForBackend.aggregated_line_items[index][field] = value; } } } else { if (key === 'has_w9_document') { poDataForBackend[key] = value === 'true'; } else { poDataForBackend[key] = value; } } });
+            formData.forEach((value, key) => { 
+                if (key.startsWith('line_items[')) { 
+                    const match = key.match(/line_items\[(\d+)\]\[(\w+)\]/); 
+                    if (match) { 
+                        const index = parseInt(match[1]); 
+                        const field = match[2]; 
+                        if (!poDataForBackend.aggregated_line_items) { 
+                            poDataForBackend.aggregated_line_items = []; 
+                        } 
+                        while (poDataForBackend.aggregated_line_items.length <= index) { 
+                            poDataForBackend.aggregated_line_items.push({}); 
+                        } 
+                        if (field === 'amount' || field === 'unit_price') { 
+                            poDataForBackend.aggregated_line_items[index][field] = String(value).replace('$', ''); 
+                        } else { 
+                            poDataForBackend.aggregated_line_items[index][field] = value; 
+                        } 
+                    } 
+                } else { 
+                    if (key === 'has_w9_document') { 
+                        poDataForBackend[key] = value === 'true'; 
+                    } else if (key !== 'backup_document_original_dropbox_paths') { // Exclude this from direct form data
+                         poDataForBackend[key] = value; 
+                    }
+                } 
+            });
             poDataForBackend.original_po_package_filename = document.getElementById('editOriginalPoPackageFilename').value;
             poDataForBackend.job_number = document.getElementById('editJobNumber').value;
             poDataForBackend.project_name = document.getElementById('editProjectName').value;
             
-            // Get original persistent paths for backup docs (these were stored from currentEditingPODataForModal)
-            // The backend will use these original paths for re-download if needed.
-            if(currentEditingPODataForModal && currentEditingPODataForModal.backup_document_original_dropbox_paths) {
-                 poDataForBackend.backup_document_original_dropbox_paths = currentEditingPODataForModal.backup_document_original_dropbox_paths.filter(p => typeof p === 'string' && p.startsWith("/"));
-            } else {
-                 poDataForBackend.backup_document_original_dropbox_paths = [];
+            // Get original persistent paths for backup docs from the hidden input
+            const backupPathsJson = document.getElementById('editBackupDocsPaths').value;
+            try {
+                 poDataForBackend.backup_document_original_dropbox_paths = JSON.parse(backupPathsJson || "[]").filter(p => typeof p === 'string' && p.startsWith("/"));
+            } catch (e) {
+                console.error("Error parsing backup_document_original_dropbox_paths JSON:", e);
+                poDataForBackend.backup_document_original_dropbox_paths = [];
             }
 
 
-            if (poDataForBackend.aggregated_line_items) { poDataForBackend.aggregated_line_items = poDataForBackend.aggregated_line_items.filter(item => item.description || item.amount ); }
+            if (poDataForBackend.aggregated_line_items) { 
+                poDataForBackend.aggregated_line_items = poDataForBackend.aggregated_line_items.filter(item => item && (item.description || item.amount )); 
+            }
+            
+            // User email should be part of the currentEditingPODataForModal or currentUser
+            if (currentEditingPODataForModal && currentEditingPODataForModal.user_email) {
+                poDataForBackend.user_email = currentEditingPODataForModal.user_email;
+            } else if (currentUser && currentUser.email) {
+                poDataForBackend.user_email = currentUser.email;
+            }
             
             let endpointUrl = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
-            let successMessage = 'PO successfully regenerated and updated!';
-            let requestBody = { po_data_to_regenerate: poDataForBackend };
-
-
+            let successMessage = 'PO successfully saved and regenerated!';
+            
             if (isApproval) {
                 console.log("Attempting to approve PO:", poDataForBackend.po_number);
-                endpointUrl = `${API_BASE_URL}/approve-po/${poDataForBackend.job_number}/${poDataForBackend.po_number}?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
-                // The /approve-po endpoint might only need the PO ID, or it might take update data.
-                // For now, assuming it can handle the same data structure as regenerate for simplicity,
-                // and will set the "status" field internally on the backend.
-                poDataForBackend.status = "Approved"; // For optimistic UI update
-                requestBody = { po_data_to_update_with_approval: poDataForBackend }; 
+                poDataForBackend.status = "Approved"; // Set status for approval
                 successMessage = 'PO successfully Approved and status updated!';
+            } else {
+                // If not approving, remove status or set to a generic "regenerated" status
+                // This ensures that if "Approved" was previously set, it's cleared unless explicitly approving again.
+                // Or, the backend can handle this by only setting "Approved" if it's explicitly sent.
+                // For clarity, we can set it here. If the backend also sets it, it's fine.
+                if (poDataForBackend.status !== "Approved") { // Only overwrite if not already being approved
+                     poDataForBackend.status = "Regenerated"; // Or null, if backend handles default
+                }
             }
+
+            const requestBody = { po_data_to_regenerate: poDataForBackend };
 
             console.log("Submitting PO Data to:", endpointUrl, "with body:", requestBody);
             try {
@@ -1376,17 +1417,18 @@
 
                 const indexToUpdate = allFetchedPOs.findIndex(po => po.po_id_on_grid === updatedPOInfo.po_id_on_grid);
                 if (indexToUpdate !== -1) {
-                    allFetchedPOs[indexToUpdate] = updatedPOInfo;
+                    allFetchedPOs[indexToUpdate] = updatedPOInfo; // Update the card data in the main list
                 } else { 
-                    allFetchedPOs.push(updatedPOInfo); 
+                    allFetchedPOs.push(updatedPOInfo); // Or add if somehow it wasn't there
                 }
-                renderPOGrid(allFetchedPOs); 
-
+                renderPOGrid(allFetchedPOs); // Re-render the grid to reflect changes
 
                 alert(successMessage);
                 closeReviewModal();
             } catch (error) { console.error('Error submitting PO changes:', error); alert(`Error: ${error.message}`); }
         }
+
+
         document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
         document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
         document.getElementById('sortPOs').addEventListener('change', applyFiltersAndSort);
