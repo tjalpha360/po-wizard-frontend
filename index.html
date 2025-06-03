@@ -54,7 +54,14 @@
             background-color: #94a3b8; 
             cursor: not-allowed;
         }
+        .btn-disabled-look { /* For "Coming Soon" button */
+            background-color: #cbd5e1; /* slate-300 */
+            color: #64748b; /* slate-500 */
+            cursor: default;
+        }
 
+
+        /* Modal Layout Adjustments */
         .review-modal-shell { 
             display: flex;
             flex-direction: column;
@@ -69,6 +76,9 @@
             overflow: hidden; 
         }
         @media (min-width: 1280px) { 
+            .review-modal-shell {
+                max-width: 80rem; /* approx max-w-7xl, but can fine-tune */
+            }
             .review-modal-content-area {
                 flex-direction: row; 
             }
@@ -82,6 +92,9 @@
             }
         }
          @media (min-width: 1024px) and (max-width: 1279px) { 
+            .review-modal-shell {
+                max-width: 90vw; /* Use viewport width for better fit */
+            }
             .review-modal-content-area {
                 flex-direction: row;
             }
@@ -94,6 +107,7 @@
                 max-width: 50%;
             }
         }
+
 
         #pdfDisplayArea { 
             flex-shrink: 0; 
@@ -164,6 +178,7 @@
             padding: 0.1rem 0.25rem;
             font-size: 0.7rem;
         }
+
 
         .review-modal-fixed-buttons {
             flex-shrink: 0; 
@@ -481,7 +496,7 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Up to 5 vendors per production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Single production processing</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Basic AI scanning</span></li>
-                                <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Standard PO templates</span></li>
+                                <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Standard PO templates with Watermark</span></li>
                             </ul><button onclick="handleGetStartedClick('free')" class="w-full bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-semibold py-3 px-6 rounded-xl transition-colors">Get Started Free</button>
                         </div>
                         <div class="pricing-card popular bg-white rounded-2xl p-8 shadow-xl relative">
@@ -492,18 +507,24 @@
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited production amounts</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited iterations on 1 production</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Advanced AI with 99% accuracy</span></li>
-                                <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Custom PO templates</span></li>
+                                <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">No Watermark on POs</span></li>
                             </ul><button onclick="handleGetStartedClick('pro')" class="w-full btn-accent font-semibold py-3 px-6 rounded-xl">Start Free Trial</button>
                         </div>
                         <div class="pricing-card bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
-                            <div class="text-center mb-8"><h4 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-2">Enterprise</h4><p class="text-slate-600 mb-6">For production companies</p><div class="text-4xl font-bold text-slate-800 mb-2">$30</div><p class="text-slate-500 text-sm">per month</p></div>
+                            <div class="text-center mb-8">
+                                <h4 class="po-wizard-title-font text-2xl font-bold text-slate-800 mb-2">Enterprise</h4>
+                                <p class="text-slate-600 mb-6">For production companies</p>
+                                <div class="text-4xl font-bold text-slate-800 mb-2">$50</div>
+                                <p class="text-slate-500 text-sm">per month</p>
+                            </div>
                             <ul class="space-y-4 mb-8">
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited productions</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Unlimited vendors</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Cross-tracking between productions</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Microsoft Excel integration</span></li>
                                 <li class="flex items-center"><span class="material-icons-outlined text-green-500 mr-3">check</span><span class="text-slate-700">Fully custom, unbranded designs</span></li>
-                            </ul><button onclick="handleGetStartedClick('enterprise')" class="w-full btn-primary font-semibold py-3 px-6 rounded-xl">Contact Sales</button>
+                            </ul>
+                            <button class="w-full btn-disabled-look font-semibold py-3 px-6 rounded-xl">Coming Soon</button>
                         </div>
                     </div>
                     <div class="text-center mt-12">
@@ -1028,7 +1049,7 @@
             if (sectionElement) sectionElement.style.display = 'block';
 
             if (sectionId === 'purchaseOrdersSection' && isAuthenticated && dropboxAccessToken) {
-                fetchGeneratedPOs(); // Automatically fetch if conditions met
+                fetchGeneratedPOs(); 
             } else if (sectionId === 'processingSection') {
                 if (!dropboxAccessToken && isAuthenticated) {
                     promptForDropboxToken();
@@ -1226,7 +1247,7 @@
                 };
             }
             const matchSimple = currentStep.match(/(\d+)\/(\d+)/);
-             if (matchSimple) {
+             if (matchSimple) { // Fallback for simple "1/10" type messages if backend sends that
                 return {
                     current: parseInt(matchSimple[1]),
                     total: parseInt(matchSimple[2])
@@ -1250,7 +1271,7 @@
                 }
             } else if (totalVendors > 0 && currentVendorNum === 0 && vendorProcessingTimes.length === 0) {
                  estimatedTimeEl.textContent = "Calculating ETR...";
-            } else if (totalVendors === 0) {
+            } else if (totalVendors === 0) { // If total is still unknown
                  estimatedTimeEl.textContent = "Waiting for vendor count...";
             }
         }
@@ -1350,13 +1371,14 @@
             const stageSpinner = getElem('stageSpinner');
             const loadingAnimationVideo = getElem('loadingAnimationVideo');
             const processingIconContainer = getElem('processingIconContainer');
-
-            let lastProcessedVendorIndex = -1; // To track changes in vendor processing
+            
+            let lastKnownVendorIndex = -1; 
 
             statusPollInterval = setInterval(async () => {
                 try {
                     const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
                     if (!response.ok) {
+                        // ... (error handling as before) ...
                         let errorDetail = `Error fetching status: ${response.statusText} (Status: ${response.status})`;
                         try{ const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch(e){}
                         console.error(`Error fetching task status ${taskId}:`, errorDetail);
@@ -1373,24 +1395,27 @@
                     const progressInfo = extractVendorProgress(currentStepMessage);
 
                     if (progressInfo) {
-                        if (totalVendorsForETR === 0) { // First time we get total vendors
+                        if (totalVendorsForETR === 0) { 
                             totalVendorsForETR = progressInfo.total;
                             console.log(`Total vendors for ETR set to: ${totalVendorsForETR}`);
                         }
-                        // If current vendor index has changed, it means the previous one finished
-                        if (progressInfo.current > lastProcessedVendorIndex && lastProcessedVendorIndex !== -1) {
-                            if (processingVendorStartTime) {
-                                const timeTakenForLast = (Date.now() - processingVendorStartTime) / 1000; // seconds
-                                vendorProcessingTimes.push(timeTakenForLast);
-                                if (vendorProcessingTimes.length > 5) vendorProcessingTimes.shift(); // Keep rolling average of last 5
-                                console.log(`Vendor ${lastProcessedVendorIndex} took ${timeTakenForLast.toFixed(1)}s. Times:`, vendorProcessingTimes);
+                       
+                        if (progressInfo.current > lastKnownVendorIndex && lastKnownVendorIndex !== -1) { // A vendor just finished
+                             if (processingVendorStartTime) {
+                                const timeTakenForLast = (Date.now() - processingVendorStartTime) / 1000; 
+                                if (timeTakenForLast > 0.1) { // Avoid tiny values if updates are too fast
+                                    vendorProcessingTimes.push(timeTakenForLast);
+                                    if (vendorProcessingTimes.length > 5) vendorProcessingTimes.shift(); 
+                                    console.log(`Vendor ${lastKnownVendorIndex} took ${timeTakenForLast.toFixed(1)}s. Times:`, vendorProcessingTimes);
+                                }
                             }
                         }
-                        if (progressInfo.current !== lastProcessedVendorIndex) {
-                             processingVendorStartTime = Date.now(); // Reset timer for the new current vendor
-                             lastProcessedVendorIndex = progressInfo.current;
+                        if (progressInfo.current !== lastKnownVendorIndex) { // Starting a new vendor or first vendor
+                             processingVendorStartTime = Date.now(); 
+                             lastKnownVendorIndex = progressInfo.current;
                         }
                         updateEtrDisplay(progressInfo.current, totalVendorsForETR);
+
                     } else if (data.status === 'SUCCESS' || data.status === 'FAILURE') {
                         getElem('estimatedTime').textContent = "Completed";
                     } else if (data.status === 'STARTED' && data.progress_percent < 10) {
@@ -1676,7 +1701,7 @@
             } else {
                 addLineItemField(); 
             }
-            // Directly load PDF
+            // Directly load PDF, as tabs are removed
             const pdfViewerIframe = getElem('pdfViewer');
             const pdfViewerFallbackMessage = getElem('pdfViewerFallbackMessage');
             if (!dropboxAccessToken) {
@@ -1791,7 +1816,7 @@
             }
 
             showActionOverlay(isApproval ? "Approving PO..." : "Saving changes...");
-            // No need to manage button spinners here, the overlay handles visual feedback
+            // Modal buttons are not disabled here, the overlay covers them
 
             const form = getElem('reviewForm'); const formData = new FormData(form); const poDataForBackend = {};
             formData.forEach((value, key) => { 
@@ -1900,7 +1925,6 @@
                 console.error('Error submitting PO changes:', error); 
                 showActionOverlay(`Error: ${error.message}`, true, true);
             } 
-            // No finally block needed to re-enable modal buttons as they are part of reviewModal, not actionOverlay
         }
 
         // --- PO Card Checkbox and Batch Actions ---
