@@ -701,14 +701,28 @@
                         </div>
 
                         <div id="billingSettingsTab" class="settings-tab-content">
-                             <h3 class="text-xl font-semibold text-slate-800 mb-4">Billing Information</h3>
-                             <p class="text-slate-600">Manage your subscription and payment methods.</p>
-                             <div class="mt-4 p-4 bg-slate-100 rounded-md">
-                                <p class="font-medium">Current Plan: <span id="currentPlanDisplay" class="text-cyan-600">Pro Plan</span></p>
-                                <p class="text-sm text-slate-500">Next billing date: July 15, 2024</p>
-                                <button class="mt-3 text-sm text-cyan-600 hover:underline">Manage Subscription</button>
+                             <h3 class="text-xl font-semibold text-slate-800 mb-4">Billing & Subscription</h3>
+                             <p class="text-slate-600 mb-6">Manage your subscription and payment methods. The ability to switch tiers is currently enabled for testing.</p>
+                             
+                             <!-- New Subscription Status Card -->
+                             <div class="mt-4 p-6 bg-slate-100 rounded-lg border border-slate-200">
+                                 <div class="flex justify-between items-center">
+                                     <div>
+                                         <p class="font-medium text-slate-800">Current Plan</p>
+                                         <p id="currentPlanDisplay" class="text-2xl font-bold text-cyan-600">Loading...</p>
+                                     </div>
+                                     <button id="switchTierButton" onclick="switchUserTier()" class="btn-primary py-2 px-5 rounded-lg text-sm font-semibold">
+                                         Switch Tier
+                                     </button>
+                                 </div>
+                                 <p id="tierDescription" class="text-sm text-slate-500 mt-3">Loading tier details...</p>
                              </div>
-                             <p class="mt-6 text-slate-500 text-sm">Billing features are managed through our secure payment processor (Stripe - Placeholder).</p>
+                         
+                             <div class="mt-8">
+                                 <h4 class="font-semibold text-slate-700">Payment Management</h4>
+                                 <p class="mt-2 text-sm text-slate-500">Full billing features are managed through our secure payment processor (Stripe). This is currently a placeholder.</p>
+                                 <button class="mt-3 text-sm text-cyan-600 hover:underline">Manage Subscription in Stripe</button>
+                             </div>
                         </div>
 
                         <div id="dropboxSettingsTab" class="settings-tab-content">
@@ -2186,6 +2200,8 @@
             } else {
                 getElem('settingsDropboxToken').placeholder = "No active token - Enter token here";
             }
+            // --- NEW: Fetch user tier when settings are populated ---
+            fetchUserTier();
         }
 
         function updateDropboxTokenFromSettings() {
@@ -2199,6 +2215,73 @@
             alert("Dropbox token updated for this session. You may need to re-fetch POs if you were on that page, or re-initiate processing if you were in that flow.");
             getElem('settingsDropboxToken').value = ''; 
             getElem('settingsDropboxToken').placeholder = "Token active (••••••••) - Enter new token to update";
+        }
+
+        // --- NEW: Tier Management Functions ---
+        async function fetchUserTier() {
+            if (!isAuthenticated || !currentUser) return;
+            
+            const planDisplay = getElem('currentPlanDisplay');
+            const tierDesc = getElem('tierDescription');
+            const appToken = localStorage.getItem('app_token');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me/tier`, {
+                    headers: { 'Authorization': `Bearer ${appToken}` }
+                });
+                if (!response.ok) {
+                    if(planDisplay) planDisplay.textContent = 'Error';
+                    if(tierDesc) tierDesc.textContent = 'Could not load tier information.';
+                    return;
+                }
+                const tier = await response.text();
+                if (planDisplay) {
+                    planDisplay.textContent = tier.charAt(0).toUpperCase() + tier.slice(1); // "Free" or "Pro"
+                }
+                if (tierDesc) {
+                    if (tier === 'free') {
+                        tierDesc.textContent = 'Limited to 5 vendors per batch. POs include a watermark.';
+                    } else if (tier === 'pro') {
+                        tierDesc.textContent = 'Unlimited vendors per batch. No watermark on POs.';
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user tier:', error);
+                if(planDisplay) planDisplay.textContent = 'Error';
+                if(tierDesc) tierDesc.textContent = 'Could not load tier information due to a network error.';
+            }
+        }
+
+        async function switchUserTier() {
+            if (!isAuthenticated || !currentUser) return;
+
+            const switchBtn = getElem('switchTierButton');
+            if(switchBtn) switchBtn.disabled = true;
+            if(switchBtn) switchBtn.textContent = 'Switching...';
+
+            const appToken = localStorage.getItem('app_token');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me/switch-tier`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${appToken}` }
+                });
+
+                if (!response.ok) {
+                    alert('Failed to switch tier. Please try again.');
+                    return;
+                }
+                
+                // Re-fetch the tier to update the UI
+                await fetchUserTier();
+
+            } catch (error) {
+                console.error('Error switching user tier:', error);
+                alert('An error occurred while switching tiers.');
+            } finally {
+                if(switchBtn) switchBtn.disabled = false;
+                if(switchBtn) switchBtn.textContent = 'Switch Tier';
+            }
         }
     </script>
 </body>
