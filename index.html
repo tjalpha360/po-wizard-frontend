@@ -118,7 +118,7 @@
             padding: 0 2rem;
         }
 
-        .nav-right {
+        .nav-left {
             display: flex;
             align-items: center;
             gap: 3rem;
@@ -155,6 +155,12 @@
         }
         .logo-text.is-hidden {
             transform: translateX(-110%);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
         }
 
         .nav-links {
@@ -291,6 +297,7 @@
             display: none;
             flex-direction: column;
             cursor: pointer;
+            z-index: 1001; /* Above nav content */
         }
 
         .menu-toggle span {
@@ -300,6 +307,72 @@
             margin: 3px 0;
             transition: 0.3s;
         }
+        
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .mobile-nav-overlay.open {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 3rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-nav-links li {
+            margin: 1.5rem 0;
+        }
+
+        .mobile-nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--accent-neon);
+        }
+
+        .mobile-nav-buttons {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 80%;
+            max-width: 300px;
+        }
+
 
         /* Hero Section */
         .hero {
@@ -758,6 +831,7 @@
             display: flex;
             justify-content: center;
             gap: 2rem;
+            flex-wrap: wrap; /* MODIFIED for mobile */
             margin-top: 2rem;
             opacity: 0.6;
         }
@@ -826,6 +900,9 @@
             color: var(--text-primary);
             font-size: 1.1rem;
             font-weight: 500;
+        }
+        .faq-question span {
+            text-align: left; /* MODIFIED for mobile */
         }
         
         .faq-icon {
@@ -1081,13 +1158,7 @@
                 display: flex;
                 justify-content: space-between;
             }
-            .nav-left {
-                gap: 1rem;
-            }
-            .nav-links {
-                display: none;
-            }
-            .nav-buttons {
+            .nav-right {
                 display: none;
             }
             .menu-toggle {
@@ -1100,6 +1171,8 @@
             .features { column-count: 1; }
             #faq .faq-grid { grid-template-columns: 1fr; }
             #faq .faq-grid-title h2 { text-align: center; }
+            .logo-flipper-container { gap: 1rem; }
+            .company-name-logo { font-size: 1.2rem; }
         }
 
         /* Animations */
@@ -1149,6 +1222,20 @@
             </div>
         </nav>
     </header>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <button class="mobile-nav-close">&times;</button>
+        <ul class="mobile-nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li id="mobile-nav-link-my-pos" style="display: none;"><a href="#my-pos">My POs</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="mobile-nav-buttons" id="mobileNavAuthButtons">
+            <!-- Mobile Auth Buttons Populated by JS -->
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -1934,6 +2021,28 @@
                     logoText.classList.add('is-hidden');
                 }, 2000);
             }
+
+            // Mobile Menu Toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+            const mobileNavClose = document.querySelector('.mobile-nav-close');
+
+            menuToggle.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+
+            mobileNavClose.addEventListener('click', () => {
+                mobileNavOverlay.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
+            
+            mobileNavOverlay.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileNavOverlay.classList.remove('open');
+                    document.body.style.overflow = 'auto';
+                });
+            });
         }
 
         function animateStats() {
@@ -1962,11 +2071,16 @@
         // --- AUTHENTICATION ---
         function updateAuthUI() {
             if (!navAuthButtons || !myPosNavLink) return;
-            navAuthButtons.innerHTML = ''; // Clear previous buttons
+            const mobileNavAuthButtons = document.getElementById('mobileNavAuthButtons');
+            const mobileMyPosLink = document.getElementById('mobile-nav-link-my-pos');
+            
+            navAuthButtons.innerHTML = '';
+            mobileNavAuthButtons.innerHTML = '';
 
             if (isAuthenticated && currentUser) {
                 // User is logged in
                 myPosNavLink.style.display = 'list-item';
+                mobileMyPosLink.style.display = 'list-item';
                 document.getElementById('my-pos').style.display = 'block';
 
                 const userDropdownHTML = `
@@ -1982,10 +2096,15 @@
                     </div>`;
                 navAuthButtons.innerHTML = userDropdownHTML;
                 document.getElementById('signOutBtn').addEventListener('click', signOut);
+                
+                const mobileSignOutHTML = `<a href="#" class="btn btn-secondary" id="mobileSignOutBtn">Sign Out</a>`;
+                mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
+                document.getElementById('mobileSignOutBtn').addEventListener('click', signOut);
 
             } else {
                 // User is logged out
                 myPosNavLink.style.display = 'none';
+                mobileMyPosLink.style.display = 'none';
                 document.getElementById('my-pos').style.display = 'none';
 
                 const loginButtonsHTML = `
@@ -1994,6 +2113,9 @@
                 navAuthButtons.innerHTML = loginButtonsHTML;
                 document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
                 document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
+
+                mobileNavAuthButtons.innerHTML = loginButtonsHTML;
+                mobileNavAuthButtons.querySelector('#loginBtn').addEventListener('click', () => openModal('loginModal'));
             }
         }
 
