@@ -22,7 +22,8 @@
             --text-secondary: #b0b0b0;
             --card-bg: #1f1f1f;
             --border-color: #333;
-            --hero-gradient-opacity: 1;
+            --success-color: #34D399;
+            --error-color: #ef4444;
         }
 
         body {
@@ -31,27 +32,85 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
         }
 
         /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
+        
+        /* NEW: Canvas Background */
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .mouse-aware-light {
+            content: '';
+            position: fixed;
+            width: 1000px;
+            height: 1000px;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(74, 189, 237, 0.08) 0%, transparent 40%); /* Simplified */
+            opacity: 0;
+            transition: opacity 0.5s;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            will-change: transform, opacity;
+        }
+
+        body:hover .mouse-aware-light {
+            opacity: 1;
+        }
+        
+        .card-light-effect {
+            position: relative;
+            /* overflow: hidden; -- REMOVED to fix badge clipping */
+        }
+        .card-light-effect .light-blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(74, 189, 237, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+            pointer-events: none;
+            opacity: 0;
+            /* MODIFIED: Use CSS variables for position */
+            transform: translate(var(--blob-x, -150px), var(--blob-y, -150px));
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+            z-index: 0;
+            will-change: transform, opacity;
+        }
+        .card-light-effect:hover .light-blob {
+            opacity: 1;
+        }
 
         /* Header */
         .header {
             position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(10, 10, 10, 0.95);
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            width: auto;
+            background: rgba(18, 18, 18, 0.8);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 1000;
-            padding: 1rem 0;
+            padding: 0.75rem 0;
             transition: all 0.3s ease;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nav-container {
-            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -59,11 +118,43 @@
             padding: 0 2rem;
         }
 
-        .logo {
-            font-size: 1.5rem;
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center; /* MODIFIED */
+            gap: 0.5rem; /* MODIFIED */
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .logo-container:hover .logo-text {
+            transform: translateX(0);
+        }
+        .logo-icon {
+            width: 60px; /* MODIFIED */
+            height: 60px; /* MODIFIED */
+            flex-shrink: 0;
+        }
+        .logo-text-wrapper {
+            overflow: hidden;
+            width: 155px; /* MODIFIED */
+        }
+        .logo-text {
+            font-size: 2.2rem; /* MODIFIED */
             font-weight: bold;
             color: var(--accent-neon);
-            text-decoration: none;
+            display: inline-block;
+            padding-left: 0.25rem;
+            transform: translateX(0);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            will-change: transform;
+        }
+        .logo-text.is-hidden {
+            transform: translateX(-110%);
         }
 
         .nav-links {
@@ -85,6 +176,55 @@
         .nav-buttons {
             display: flex;
             gap: 1rem;
+            align-items: center;
+        }
+        
+        .user-dropdown {
+            position: relative;
+        }
+        
+        .user-dropdown-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-dropdown-toggle:hover {
+            color: var(--accent-neon);
+        }
+        
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 150%;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            min-width: 180px;
+            z-index: 1010;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+        
+        .user-dropdown:hover .user-dropdown-menu {
+            display: block;
+        }
+
+        .user-dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown-menu a:hover {
+            background: var(--card-bg);
+            color: var(--text-primary);
         }
 
         .btn {
@@ -107,6 +247,14 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(74, 189, 237, 0.25);
+        }
+        
+        .btn-primary:disabled {
+            background: #333;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .btn-secondary {
@@ -163,44 +311,7 @@
             background: transparent;
             overflow: hidden;
             z-index: 1;
-        }
-
-        .hero::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(74, 189, 237, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(74, 189, 237, 0.1) 0%, transparent 60%);
-            animation: morphGradient 8s ease-in-out infinite;
-            z-index: -1;
-            opacity: var(--hero-gradient-opacity);
-            transition: opacity 0.3s ease-out;
-        }
-
-        @keyframes morphGradient {
-            0%, 100% { 
-                background: 
-                    radial-gradient(circle at 20% 80%, rgba(74, 189, 237, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 40%, rgba(74, 189, 237, 0.1) 0%, transparent 60%);
-            }
-            33% { 
-                background: 
-                    radial-gradient(circle at 60% 20%, rgba(74, 189, 237, 0.2) 0%, transparent 50%),
-                    radial-gradient(circle at 20% 60%, rgba(30, 58, 138, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 80%, rgba(74, 189, 237, 0.12) 0%, transparent 60%);
-            }
-            66% { 
-                background: 
-                    radial-gradient(circle at 80% 60%, rgba(30, 58, 138, 0.18) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 80%, rgba(74, 189, 237, 0.12) 0%, transparent 50%),
-                    radial-gradient(circle at 20% 20%, rgba(30, 58, 138, 0.08) 0%, transparent 60%);
-            }
+            padding-top: 100px;
         }
 
         .hero-content {
@@ -231,7 +342,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 15px rgba(74, 189, 237, 0.5);
         }
 
         .hero-subtitle {
@@ -305,24 +415,20 @@
 
         /* Features */
         .features {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
             margin-top: 4rem;
+            column-count: 1;
+            column-gap: 2rem;
         }
-
         @media (min-width: 768px) {
             .features {
-                grid-template-columns: repeat(2, 1fr);
+                column-count: 2;
             }
         }
-
         @media (min-width: 1024px) {
             .features {
-                grid-template-columns: repeat(3, 1fr);
+                column-count: 3;
             }
         }
-
 
         .feature {
             background: var(--card-bg);
@@ -330,6 +436,11 @@
             border-radius: 6px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 2rem;
+            break-inside: avoid; /* Prevents card from breaking across columns */
+            -webkit-column-break-inside: avoid;
         }
 
         .feature:hover {
@@ -392,6 +503,35 @@
         }
 
         /* Pricing */
+        .pricing-toggle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: -1rem;
+        }
+        .segmented-control {
+            display: inline-flex;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        .segmented-control button {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .segmented-control button.active {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -411,26 +551,13 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            z-index: 1;
         }
 
         .pricing-card.popular {
             border-color: var(--accent-neon);
-            transform: scale(1.05);
         }
         
-        @media (max-width: 1023px) {
-            .pricing-card.popular {
-                transform: scale(1);
-                margin-top: 2rem;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-             .pricing-card.popular {
-                transform: translateY(-20px) scale(1.05);
-             }
-        }
-
         .popular-badge {
             content: 'Most Popular';
             position: absolute;
@@ -446,19 +573,9 @@
         }
 
         .pricing-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) scale(1.04);
             border-color: var(--accent-neon);
         }
-
-        .pricing-card.popular:hover {
-            transform: translateY(-30px) scale(1.05);
-        }
-        @media (max-width: 1023px) {
-            .pricing-card.popular:hover {
-                transform: translateY(-10px);
-            }
-        }
-
 
         .pricing-card h3 {
             font-size: 1.5rem;
@@ -478,6 +595,7 @@
         .price-subtitle {
              color: var(--text-secondary);
              margin-bottom: 1rem;
+             min-height: 20px; /* Add min-height for stability */
         }
 
         .pricing-features {
@@ -495,7 +613,7 @@
         }
 
         .pricing-features li svg {
-            color: #34D399; /* Green check */
+            color: var(--success-color);
             margin-right: 0.75rem;
             width: 20px;
             height: 20px;
@@ -503,111 +621,185 @@
             margin-top: 2px;
         }
 
-        /* Trusted By */
-        .trusted-by {
-            text-align: center;
-            padding: 4rem 0;
-        }
-
-        .logo-marquee {
-            overflow: hidden;
-            margin-top: 2rem;
-            position: relative;
-            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-        }
-
-        .logo-track {
+        /* My POs Section */
+        #my-pos .po-header {
             display: flex;
-            animation: scroll 30s linear infinite;
-            gap: 5.6rem;
-            align-items: center;
-        }
-
-        .company-name-logo {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
-            white-space: nowrap;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-
-        /* Dashboard Preview */
-        .dashboard-preview-container {
-            padding: 4rem 2rem;
-        }
-
-        .dashboard-mockup {
-            background: var(--card-bg);
-            border-radius: 6px;
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            margin-top: 2rem;
-        }
-
-        .workflow-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
             flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
             gap: 1rem;
+            margin-bottom: 2rem;
         }
-
-        .workflow-step {
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-            padding: 1rem;
-            background: var(--primary-bg);
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-        }
-
-        .workflow-step.active {
-            border-color: var(--accent-neon);
-            background: rgba(74, 189, 237, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+        #my-pos .po-header-info {
             color: var(--text-secondary);
         }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--primary-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
+        #my-pos .po-header-info span {
+            font-weight: 600;
             color: var(--text-primary);
         }
 
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
+        #my-pos .po-actions-bar {
+            background-color: rgba(31, 31, 31, 0.5);
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        #my-pos .po-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        #poGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .po-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .po-card.selected-card {
+            border-color: var(--accent-neon);
+            box-shadow: 0 0 15px rgba(74, 189, 237, 0.2);
+        }
+        .po-card:hover {
+            transform: translateY(-5px);
             border-color: var(--accent-neon);
         }
-
-        /* FAQ Section */
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
+        .po-card-checkbox {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+        }
+        .po-card-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-neon);
+        }
+        .po-card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .po-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .po-card-po-number {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-neon);
+        }
+        .po-card-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .status-approved { background-color: rgba(52, 211, 153, 0.1); color: var(--success-color); }
+        .status-pending, .status-regenerated { background-color: rgba(251, 191, 36, 0.1); color: #FBBF24; }
+        .status-error { background-color: rgba(239, 68, 68, 0.1); color: var(--error-color); }
+        
+        .po-card-vendor {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        .po-card-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .po-card-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .po-card-footer {
+            margin-top: auto;
         }
 
-        .faq-subtitle {
+        #noPOsActionContainer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
             color: var(--text-secondary);
-            margin-bottom: 3rem;
-            margin-top: -2rem; /* Adjust spacing */
+        }
+        #noPOsActionContainer h3 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Trusted By Marquee */
+        .trusted-by {
+            text-align: center;
+            padding: 8rem 0;
+        }
+        .logo-flipper-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            opacity: 0.6;
+        }
+        .logo-flipper-column {
+            height: 4rem;
+            overflow: hidden;
+        }
+        .logo-flipper-column .flipper-inner {
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .company-name-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* FAQ Section */
+        #faq .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+        @media (min-width: 768px) {
+            #faq .faq-grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+        #faq .faq-grid-title h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: bold;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .faq-accordion {
@@ -645,7 +837,7 @@
         }
 
         .faq-item.active .faq-icon {
-            transform: rotate(90deg);
+            transform: rotate(45deg);
         }
 
         .faq-answer {
@@ -663,7 +855,7 @@
         /* Footer */
         .footer {
             background: var(--secondary-bg);
-            padding: 4rem 0 2rem;
+            padding: 4rem 2rem 2rem;
             margin-top: 6rem;
             position: relative;
             z-index: 5;
@@ -672,31 +864,31 @@
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 3rem;
         }
-
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: 2fr repeat(3, 1fr);
+            }
+        }
         .footer-section h3 {
-            color: var(--accent-neon);
+            color: var(--text-primary);
+            font-size: 1rem;
             margin-bottom: 1rem;
         }
-
         .footer-section ul {
             list-style: none;
         }
-
         .footer-section ul li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
-
         .footer-section ul li a {
             color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.3s ease;
         }
-
         .footer-section ul li a:hover {
             color: var(--accent-neon);
         }
@@ -709,36 +901,205 @@
             color: var(--text-secondary);
         }
 
+        /* Form Group (used in modals) */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            color: var(--text-primary);
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-neon);
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 6px;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Review PO Modal */
+        #reviewModal .modal-content {
+            max-width: 90vw;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #reviewModal .review-modal-body {
+            display: flex;
+            gap: 2rem;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        #reviewModal .pdf-viewer-area {
+            flex: 1 1 55%;
+            min-width: 0;
+        }
+        #reviewModal .pdf-viewer-area iframe {
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        #reviewModal .form-area {
+            flex: 1 1 45%;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #reviewModal .form-scroll-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 1rem; /* for scrollbar */
+        }
+        #reviewModal .form-scroll-container .form-group {
+            margin-bottom: 1rem;
+        }
+        #reviewModal .form-scroll-container label {
+            font-size: 0.8rem;
+        }
+        #reviewModal .form-scroll-container input,
+        #reviewModal .form-scroll-container select,
+        #reviewModal .form-scroll-container textarea {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        #reviewModal .line-item-grid {
+            display: grid;
+            grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        #reviewModal .line-item-grid input {
+            font-size: 0.8rem;
+            padding: 0.4rem;
+        }
+        #reviewModal .line-item-grid button {
+            background: none; border: none; color: var(--error-color); cursor: pointer;
+        }
+        #reviewModal .modal-footer {
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Processing Modal */
+        #processingModal .step-indicator {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        #processingModal .step { text-align: center; color: var(--text-secondary); }
+        #processingModal .step-circle {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 0.5rem;
+            transition: all 0.3s ease;
+        }
+        #processingModal .step.active .step-circle {
+            border-color: var(--accent-neon);
+            background-color: rgba(74, 189, 237, 0.1);
+        }
+        #processingModal .step.completed .step-circle {
+            border-color: var(--success-color);
+            background-color: rgba(52, 211, 153, 0.1);
+            color: var(--success-color);
+        }
+        #processingModal .step-content { display: none; }
+        #processingModal .step-content.active { display: block; }
+        #processingModal .progress-bar-container {
+            width: 100%; background: var(--primary-bg); border-radius: 5px; overflow: hidden;
+            border: 1px solid var(--border-color); height: 1.25rem; margin-bottom: 0.5rem;
+        }
+        #processingModal .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-neon));
+            width: 0%; transition: width 0.5s ease;
+        }
+
+
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links, .nav-buttons {
+            .nav-container {
+                display: flex;
+                justify-content: space-between;
+            }
+            .nav-left {
+                gap: 1rem;
+            }
+            .nav-links {
                 display: none;
             }
-
+            .nav-buttons {
+                display: none;
+            }
             .menu-toggle {
                 display: flex;
             }
-
-            .hero-cta {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .stats {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .section {
-                padding: 4rem 1rem;
-            }
-             .dashboard-preview-container {
-                padding: 4rem 1rem;
-             }
-
-            .workflow-steps {
-                flex-direction: column;
-            }
+            .hero-cta { flex-direction: column; align-items: center; }
+            .stats { flex-direction: column; gap: 1rem; }
+            .section { padding: 4rem 1rem; }
+            #reviewModal .review-modal-body { flex-direction: column; }
+            .features { column-count: 1; }
+            #faq .faq-grid { grid-template-columns: 1fr; }
+            #faq .faq-grid-title h2 { text-align: center; }
         }
 
         /* Animations */
@@ -752,62 +1113,32 @@
             opacity: 1;
             transform: translateY(0);
         }
-
-        /* Login Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 6px;
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .modal-close:hover {
-            color: var(--text-primary);
-        }
     </style>
 </head>
 <body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="mouse-aware-light"></div>
+
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
-            <a href="#" class="logo">PO Wizard</a>
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                 <li><a href="#faq">FAQ</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <div class="nav-buttons">
-                <a href="#" class="btn btn-secondary" onclick="openModal('loginModal')">Login</a>
-                <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+            <div class="nav-left">
+                <a href="#" class="logo-container">
+                    <img src="assets/POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
+                    <div class="logo-text-wrapper">
+                        <span class="logo-text">Wizard</span>
+                    </div>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li id="nav-link-my-pos" style="display: none;"><a href="#my-pos">My POs</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div id="nav-auth-buttons" class="nav-buttons">
+                <!-- This will be populated by JS -->
             </div>
             <div class="menu-toggle">
                 <span></span>
@@ -853,38 +1184,81 @@
 
     <!-- Features -->
     <section class="section" id="features">
-        <h2 class="section-title">Powerful Features</h2>
+        <h2 class="section-title">Features</h2>
         <div class="features">
-            <div class="feature fade-in">
+            <div class="feature fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="feature-icon">🎯</div>
                 <h3>99% Accuracy</h3>
                 <p>AI-powered data extraction and validation ensures error-free purchase orders every time.</p>
             </div>
-            <div class="feature fade-in">
+            <div class="feature fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="feature-icon">📊</div>
                 <h3>Complete Audit Trail</h3>
                 <p>Track every change, approval, and communication with comprehensive audit logging.</p>
             </div>
-            <div class="feature fade-in">
+            <div class="feature fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="feature-icon">⚡</div>
                 <h3>Lightning Fast</h3>
                 <p>Generate professional POs in seconds, not hours. No more manual data entry.</p>
             </div>
-            <div class="feature fade-in">
+            <div class="feature fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="feature-icon">🔗</div>
                 <h3>Seamless Integration</h3>
                 <p>Works with your existing accounting software and production management tools.</p>
             </div>
-            <div class="feature fade-in">
+            <div class="feature fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="feature-icon">💰</div>
                 <h3>Faster Payments</h3>
                 <p>Automated vendor notifications and approval workflows accelerate payment processing.</p>
             </div>
-            <div class="feature fade-in">
+            <div class="feature fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="feature-icon">🛡️</div>
                 <h3>Enterprise Security</h3>
                 <p>Bank-level encryption and compliance with industry security standards.</p>
             </div>
+        </div>
+    </section>
+
+    <!-- My POs Section -->
+    <section class="section" id="my-pos">
+        <h2 class="section-title">My Purchase Orders</h2>
+        <div class="po-header">
+            <div class="po-header-info">
+                <p>Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p>
+                <p id="poCount">0 POs Generated</p>
+            </div>
+            <button id="newPOBatchBtn" class="btn btn-primary">New PO Batch</button>
+        </div>
+        
+        <div id="batchActionControls" class="po-actions-bar" style="display: none;">
+            <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <button id="approveSelectedButton" class="btn btn-secondary" style="--bs-btn-color: var(--success-color); border-color: var(--success-color);" disabled>Approve</button>
+                <button id="deleteSelectedButton" class="btn btn-secondary" style="--bs-btn-color: var(--error-color); border-color: var(--error-color);" disabled>Delete</button>
+            </div>
+        </div>
+
+        <div class="po-actions-bar">
+            <div class="po-filters">
+                <select id="filterStatus" class="form-group" style="margin-bottom: 0; min-width: 150px;"><option value="all">All Status</option><option value="pending">Pending</option><option value="approved">Approved</option></select>
+                <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="form-group" style="margin-bottom: 0; flex-grow: 1;">
+            </div>
+        </div>
+        
+        <div id="poGrid">
+            <!-- PO Cards will be generated here by JavaScript -->
+        </div>
+
+        <div id="noPOsActionContainer" style="display: none;">
+            <h3>No Purchase Orders Found</h3>
+            <p id="noPOsMessage">Get started by creating a new batch.</p>
+            <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Create New PO Batch</button>
         </div>
     </section>
 
@@ -930,9 +1304,18 @@
     <!-- Pricing -->
     <section class="section" id="pricing">
         <h2 class="section-title">Simple, Transparent Pricing</h2>
+        
+        <div class="pricing-toggle-container">
+            <div class="segmented-control">
+                <button id="monthlyBtn" class="active">MONTHLY</button>
+                <button id="yearlyBtn">YEARLY (SAVE 20%)</button>
+            </div>
+        </div>
+
         <div class="pricing-grid">
             <!-- Free Tier -->
-            <div class="pricing-card fade-in">
+            <div class="pricing-card fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <h3>Free</h3>
                 <p class="pricing-card-subtitle">Perfect for small productions</p>
                 <div class="price">Free</div>
@@ -943,15 +1326,16 @@
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Basic AI scanning</li>
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Standard PO templates with Watermark</li>
                 </ul>
-                <a href="#" class="btn btn-free">Get Started Free</a>
+                <a href="#" class="btn btn-free pricing-button" data-plan="free">Get Started Free</a>
             </div>
             <!-- Pro Tier -->
-            <div class="pricing-card popular fade-in">
+            <div class="pricing-card popular fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <div class="popular-badge">Most Popular</div>
                 <h3>Pro</h3>
                 <p class="pricing-card-subtitle">For growing productions</p>
-                <div class="price">$20<small>/month</small></div>
-                <p class="price-subtitle"> </p>
+                <div class="price" id="proPrice" data-monthly="29">$29<small>/month</small></div>
+                <p class="price-subtitle" id="proSubtitle">&nbsp;</p>
                 <ul class="pricing-features">
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li>
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited production amounts</li>
@@ -959,14 +1343,15 @@
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Advanced AI with 99% accuracy</li>
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>No Watermark on POs</li>
                 </ul>
-                <a href="#" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+                <a href="#" class="btn btn-primary pricing-button" data-plan="pro" style="width: 100%;">Start Free Trial</a>
             </div>
             <!-- Enterprise Tier -->
-            <div class="pricing-card fade-in">
+            <div class="pricing-card fade-in card-light-effect">
+                <div class="light-blob"></div>
                 <h3>Enterprise</h3>
                 <p class="pricing-card-subtitle">For production companies</p>
-                <div class="price">$50<small>/month</small></div>
-                <p class="price-subtitle"> </p>
+                <div class="price" id="enterprisePrice" data-monthly="99">$99<small>/month</small></div>
+                <p class="price-subtitle" id="enterpriseSubtitle">&nbsp;</p>
                 <ul class="pricing-features">
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited productions</li>
                     <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li>
@@ -982,96 +1367,22 @@
     <!-- Trusted By -->
     <section class="section trusted-by">
         <h2 class="section-title">Trusted by Leading Production Companies</h2>
-        <div class="logo-marquee">
-            <div class="logo-track">
-                <div class="company-name-logo">NETFLIX</div>
-                <div class="company-name-logo">HBO</div>
-                <div class="company-name-logo">WARNER BROS.</div>
-                <div class="company-name-logo">A24</div>
-                <div class="company-name-logo">PARAMOUNT</div>
-                <div class="company-name-logo">SONY PICTURES</div>
-                <div class="company-name-logo">DISNEY</div>
-                <div class="company-name-logo">AMAZON MGM STUDIOS</div>
-                <!-- Duplicate for seamless loop -->
-                <div class="company-name-logo">NETFLIX</div>
-                <div class="company-name-logo">HBO</div>
-                <div class="company-name-logo">WARNER BROS.</div>
-                <div class="company-name-logo">A24</div>
-                <div class="company-name-logo">PARAMOUNT</div>
-                <div class="company-name-logo">SONY PICTURES</div>
-                <div class="company-name-logo">DISNEY</div>
-                <div class="company-name-logo">AMAZON MGM STUDIOS</div>
-            </div>
+        <div class="logo-flipper-container">
+            <!-- Columns will be populated by JS -->
         </div>
-    </section>
-
-    <!-- Dashboard Preview -->
-    <section class="section">
-       <div class="dashboard-preview-container">
-            <h2 class="section-title">See PO Wizard in Action</h2>
-            <div class="dashboard-mockup">
-                <div class="workflow-steps">
-                    <div class="workflow-step active">
-                        <strong>Connect</strong><br>
-                        <small>Upload Data</small>
-                    </div>
-                    <div class="workflow-step">
-                        <strong>Configure</strong><br>
-                        <small>Set Parameters</small>
-                    </div>
-                    <div class="workflow-step">
-                        <strong>Process</strong><br>
-                        <small>Generate POs</small>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Project Number</label>
-                    <input type="text" placeholder="Enter project number..." value="NS-2024-001">
-                </div>
-                <div class="form-group">
-                    <label>Project Name</label>
-                    <input type="text" placeholder="Enter project name..." value="The Last Stand - Season 2">
-                </div>
-                <div class="form-group">
-                    <label>Production Company</label>
-                    <select>
-                        <option>Select company...</option>
-                        <option selected>Netflix Productions</option>
-                        <option>HBO Max Studios</option>
-                        <option>Warner Bros</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Choose Data Source</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div style="border: 2px dashed var(--border-color); padding: 1.5rem; text-align: center; border-radius: 4px; background: var(--primary-bg); cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--accent-neon)'" onmouseout="this.style.borderColor='var(--border-color)'">
-                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📁</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Upload Documents (drag and drop)</p>
-                        </div>
-                        <div style="border: 2px dashed var(--border-color); padding: 1.5rem; text-align: center; border-radius: 4px; background: var(--primary-bg); cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--accent-neon)'" onmouseout="this.style.borderColor='var(--border-color)'">
-                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📦</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Connect to Dropbox</p>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <button class="btn btn-primary" style="flex: 1;">Process with AI</button>
-                    <button class="btn btn-secondary">Save Draft</button>
-                </div>
-            </div>
-       </div>
     </section>
 
     <!-- FAQ Section -->
     <section class="section" id="faq">
-        <div class="faq-container">
-            <h2 class="section-title">FAQs about PO Wizard</h2>
-            <p class="faq-subtitle">Everything you should know about our platform</p>
+        <div class="faq-grid">
+            <div class="faq-grid-title">
+                <h2>Questions about PO Wizard</h2>
+            </div>
             <div class="faq-accordion">
                 <div class="faq-item">
                     <button class="faq-question">
                         <span>What is PO Wizard?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
                         <p>PO Wizard is an AI-powered software designed for production coordinators to automate the creation of purchase orders. It drastically reduces manual data entry, minimizes errors, and saves significant time during the production wrap process.</p>
@@ -1079,65 +1390,101 @@
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">
-                        <span>Who is PO Wizard for?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>How does the Dropbox integration work?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>PO Wizard is built specifically for production coordinators, line producers, production accountants, and anyone in the film, television, or commercial production industry who deals with purchase orders and vendor management.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How does the AI work?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>You can upload various documents like invoices, receipts, or deal memos. Our AI intelligently scans these documents, extracts the necessary information (like vendor details, line items, costs, and project codes), and populates a professional purchase order automatically.</p>
+                        <p>You grant PO Wizard temporary, session-based access to a specific folder in your Dropbox. You simply drop all your receipts, invoices, and vendor documents into this folder. Our AI scans the contents, processes them, and organizes the generated POs back into your Dropbox, keeping your workflow centralized.</p>
                     </div>
                 </div>
                  <div class="faq-item">
                     <button class="faq-question">
-                        <span>What accounting software can it integrate with?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>What if a vendor has multiple invoices?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>PO Wizard is designed for flexible integration. It can export data in formats compatible with popular industry accounting software like Global Vista, Media Services, and QuickBooks, ensuring a smooth handoff to your accounting department.</p>
+                        <p>PO Wizard is built for this exact scenario. Our AI intelligently groups all documents from the same vendor into a single, consolidated Purchase Order. It automatically creates line items for each invoice or receipt, ensuring a clean and comprehensive PO that's easy for accounting to process.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">
-                        <span>Is my production data secure?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>Is my production data and Dropbox token secure?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Absolutely. We prioritize your data's security above all else. All data is encrypted both in transit (using TLS 1.2+) and at rest (using AES-256). Our infrastructure is built on world-class, secure cloud providers and undergoes regular security audits to ensure your sensitive production information remains confidential and protected.</p>
+                        <p>Absolutely. Security is our top priority. Your Dropbox token is stored only in your browser's session storage, meaning it's deleted the moment you close the tab and is never saved on our servers. All data transfer uses bank-grade TLS encryption, and we only ever read the files you specify for processing.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">
-                        <span>What file types can I upload for AI processing?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>Can I use this for multiple productions at once?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Our AI can process a wide range of common file types, including PDF, JPEG, PNG, and TIFF. Whether it's a scanned receipt, a vendor invoice PDF, or a photo of a document taken on your phone, you can upload it directly. We are continuously working to expand support for more formats.</p>
+                        <p>The Pro plan is designed for one production at a time. However, our Enterprise plan is built for production companies and freelance coordinators juggling multiple projects. It allows you to create and manage separate, secure workspaces for each production, with cross-tracking capabilities for vendors used across different jobs.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">
-                        <span>Can I collaborate with my team?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>How does this integrate with accounting software like Global Vista?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Yes. Our Pro and Enterprise plans are built for collaboration. You can invite other team members, such as producers or accountants, to your production. Features like the complete audit trail and status tracking ensure everyone is on the same page, creating a single source of truth for all purchase orders.</p>
+                        <p>PO Wizard generates clean, professional PDF purchase orders with all necessary information, including vendor details, line items, amounts, and job codes. These PDFs are formatted for easy submission to any major production accounting system. The Enterprise plan also offers direct data export options (e.g., CSV, Excel) for seamless import into software like Global Vista or Media Services.</p>
+                    </div>
+                </div>
+                 <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What happens if I upload a blurry receipt?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our AI is trained to handle a wide variety of document qualities. If a document is too blurry or unreadable, the system will flag it for manual review. You will be able to see the problematic document and manually enter the correct information in the review step, ensuring no data is lost or guessed.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">
-                        <span>What kind of customer support do you offer?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>Can I edit a PO after it has been generated?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>We offer different levels of support based on your plan. All users have access to our comprehensive documentation and video tutorials. The Free plan includes email support. Our Pro plan includes priority email support, and the Enterprise plan comes with a dedicated account manager and phone support to provide immediate assistance for any complex needs.</p>
+                        <p>Yes. Every PO goes through a review stage where you have full control to edit any field. You can correct vendor names, adjust line items, add notes, and modify amounts. Once you approve the PO, a final, clean version is created, but you can always revisit and create a new version if needed.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Does this work for both union and non-union productions?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely. PO Wizard is agnostic to union status. It is designed to handle vendor invoices, receipts, and standard paperwork common to all types of film, television, and commercial productions, regardless of guild affiliations.</p>
+                    </div>
+                </div>
+                 <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What are the system requirements?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>PO Wizard is a web-based application, so there are no downloads or installations required. It runs on any modern web browser (like Chrome, Firefox, Safari, or Edge) on both Mac and PC. All you need is an internet connection and a Dropbox account.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Can I cancel my subscription at any time?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, you can cancel your Pro or Enterprise subscription at any time through your account settings. You will retain access to the paid features until the end of your current billing period. There are no long-term contracts or cancellation fees.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How is this different from just using a spreadsheet?</span>
+                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>While spreadsheets are great for tracking, PO Wizard eliminates the most time-consuming part of the process: manual data entry. Instead of you typing out every vendor, date, and amount, our AI does it for you in seconds. It also standardizes the format, groups related expenses, and creates professional, submittable PDF documents, saving you hours of administrative work compared to a manual spreadsheet workflow.</p>
                     </div>
                 </div>
             </div>
@@ -1145,235 +1492,944 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer" id="contact">
+    <footer class="footer">
         <div class="footer-content">
+             <div class="footer-section">
+                <h3 style="color: var(--accent-neon); margin-bottom: 1rem;">PO Wizard</h3>
+                <p style="color: var(--text-secondary);">Automate without limits.</p>
+            </div>
             <div class="footer-section">
-                <h3>Products</h3>
+                <h3>Product</h3>
                 <ul>
-                    <li><a href="#">PO Wizard AI</a></li>
-                    <li><a href="#">Enterprise Suite</a></li>
-                    <li><a href="#">API Integration</a></li>
-                    <li><a href="#">Mobile App</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#my-pos">My POs</a></li>
+                    <li><a href="#">Security</a></li>
                 </ul>
             </div>
             <div class="footer-section">
                 <h3>Resources</h3>
                 <ul>
                     <li><a href="#">Documentation</a></li>
-                    <li><a href="#">Video Tutorials</a></li>
-                    <li><a href="#">Best Practices</a></li>
-                    <li><a href="#">Community Forum</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#">Blog</a></li>
                 </ul>
             </div>
-            <div class="footer-section">
+             <div class="footer-section">
                 <h3>Company</h3>
                 <ul>
                     <li><a href="#">About Us</a></li>
                     <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Contact Us</a></li>
                     <li><a href="#">Partners</a></li>
                 </ul>
             </div>
-            <div class="footer-section">
-                <h3>Stay Updated</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Get the latest updates and tips for production coordinators.</p>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="email" placeholder="Enter your email..." style="flex: 1; padding: 0.75rem; background: var(--primary-bg); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);">
-                    <button class="btn btn-primary">Subscribe</button>
-                </div>
-            </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025 PO Wizard. All rights reserved. | <a href="#" style="color: var(--text-secondary);">Privacy Policy</a> | <a href="#" style="color: var(--text-secondary);">Terms of Service</a></p>
+            <p>© 2025 PO Wizard. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- MODALS -->
 
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('loginModal')">×</button>
             <h2 style="margin-bottom: 1.5rem; color: var(--text-primary);">Login to PO Wizard</h2>
-            <form>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" placeholder="Enter your email..." required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="Enter your password..." required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Login</button>
-                <p style="text-align: center; color: var(--text-secondary);">
-                    Don't have an account? <a href="#" style="color: var(--accent-neon);">Sign up for free</a>
-                </p>
-            </form>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; text-align: center;">Sign in securely with your Google account to access your dashboard.</p>
+            <button id="googleSignInBtn" class="btn btn-primary" style="width: 100%;">
+                Sign In with Google
+            </button>
         </div>
     </div>
 
+    <!-- Processing Modal -->
+    <div class="modal" id="processingModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('processingModal')">×</button>
+            <h2 style="text-align:center; margin-bottom: 1rem; color: var(--text-primary);">New PO Batch</h2>
+            <div class="step-indicator">
+                <div id="tokenStepIndicator" class="step"><div class="step-circle">1</div>Connect</div>
+                <div id="configureStepIndicator" class="step"><div class="step-circle">2</div>Configure</div>
+                <div id="processDocsStepIndicator" class="step"><div class="step-circle">3</div>Process</div>
+            </div>
+
+            <!-- Step 1: Dropbox Token -->
+            <div id="step1_token_input" class="step-content">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Connect to Dropbox</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Enter your temporary Dropbox Access Token to allow PO Wizard to access your files for this session.</p>
+                <div class="form-group">
+                    <label for="dropboxAccessTokenInput">Dropbox Access Token</label>
+                    <input type="password" id="dropboxAccessTokenInput" placeholder="Paste your token here">
+                </div>
+                <button id="submitTokenButton" class="btn btn-primary" style="width: 100%;">Submit & Continue</button>
+            </div>
+
+            <!-- Step 2: Configure Job -->
+            <div id="step2_configure_job" class="step-content">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Configure Job & Paths</h3>
+                <div class="form-group">
+                    <label for="inputJobNumber">Job Number</label>
+                    <input type="text" id="inputJobNumber" placeholder="e.g., 85319">
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectName">Project Name</label>
+                    <input type="text" id="inputProjectName" placeholder="e.g., Macy's Holiday Shoot">
+                </div>
+                <div class="form-group">
+                    <label for="dropboxSourcePath">Dropbox Source Path</label>
+                    <input type="text" id="dropboxSourcePath" value="/POWizardCompany/SourceDocs">
+                </div>
+                <button id="confirmPathsButton" class="btn btn-primary" style="width: 100%;">Confirm & Start Processing</button>
+            </div>
+
+            <!-- Step 3: Processing -->
+            <div id="step3_processing_docs" class="step-content">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1rem; text-align: center;">Processing Documents...</h3>
+                <div class="progress-bar-container">
+                    <div id="progressFill" class="progress-bar-fill"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    <span id="progressPercent">0%</span>
+                    <span id="estimatedTime">Calculating...</span>
+                </div>
+                <div id="stageDescription" style="text-align: center; color: var(--text-secondary); min-height: 40px;">Initializing...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review/Edit PO Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('reviewModal')">×</button>
+            <h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2>
+            <div class="review-modal-body">
+                <div class="pdf-viewer-area">
+                    <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
+                </div>
+                <div class="form-area">
+                    <div class="form-scroll-container">
+                        <form id="reviewForm">
+                            <input type="hidden" id="editPoIdOnGrid">
+                            <div class="form-group">
+                                <label for="editVendor">Vendor Name</label>
+                                <input type="text" id="editVendor" name="vendor_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="editVendorAddress">Vendor Address</label>
+                                <textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div>
+                                <div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div>
+                            </div>
+                             <h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4>
+                            <div id="editLineItemsContainer"></div>
+                            <button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount"></div>
+                                <div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;">Save Changes</button>
+                        <button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);">Approve PO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerOffset = document.querySelector('.header').offsetHeight;
-                    const elementPosition = target.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        // --- CONFIG ---
+        const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
 
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
+        // --- GLOBAL STATE ---
+        let isAuthenticated = false;
+        let currentUser = null;
+        let dropboxAccessToken = "";
+        let currentJobNumberContext = "";
+        let currentProjectNameContext = "";
+        let allFetchedPOs = [];
+        let selectedPOIds = new Set();
+        let statusPollInterval = null;
+
+        // --- DOM ELEMENTS ---
+        const navAuthButtons = document.getElementById('nav-auth-buttons');
+        const poGrid = document.getElementById('poGrid');
+        const noPOsContainer = document.getElementById('noPOsActionContainer');
+        const noPOsMessage = document.getElementById('noPOsMessage');
+        const myPosNavLink = document.getElementById('nav-link-my-pos');
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            await handleAuthCallback();
+            await checkAuthOnLoad();
+            initializeEventListeners();
+            updateAuthUI();
         });
-        
-        // Hero background opacity on scroll
-        const root = document.documentElement;
-        window.addEventListener('scroll', () => {
-            const scrollY = window.pageYOffset;
-            const fadeDistance = 500; // Pixels over which to fade
+
+        function initializeEventListeners() {
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerOffset = document.querySelector('.header').offsetHeight + 32; // Add offset for floating header
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    } else if (targetId === '#') {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            // Modals
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal(modal.id);
+                });
+            });
             
-            let newOpacity = 1;
-            if (scrollY < fadeDistance) {
-                newOpacity = 1 - (scrollY / fadeDistance) * 0.5;
-            } else {
-                newOpacity = 0.5;
-            }
-            root.style.setProperty('--hero-gradient-opacity', newOpacity.toFixed(2));
-        });
-
-        // Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+            // Pricing buttons
+            document.querySelectorAll('.pricing-button').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.preventDefault();
+                    handleGetStartedClick();
+                });
             });
-        }, observerOptions);
+            
+            // Pricing Toggle
+            const monthlyBtn = document.getElementById('monthlyBtn');
+            const yearlyBtn = document.getElementById('yearlyBtn');
+            
+            const updatePricing = (isYearly) => {
+                const proPriceEl = document.getElementById('proPrice');
+                const proSubtitleEl = document.getElementById('proSubtitle');
+                const entPriceEl = document.getElementById('enterprisePrice');
+                const entSubtitleEl = document.getElementById('enterpriseSubtitle');
 
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
+                if (isYearly) {
+                    const yearlyPro = Math.round(proPriceEl.dataset.monthly * 12 * 0.8) / 12;
+                    const yearlyEnt = Math.round(entPriceEl.dataset.monthly * 12 * 0.8) / 12;
+                    proPriceEl.innerHTML = `$${yearlyPro.toFixed(0)}<small>/month</small>`;
+                    proSubtitleEl.textContent = 'Billed annually';
+                    entPriceEl.innerHTML = `$${yearlyEnt.toFixed(0)}<small>/month</small>`;
+                    entSubtitleEl.textContent = 'Billed annually';
+                    monthlyBtn.classList.remove('active');
+                    yearlyBtn.classList.add('active');
+                } else {
+                    proPriceEl.innerHTML = `$${proPriceEl.dataset.monthly}<small>/month</small>`;
+                    proSubtitleEl.innerHTML = '&nbsp;';
+                    entPriceEl.innerHTML = `$${entPriceEl.dataset.monthly}<small>/month</small>`;
+                    entSubtitleEl.innerHTML = '&nbsp;';
+                    monthlyBtn.classList.add('active');
+                    yearlyBtn.classList.remove('active');
+                }
+            };
 
-        // Header scroll effect
-        let lastScrollTop = 0;
-        const header = document.querySelector('.header');
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
+            monthlyBtn.addEventListener('click', () => updatePricing(false));
+            yearlyBtn.addEventListener('click', () => updatePricing(true));
+
+
+            // PO Page controls
+            document.getElementById('newPOBatchBtn').addEventListener('click', () => openModal('processingModal'));
+            document.getElementById('noPOsCreateBtn').addEventListener('click', () => openModal('processingModal'));
+            document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
+            document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
+
+            // Processing Modal controls
+            document.getElementById('submitTokenButton').addEventListener('click', submitDropboxToken);
+            document.getElementById('confirmPathsButton').addEventListener('click', confirmPathsAndProceed);
+
+            // Review Modal controls
+            document.getElementById('addLineItemBtn').addEventListener('click', () => addLineItemField());
+            document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => submitPOChanges(false));
+            document.getElementById('reviewModalApproveButton').addEventListener('click', () => submitPOChanges(true));
+            
+            // Batch Actions
+            document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
+            document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
+
+            // FAQ Accordion
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', () => {
+                    const faqItem = button.parentElement;
+                    const faqAnswer = faqItem.querySelector('.faq-answer');
+                    const wasActive = faqItem.classList.contains('active');
+                    faqItem.classList.toggle('active');
+                    faqAnswer.style.maxHeight = wasActive ? null : faqAnswer.scrollHeight + 'px';
+                });
+            });
+
+            // Organic movement scripts
+            (() => {
+                const light = document.querySelector('.mouse-aware-light');
+                if (!light) return;
+
+                let lightPos = { x: 0, y: 0 }, lightTarget = { x: 0, y: 0 };
+
+                document.body.addEventListener('mousemove', e => {
+                    lightTarget.x = e.clientX;
+                    lightTarget.y = e.clientY;
+                });
+
+                function animateElements() {
+                    lightPos.x += (lightTarget.x - lightPos.x) * 0.1;
+                    lightPos.y += (lightTarget.y - lightPos.y) * 0.1;
+                    light.style.transform = `translate(${lightPos.x - 500}px, ${lightPos.y - 500}px)`;
+                    requestAnimationFrame(animateElements);
+                }
+                animateElements();
+            })();
+
+            (() => {
+                document.querySelectorAll('.card-light-effect').forEach(card => {
+                    card.addEventListener('mousemove', e => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        card.style.setProperty('--blob-x', `${x - 150}px`);
+                        card.style.setProperty('--blob-y', `${y - 150}px`);
+                    });
+                });
+            })();
+            
+            // Stats Counter
+            const statsSection = document.querySelector('.stats');
+            const statsObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateStats();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            if (statsSection) statsObserver.observe(statsSection);
+
+            // Logo Flipper
+            const companies = [
+                ['NETFLIX', 'HBO', 'WARNER BROS.', 'A24'],
+                ['PARAMOUNT', 'SONY PICTURES', 'DISNEY', 'AMAZON STUDIOS'],
+                ['UNIVERSAL', 'LIONSGATE', 'LEGENDARY', 'BLUMHOUSE'],
+                ['PLAN B', 'ANNAPURNA', 'SEARCHLIGHT', 'FOCUS FEATURES']
+            ];
+            const flipperContainer = document.querySelector('.logo-flipper-container');
+            if(flipperContainer) {
+                companies.forEach(companyList => {
+                    const column = document.createElement('div');
+                    column.className = 'logo-flipper-column';
+                    const inner = document.createElement('div');
+                    inner.className = 'flipper-inner';
+                    
+                    // Duplicate first item at the end for seamless loop
+                    [...companyList, companyList[0]].forEach(name => {
+                        const div = document.createElement('div');
+                        div.className = 'company-name-logo';
+                        div.textContent = name;
+                        inner.appendChild(div);
+                    });
+                    column.appendChild(inner);
+                    flipperContainer.appendChild(column);
+                });
+
+                document.querySelectorAll('.logo-flipper-column').forEach((column, i) => {
+                    const inner = column.querySelector('.flipper-inner');
+                    const items = inner.querySelectorAll('.company-name-logo');
+                    const itemHeight = items[0].offsetHeight;
+                    let currentIndex = 0;
+                    
+                    setInterval(() => {
+                        currentIndex++;
+                        inner.style.transition = 'transform 0.8s cubic-bezier(0.77, 0, 0.175, 1)';
+                        inner.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
+
+                        if (currentIndex >= items.length - 1) {
+                            setTimeout(() => {
+                                inner.style.transition = 'none';
+                                currentIndex = 0;
+                                inner.style.transform = 'translateY(0)';
+                            }, 800);
+                        }
+                    }, 2000 + i * 300); // Staggered interval
+                });
             }
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        });
 
-        // Mobile menu toggle
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
-        const navButtons = document.querySelector('.nav-buttons');
+            // Canvas Background
+            const canvas = document.getElementById('backgroundCanvas');
+            const ctx = canvas.getContext('2d');
+            let blobs = [];
 
-        menuToggle.addEventListener('click', () => {
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-            navButtons.style.display = navButtons.style.display === 'flex' ? 'none' : 'flex';
-        });
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
 
-        // Modal functions
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            class Blob {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.radius = Math.random() * 200 + 150;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.color = `rgba(${Math.random() > 0.5 ? '74, 189, 237' : '30, 58, 138'}, 0.15)`;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) this.vx *= -1;
+                    if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.1, this.x, this.y, this.radius);
+                    gradient.addColorStop(0, this.color);
+                    gradient.addColorStop(1, 'rgba(10, 10, 10, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            for (let i = 0; i < 4; i++) {
+                blobs.push(new Blob());
+            }
+            
+            function animateCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                blobs.forEach(blob => {
+                    blob.update();
+                    blob.draw();
+                });
+                requestAnimationFrame(animateCanvas);
+            }
+            animateCanvas();
+
+            // Logo Text Animation
+            const logoText = document.querySelector('.logo-text');
+            if (logoText) {
+                setTimeout(() => {
+                    logoText.classList.add('is-hidden');
+                }, 2000);
+            }
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
-        });
-
-        // Feature cards hover effect
-        document.querySelectorAll('.feature').forEach(feature => {
-            feature.addEventListener('mouseenter', () => {
-                feature.style.background = 'linear-gradient(135deg, rgba(74, 189, 237, 0.05), rgba(30, 58, 138, 0.05))';
-            });
-            feature.addEventListener('mouseleave', () => {
-                feature.style.background = 'var(--card-bg)';
-            });
-        });
-
-        // Dynamic stats counter animation
         function animateStats() {
             document.querySelectorAll('.stat-number').forEach(stat => {
-                const target = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
+                const targetText = stat.textContent;
+                const target = parseInt(targetText.replace(/[^0-9]/g, ''));
+                if (isNaN(target)) return;
+                const suffix = targetText.replace(/[0-9]/g, '');
                 let current = 0;
-                const increment = target / 50;
+                const duration = 1500; // ms
+                const stepTime = 20; // ms
+                const steps = duration / stepTime;
+                const increment = target / steps;
+                
                 const timer = setInterval(() => {
                     current += increment;
                     if (current >= target) {
                         current = target;
                         clearInterval(timer);
                     }
-                    stat.textContent = `${Math.floor(current)}${stat.textContent.includes('%') ? '%' : '+'}`;
-                }, 50);
+                    stat.textContent = `${Math.floor(current)}${suffix}`;
+                }, stepTime);
             });
         }
-        
-        const heroObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                setTimeout(animateStats, 500);
-                heroObserver.unobserve(entries[0].target);
+
+        // --- AUTHENTICATION ---
+        function updateAuthUI() {
+            if (!navAuthButtons || !myPosNavLink) return;
+            navAuthButtons.innerHTML = ''; // Clear previous buttons
+
+            if (isAuthenticated && currentUser) {
+                // User is logged in
+                myPosNavLink.style.display = 'list-item';
+                document.getElementById('my-pos').style.display = 'block';
+
+                const userDropdownHTML = `
+                    <a href="#my-pos" class="btn btn-primary">My POs</a>
+                    <div class="user-dropdown">
+                        <button class="user-dropdown-toggle">
+                            <span>${currentUser.displayName}</span>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <div class="user-dropdown-menu">
+                            <a href="#" id="signOutBtn">Sign Out</a>
+                        </div>
+                    </div>`;
+                navAuthButtons.innerHTML = userDropdownHTML;
+                document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+            } else {
+                // User is logged out
+                myPosNavLink.style.display = 'none';
+                document.getElementById('my-pos').style.display = 'none';
+
+                const loginButtonsHTML = `
+                    <a href="#" class="btn btn-secondary" id="loginBtn">Login</a>
+                    <a href="#pricing" class="btn btn-primary">Start Free Trial</a>`;
+                navAuthButtons.innerHTML = loginButtonsHTML;
+                document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
+                document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
             }
-        }, { threshold: 0.5 });
-        heroObserver.observe(document.querySelector('.hero'));
+        }
 
-        // Form submission handlers
-        document.querySelector('#loginModal form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Login functionality would be implemented here!');
-        });
+        async function checkAuthOnLoad() {
+            const token = localStorage.getItem('app_token');
+            if (token) {
+                const userDetails = await fetchUserDetails(token);
+                if (userDetails) {
+                    isAuthenticated = true;
+                    currentUser = userDetails;
+                    localStorage.setItem('user_displayName', currentUser.displayName);
+                    localStorage.setItem('user_email', currentUser.email);
+                    dropboxAccessToken = sessionStorage.getItem('dropbox_access_token') || "";
+                    await fetchGeneratedPOs();
+                }
+            }
+            updateAuthUI();
+        }
+
+        async function handleAuthCallback() {
+            if (window.location.hash && window.location.hash.startsWith('#token=')) {
+                const token = window.location.hash.substring('#token='.length);
+                localStorage.setItem('app_token', token);
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+                await checkAuthOnLoad();
+                closeModal('loginModal');
+                const myPosSection = document.getElementById('my-pos');
+                if (myPosSection) {
+                     const headerOffset = document.querySelector('.header').offsetHeight;
+                     const elementPosition = myPosSection.getBoundingClientRect().top;
+                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                     window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+            }
+        }
+
+        function signInWithGoogle() {
+            window.location.href = `${API_BASE_URL}/auth/google/login`;
+        }
+
+        function signOut(e) {
+            if(e) e.preventDefault();
+            localStorage.clear();
+            sessionStorage.clear();
+            isAuthenticated = false;
+            currentUser = null;
+            dropboxAccessToken = "";
+            allFetchedPOs = [];
+            updateAuthUI();
+            renderPOGrid([]); // Clear the grid
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function fetchUserDetails(token) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    if (response.status === 401) signOut();
+                    return null;
+                }
+                const userData = await response.json();
+                return {
+                    displayName: userData.full_name || userData.email.split('@')[0],
+                    email: userData.email,
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function handleGetStartedClick() {
+            if (isAuthenticated) {
+                openModal('processingModal');
+            } else {
+                openModal('loginModal');
+            }
+        }
+
+        // --- MODAL & UI HELPERS ---
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                if(modalId === 'processingModal') {
+                    resetAndShowProcessingStep(1);
+                }
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // --- PO PROCESSING FLOW ---
+        function resetAndShowProcessingStep(stepNum) {
+            // Hide all steps
+            document.querySelectorAll('#processingModal .step-content').forEach(el => el.style.display = 'none');
+            // Deactivate all indicators
+            document.querySelectorAll('#processingModal .step').forEach(el => el.classList.remove('active', 'completed'));
+            
+            if(stepNum >= 1) {
+                document.getElementById('tokenStepIndicator').classList.add('completed');
+            }
+            if(stepNum >= 2) {
+                document.getElementById('configureStepIndicator').classList.add('completed');
+            }
+            if(stepNum >= 3) {
+                document.getElementById('processDocsStepIndicator').classList.add('completed');
+            }
+
+            // Show and activate the current step
+            const currentStepContent = document.getElementById(`step${stepNum}_${stepNum === 1 ? 'token_input' : stepNum === 2 ? 'configure_job' : 'processing_docs'}`);
+            const currentStepIndicator = document.getElementById(`${stepNum === 1 ? 'token' : stepNum === 2 ? 'configure' : 'processDocs'}StepIndicator`);
+            
+            if(currentStepContent) currentStepContent.style.display = 'block';
+            if(currentStepIndicator) {
+                currentStepIndicator.classList.remove('completed');
+                currentStepIndicator.classList.add('active');
+            }
+        }
+
+        function submitDropboxToken() {
+            const token = document.getElementById('dropboxAccessTokenInput').value.trim();
+            if (!token) {
+                alert("Please enter your Dropbox Access Token.");
+                return;
+            }
+            dropboxAccessToken = token;
+            sessionStorage.setItem('dropbox_access_token', token);
+            resetAndShowProcessingStep(2);
+        }
+
+        function confirmPathsAndProceed() {
+            currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
+            currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
+            const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
+
+            if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath) {
+                alert("All fields are required.");
+                return;
+            }
+            resetAndShowProcessingStep(3);
+            startDocumentProcessing(sourcePath);
+        }
+
+        async function startDocumentProcessing(sourcePath) {
+            updateProgressUI(0, "Initializing job submission...");
+            const appToken = localStorage.getItem('app_token');
+            if (!isAuthenticated || !appToken) {
+                alert("Authentication error. Please sign in again.");
+                signOut();
+                return;
+            }
+
+            const payload = {
+                dropbox_access_token: dropboxAccessToken,
+                dropbox_source_path: sourcePath,
+                dropbox_output_path: "/POWizardCompany/OutputPOs", // Hardcoded for simplicity
+                job_number_context: currentJobNumberContext,
+                project_name_context: currentProjectNameContext,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`Failed to trigger processing: ${response.statusText}`);
+                
+                const data = await response.json();
+                updateProgressUI(5, "Job submitted. Waiting for worker...");
+                pollTaskStatus(data.task_id);
+            } catch (error) {
+                updateProgressUI(0, `Error: ${error.message}`, true);
+            }
+        }
+
+        function pollTaskStatus(taskId) {
+            if (statusPollInterval) clearInterval(statusPollInterval);
+            statusPollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
+                    if (!response.ok) {
+                        clearInterval(statusPollInterval);
+                        updateProgressUI(null, `Error fetching status: ${response.statusText}`, true);
+                        return;
+                    }
+                    const data = await response.json();
+                    updateProgressUI(data.progress_percent, data.current_step || data.status);
+
+                    if (data.status === 'SUCCESS') {
+                        clearInterval(statusPollInterval);
+                        updateProgressUI(100, "Processing complete!");
+                        setTimeout(async () => {
+                            closeModal('processingModal');
+                            await fetchGeneratedPOs();
+                        }, 1500);
+                    } else if (data.status === 'FAILURE') {
+                        clearInterval(statusPollInterval);
+                        const failureDetails = data.result?.error_message || JSON.stringify(data.result);
+                        updateProgressUI(null, `Processing failed: ${failureDetails}`, true);
+                    }
+                } catch (error) {
+                    clearInterval(statusPollInterval);
+                    updateProgressUI(null, "Error polling status. Check console.", true);
+                }
+            }, 3000);
+        }
+
+        function updateProgressUI(percentage, statusText, isError = false) {
+            const progressFill = document.getElementById('progressFill');
+            const progressPercent = document.getElementById('progressPercent');
+            const stageDescription = document.getElementById('stageDescription');
+
+            if (percentage !== null && progressFill && progressPercent) {
+                progressFill.style.width = percentage + '%';
+                progressPercent.textContent = percentage + '%';
+            }
+            if (stageDescription) stageDescription.textContent = statusText;
+            if (isError) {
+                if(progressFill) progressFill.style.background = 'var(--error-color)';
+                if(stageDescription) stageDescription.style.color = 'var(--error-color)';
+            } else {
+                 if(progressFill) progressFill.style.background = 'linear-gradient(90deg, var(--accent-blue), var(--accent-neon))';
+                 if(stageDescription) stageDescription.style.color = 'var(--text-secondary)';
+            }
+        }
+
+        // --- PO MANAGEMENT ---
+        async function fetchGeneratedPOs() {
+            if (!isAuthenticated || !dropboxAccessToken || !currentJobNumberContext) {
+                renderPOGrid([]); // Render empty to hide loader
+                return;
+            }
+            
+            poGrid.innerHTML = `<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">Loading POs...</p>`;
+            const appToken = localStorage.getItem('app_token');
+
+            try {
+                const url = `${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appToken}` } });
+                if (!response.ok) throw new Error(`Failed to fetch POs: ${response.statusText}`);
+                
+                const data = await response.json();
+                allFetchedPOs = data.generated_pos || [];
+                renderPOGrid(allFetchedPOs);
+            } catch (error) {
+                poGrid.innerHTML = `<p style="color: var(--error-color); grid-column: 1 / -1; text-align: center;">Error loading POs: ${error.message}</p>`;
+            }
+        }
+
+        function renderPOGrid(posToRender) {
+            document.getElementById('displayJobNumber_dashboard').textContent = currentJobNumberContext || "N/A";
+            document.getElementById('displayProjectName_dashboard').textContent = currentProjectNameContext || "N/A";
+            document.getElementById('poCount').textContent = `${posToRender.length} POs Generated`;
+
+            if (posToRender.length === 0) {
+                poGrid.style.display = 'none';
+                noPOsContainer.style.display = 'block';
+                noPOsMessage.textContent = isAuthenticated ? "No Purchase Orders found for this job. Get started by creating a new batch." : "Please sign in to view your Purchase Orders.";
+            } else {
+                poGrid.style.display = 'grid';
+                noPOsContainer.style.display = 'none';
+                poGrid.innerHTML = '';
+                posToRender.forEach(po => poGrid.appendChild(createPOCard(po)));
+            }
+            updateBatchActionButtons();
+        }
+
+        function createPOCard(po) {
+            const card = document.createElement('div');
+            card.className = 'po-card card-light-effect';
+            card.id = `po-card-${po.po_id_on_grid}`;
+
+            const isApproved = po.status?.toLowerCase().includes('approved');
+            let statusClass = 'status-pending';
+            if(isApproved) statusClass = 'status-approved';
+            else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
+
+            card.innerHTML = `
+                <div class="light-blob"></div>
+                <div class="po-card-checkbox">
+                    <input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)">
+                </div>
+                <div class="po-card-content">
+                    <div class="po-card-header">
+                        <h4 class="po-card-po-number">${po.po_number}</h4>
+                        <span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span>
+                    </div>
+                    <p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p>
+                    <p class="po-card-amount">${po.total_amount || '$0.00'}</p>
+                    <p class="po-card-date">Date: ${po.po_date || 'N/A'}</p>
+                    <div class="po-card-footer">
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
         
-        // FAQ Accordion Script
-        document.querySelectorAll('.faq-question').forEach(button => {
-            button.addEventListener('click', () => {
-                const faqItem = button.parentElement;
-                const faqAnswer = faqItem.querySelector('.faq-answer');
-                const wasActive = faqItem.classList.contains('active');
+        function applyFiltersAndSort() {
+            let filteredPOs = [...allFetchedPOs];
+            const statusFilter = document.getElementById('filterStatus').value;
+            const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
+            
+            if (statusFilter !== 'all') {
+                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase().includes(statusFilter));
+            }
+            if (vendorNameFilter) {
+                filteredPOs = filteredPOs.filter(po => po.vendor_name?.toLowerCase().includes(vendorNameFilter));
+            }
+            renderPOGrid(filteredPOs);
+        }
+        
+        // --- BATCH ACTIONS ---
+        function handlePOCheckboxChange(checkbox) {
+            const poId = checkbox.dataset.poId;
+            const cardElement = document.getElementById(`po-card-${poId}`);
+            if (checkbox.checked) {
+                selectedPOIds.add(poId);
+                cardElement?.classList.add('selected-card');
+            } else {
+                selectedPOIds.delete(poId);
+                cardElement?.classList.remove('selected-card');
+            }
+            updateBatchActionButtons();
+        }
 
-                if (!wasActive) {
-                    faqItem.classList.add('active');
-                    faqAnswer.style.maxHeight = faqAnswer.scrollHeight + 'px';
-                } else {
-                    faqItem.classList.remove('active');
-                    faqAnswer.style.maxHeight = null;
+        function updateBatchActionButtons() {
+            const count = selectedPOIds.size;
+            const controls = document.getElementById('batchActionControls');
+            document.getElementById('selectedPoCount').textContent = count;
+            
+            document.getElementById('approveSelectedButton').disabled = count === 0;
+            document.getElementById('deleteSelectedButton').disabled = count === 0;
+
+            controls.style.display = count > 0 ? 'block' : 'none';
+        }
+
+        async function handleApproveSelected() {
+            if (selectedPOIds.size === 0 || !confirm(`Approve ${selectedPOIds.size} selected PO(s)?`)) return;
+            // Simplified: Just mark as approved on the frontend and re-render.
+            // A real implementation would loop and call the backend API for each.
+            allFetchedPOs.forEach(po => {
+                if (selectedPOIds.has(po.po_id_on_grid)) {
+                    po.status = 'Approved';
                 }
             });
-        });
+            selectedPOIds.clear();
+            applyFiltersAndSort();
+            alert('POs marked as approved. (Note: This is a frontend demo of the action)');
+        }
 
-        // Demo button handler
-        document.querySelectorAll('.btn').forEach(btn => {
-            const text = btn.textContent || btn.innerText;
-            if (text.includes('Demo') || text.includes('Play')) {
-                btn.addEventListener('click', (e) => {
-                    if (e.currentTarget.getAttribute('href') !== '#how-it-works') {
-                         e.preventDefault();
-                         alert('Demo video would be shown here!');
-                    }
-                });
+        async function handleDeleteSelected() {
+            if (selectedPOIds.size === 0 || !confirm(`DELETE ${selectedPOIds.size} selected PO(s)? This is a demo and will only remove them from view.`)) return;
+            // Simplified: Filter out from the main array and re-render.
+            allFetchedPOs = allFetchedPOs.filter(po => !selectedPOIds.has(po.po_id_on_grid));
+            selectedPOIds.clear();
+            applyFiltersAndSort();
+            alert('POs removed from view. (Note: This is a frontend demo of the action)');
+        }
+
+
+        // --- REVIEW MODAL LOGIC ---
+        async function openReviewModal(poId) {
+            const poData = allFetchedPOs.find(p => p.po_id_on_grid === poId);
+            if (!poData) { alert('Could not find PO data.'); return; }
+            
+            // For demo, we'll use the summary data. A full implementation would fetch detailed data.
+            const fullData = poData.full_po_data_for_review || poData;
+            
+            document.getElementById('reviewModalTitle').textContent = `Review PO: ${fullData.po_number}`;
+            document.getElementById('editPoIdOnGrid').value = poId;
+            document.getElementById('editVendor').value = fullData.vendor_name || '';
+            document.getElementById('editVendorAddress').value = fullData.vendor_address || '';
+            document.getElementById('editVendorPhone').value = fullData.vendor_phone || '';
+            document.getElementById('editPoDate').value = fullData.po_date || '';
+            document.getElementById('editTaxAmount').value = (fullData.tax_amount || '0.00').replace('$', '');
+            document.getElementById('editTotalAmount').value = (fullData.total_amount || '0.00').replace('$', '');
+
+            const lineItemsContainer = document.getElementById('editLineItemsContainer');
+            lineItemsContainer.innerHTML = '';
+            const lineItems = fullData.aggregated_line_items || [{ description: 'Misc Expenses', amount: fullData.total_amount }];
+            lineItems.forEach(item => addLineItemField(item));
+
+            const pdfViewer = document.getElementById('pdfViewer');
+            const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
+            if (pdfPath) {
+                pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+            } else {
+                pdfViewer.src = 'about:blank';
             }
-        });
+
+            openModal('reviewModal');
+        }
+
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
+            const container = document.getElementById('editLineItemsContainer');
+            const div = document.createElement('div');
+            div.className = 'line-item-grid';
+            div.innerHTML = `
+                <input type="text" value="${item.description || ''}" placeholder="Description">
+                <input type="text" value="${item.budget_code || ''}" placeholder="Code">
+                <input type="text" value="${item.quantity || '1'}" placeholder="Qty">
+                <input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right">
+                <input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right">
+                <button type="button" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        async function submitPOChanges(isApproval) {
+            // This is a simplified version. A real app would gather form data and POST to the backend.
+            const poId = document.getElementById('editPoIdOnGrid').value;
+            const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
+
+            if(poIndex > -1) {
+                allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value;
+                allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value;
+                if(isApproval) {
+                    allFetchedPOs[poIndex].status = 'Approved';
+                } else {
+                    allFetchedPOs[poIndex].status = 'Regenerated';
+                }
+            }
+            closeModal('reviewModal');
+            applyFiltersAndSort();
+            alert(`PO changes ${isApproval ? 'approved' : 'saved'}. (Note: This is a frontend demo)`);
+        }
+
     </script>
 </body>
 </html>
