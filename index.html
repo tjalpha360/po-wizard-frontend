@@ -118,7 +118,7 @@
             padding: 0 2rem;
         }
 
-        .nav-left {
+        .nav-right {
             display: flex;
             align-items: center;
             gap: 3rem;
@@ -126,8 +126,8 @@
 
         .logo-container {
             display: flex;
-            align-items: center; /* MODIFIED */
-            gap: 0.5rem; /* MODIFIED */
+            align-items: center;
+            gap: 0.5rem;
             text-decoration: none;
             transition: transform 0.3s ease;
         }
@@ -135,16 +135,16 @@
             transform: translateX(0);
         }
         .logo-icon {
-            width: 60px; /* MODIFIED */
-            height: 60px; /* MODIFIED */
+            width: 60px;
+            height: 60px;
             flex-shrink: 0;
         }
         .logo-text-wrapper {
             overflow: hidden;
-            width: 155px; /* MODIFIED */
+            width: 155px;
         }
         .logo-text {
-            font-size: 2.2rem; /* MODIFIED */
+            font-size: 2.2rem;
             font-weight: bold;
             color: var(--accent-neon);
             display: inline-block;
@@ -1129,6 +1129,8 @@
                         <span class="logo-text">Wizard</span>
                     </div>
                 </a>
+            </div>
+            <div class="nav-right">
                 <ul class="nav-links">
                     <li><a href="#features">Features</a></li>
                     <li><a href="#pricing">Pricing</a></li>
@@ -1136,9 +1138,9 @@
                     <li id="nav-link-my-pos" style="display: none;"><a href="#my-pos">My POs</a></li>
                     <li><a href="#faq">FAQ</a></li>
                 </ul>
-            </div>
-            <div id="nav-auth-buttons" class="nav-buttons">
-                <!-- This will be populated by JS -->
+                <div id="nav-auth-buttons" class="nav-buttons">
+                    <!-- This will be populated by JS -->
+                </div>
             </div>
             <div class="menu-toggle">
                 <span></span>
