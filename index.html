@@ -184,39 +184,74 @@
             align-items: center;
         }
         
-        .user-dropdown {
+        /* Redesigned User Menu */
+        .user-menu-container {
             position: relative;
         }
-        
-        .user-dropdown-toggle {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
+
+        .user-menu-toggle {
+            display: flex;
+            align-items: center;
+            padding: 0; /* Remove padding from btn class */
+            border-radius: 3px;
+            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            color: var(--primary-bg);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .user-menu-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(74, 189, 237, 0.25);
+        }
+
+        .user-menu-toggle a {
+            padding: 0.75rem 1.5rem;
+            color: inherit;
+            text-decoration: none;
+            display: block;
+        }
+
+        .user-menu-separator {
+            width: 1px;
+            align-self: stretch;
+            background-color: rgba(255, 255, 255, 0.25);
+            margin: 8px 0;
+        }
+
+        .user-menu-name-section {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
         }
-        
-        .user-dropdown-toggle:hover {
-            color: var(--accent-neon);
+        .user-menu-name-section .arrow-down {
+             transition: transform 0.2s ease-in-out;
         }
-        
+
         .user-dropdown-menu {
             display: none;
             position: absolute;
             right: 0;
-            top: 150%;
+            top: 120%;
             background: var(--secondary-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            min-width: 180px;
+            min-width: 220px;
             z-index: 1010;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
         
-        .user-dropdown:hover .user-dropdown-menu {
+        .user-menu-container:hover .user-dropdown-menu {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .user-menu-container:hover .user-menu-name-section .arrow-down {
+            transform: rotate(180deg);
         }
 
         .user-dropdown-menu a {
@@ -273,7 +308,7 @@
             border-color: var(--accent-neon);
             color: var(--accent-neon);
         }
-
+        
         /* Mobile menu */
         .menu-toggle { display: none; flex-direction: column; cursor: pointer; z-index: 1001; }
         .menu-toggle span { width: 25px; height: 3px; background: var(--text-primary); margin: 3px 0; transition: 0.3s; }
@@ -566,7 +601,7 @@
         <nav class="nav-container">
             <div class="nav-left">
                 <a class="logo-container" onclick="showLandingPage()">
-                    <img src="https://assets-global.website-files.com/6451a1bb049a83437c6a3857/646cf35b0936dfe6284852e9_POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
+                    <img src="assets/POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
                     <div class="logo-text-wrapper">
                         <span class="logo-text">Wizard</span>
                     </div>
@@ -807,7 +842,7 @@
             
             // Populate dynamic content
             populateFaq();
-            createNeuralNetwork('neuralNetwork');
+            createNeuralNetwork();
         });
 
         // --- PAGE/VIEW ROUTING ---
@@ -1019,8 +1054,22 @@
             navAuthButtons.innerHTML = '';
             mobileNavAuthButtons.innerHTML = '';
             if (isAuthenticated && currentUser) {
-                const userDropdownHTML = ` <a href="#" onclick="showAppPage(); return false;" class="btn btn-primary">My Dashboard</a> <div class="user-dropdown"> <button class="user-dropdown-toggle"> <span>${currentUser.displayName}</span> <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </button> <div class="user-dropdown-menu"> <a onclick="showAppPage('settingsView')">Settings</a> <a id="signOutBtn">Sign Out</a> </div> </div>`;
-                navAuthButtons.innerHTML = userDropdownHTML;
+                const userMenuHTML = `
+                    <div class="user-menu-container">
+                        <div class="user-menu-toggle">
+                            <a href="#" onclick="showAppPage(); return false;">My Dashboard</a>
+                            <span class="user-menu-separator"></span>
+                            <div class="user-menu-name-section">
+                                <span>${currentUser.displayName}</span>
+                                <svg class="arrow-down" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                        </div>
+                        <div class="user-dropdown-menu">
+                            <a onclick="showAppPage('settingsView')">Settings</a>
+                            <a id="signOutBtn">Sign Out</a>
+                        </div>
+                    </div>`;
+                navAuthButtons.innerHTML = userMenuHTML;
                 document.getElementById('signOutBtn').addEventListener('click', signOut);
                 const mobileSignOutHTML = `<a href="#" onclick="showAppPage(); return false;" class="btn btn-primary">My Dashboard</a><a href="#" class="btn btn-secondary" id="mobileSignOutBtn">Sign Out</a>`;
                 mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
@@ -1269,7 +1318,7 @@
             }
         }
         
-        function createNeuralNetwork(containerId) {
+        function createNeuralNetwork(containerId = 'neuralNetworkProcessing') {
             const networkContainer = document.getElementById(containerId);
             if(!networkContainer) return;
             networkContainer.innerHTML = '';
