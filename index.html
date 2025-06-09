@@ -14,8 +14,8 @@
         }
 
         :root {
-            --primary-bg: #121212; /* MODIFIED */
-            --secondary-bg: #1e1e1e; /* MODIFIED */
+            --primary-bg: #1A1A1A; /* MODIFIED - Brighter */
+            --secondary-bg: #242424; /* MODIFIED - Brighter */
             --accent-neon: #4ABDED;
             --accent-blue: #1E3A8A;
             --text-primary: #ffffff;
@@ -71,7 +71,6 @@
         
         .card-light-effect {
             position: relative;
-            /* overflow: hidden; -- REMOVED to fix badge clipping */
         }
         .card-light-effect .light-blob {
             position: absolute;
@@ -98,7 +97,7 @@
             left: 1rem;
             right: 1rem;
             width: auto;
-            background: rgba(18, 18, 18, 0.8);
+            background: rgba(26, 26, 26, 0.8); /* MODIFIED - Brighter */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             z-index: 1000;
@@ -128,6 +127,7 @@
             gap: 0.5rem;
             text-decoration: none;
             transition: transform 0.3s ease;
+            cursor: pointer;
         }
         .logo-container:hover .logo-text {
             transform: translateX(0);
@@ -171,6 +171,7 @@
             color: var(--text-primary);
             text-decoration: none;
             transition: color 0.3s ease;
+            cursor: pointer;
         }
 
         .nav-links a:hover {
@@ -224,6 +225,7 @@
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 0.9rem;
+            cursor: pointer;
         }
 
         .user-dropdown-menu a:hover {
@@ -272,896 +274,269 @@
             color: var(--accent-neon);
         }
 
-        .btn-free {
-            background-color: rgba(74, 189, 237, 0.1);
-            color: var(--accent-neon);
-            border: 1px solid rgba(74, 189, 237, 0.2);
-            width: 100%;
-        }
-        .btn-free:hover {
-            background-color: rgba(74, 189, 237, 0.2);
-        }
-
-        .btn-disabled {
-            background: #333;
-            color: #888;
-            cursor: not-allowed;
-            border: 1px solid #444;
-            width: 100%;
-        }
-
         /* Mobile menu */
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            z-index: 1001; /* Above nav content */
-        }
-
-        .menu-toggle span {
-            width: 25px;
-            height: 3px;
-            background: var(--text-primary);
-            margin: 3px 0;
-            transition: 0.3s;
-        }
+        .menu-toggle { display: none; flex-direction: column; cursor: pointer; z-index: 1001; }
+        .menu-toggle span { width: 25px; height: 3px; background: var(--text-primary); margin: 3px 0; transition: 0.3s; }
         
         .mobile-nav-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
         }
-
-        .mobile-nav-overlay.open {
-            transform: translateX(0);
-        }
-
-        .mobile-nav-close {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 3rem;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .mobile-nav-links {
-            list-style: none;
-            text-align: center;
-            padding: 0;
-            margin: 0;
-        }
-
-        .mobile-nav-links li {
-            margin: 1.5rem 0;
-        }
-
-        .mobile-nav-links a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 2rem;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .mobile-nav-links a:hover {
-            color: var(--accent-neon);
-        }
-
-        .mobile-nav-buttons {
-            margin-top: 3rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            width: 80%;
-            max-width: 300px;
-        }
-
+        .mobile-nav-overlay.open { transform: translateX(0); }
+        .mobile-nav-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: var(--text-primary); font-size: 3rem; cursor: pointer; line-height: 1; }
+        .mobile-nav-links { list-style: none; text-align: center; padding: 0; margin: 0; }
+        .mobile-nav-links li { margin: 1.5rem 0; }
+        .mobile-nav-links a { color: var(--text-primary); text-decoration: none; font-size: 2rem; font-weight: 600; transition: color 0.3s ease; cursor: pointer; }
+        .mobile-nav-links a:hover { color: var(--accent-neon); }
+        .mobile-nav-buttons { margin-top: 3rem; display: flex; flex-direction: column; gap: 1rem; width: 80%; max-width: 300px; }
 
         /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background: transparent;
-            overflow: hidden;
-            z-index: 1;
-            padding-top: 100px;
-        }
-
-        .hero-content {
-            text-align: center;
-            max-width: 900px;
-            padding: 0 2rem;
-            z-index: 2;
-            position: relative;
-        }
-
-        .hero h1 {
-            font-size: clamp(3rem, 7vw, 5.5rem);
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-            letter-spacing: -2px;
-        }
-
-        .hero h1 .highlight-chaos {
-            font-style: italic;
-            font-weight: 400;
-            color: var(--text-secondary);
-        }
-
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; background: transparent; overflow: hidden; z-index: 1; padding-top: 100px; }
+        .hero-content { text-align: center; max-width: 900px; padding: 0 2rem; z-index: 2; position: relative; }
+        .hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; letter-spacing: -2px; }
+        .hero h1 .highlight-chaos { font-style: italic; font-weight: 400; color: var(--text-secondary); }
         .hero h1 .highlight-precision {
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 800; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
+        .hero-subtitle { font-size: clamp(1.1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
 
-        .hero-subtitle {
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 4rem;
-            opacity: 0.8;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--accent-neon);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
+        /* Stats */
+        .stats { display: flex; justify-content: center; gap: 3rem; margin-top: 4rem; opacity: 0.8; }
+        .stat { text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--accent-neon); }
+        .stat-label { font-size: 0.9rem; color: var(--text-secondary); }
 
         /* Section Styles */
-        .section {
-            padding: 6rem 0;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 2rem;
-            padding-right: 2rem;
-            position: relative;
-            z-index: 3;
-            background: transparent;
-        }
-        
-        .section-fullwidth {
-            padding: 6rem 0;
-            position: relative;
-            z-index: 3;
-        }
-
+        .section { padding: 6rem 0; max-width: 1200px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; position: relative; z-index: 3; background: transparent; }
+        .section-fullwidth { padding: 6rem 0; position: relative; z-index: 3; }
         .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 3rem;
+            font-size: clamp(2rem, 4vw, 3rem); font-weight: bold; text-align: center; margin-bottom: 3rem;
             background: linear-gradient(135deg, var(--text-primary), var(--accent-neon));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
         /* Features */
-        .features {
-            margin-top: 4rem;
-            column-count: 1;
-            column-gap: 2rem;
-        }
-        @media (min-width: 768px) {
-            .features {
-                column-count: 2;
-            }
-        }
-        @media (min-width: 1024px) {
-            .features {
-                column-count: 3;
-            }
-        }
-
-        .feature {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            margin-bottom: 2rem;
-            break-inside: avoid; /* Prevents card from breaking across columns */
-            -webkit-column-break-inside: avoid;
-        }
-
-        .feature:hover {
-            border-color: var(--accent-neon);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
+        .features { margin-top: 4rem; column-count: 1; column-gap: 2rem; }
+        @media (min-width: 768px) { .features { column-count: 2; } }
+        @media (min-width: 1024px) { .features { column-count: 3; } }
+        .feature { background: var(--card-bg); padding: 2rem; border-radius: 6px; border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; z-index: 1; margin-bottom: 2rem; break-inside: avoid; -webkit-column-break-inside: avoid; }
+        .feature:hover { border-color: var(--accent-neon); transform: translateY(-5px); }
+        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue)); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.5rem; }
 
         /* Testimonials */
-        .testimonials-container {
-            padding: 4rem 0;
-        }
-
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .testimonial {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .testimonial-quote {
-            font-style: italic;
-            margin-bottom: 1.5rem;
-            color: var(--text-secondary);
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+        .testimonials-container { padding: 4rem 0; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .testimonial { background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); }
+        .testimonial-quote { font-style: italic; margin-bottom: 1.5rem; color: var(--text-secondary); }
+        .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+        .author-avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue)); border-radius: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         /* Pricing */
-        .pricing-toggle-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: -1rem;
-        }
-        .segmented-control {
-            display: inline-flex;
-            background-color: var(--secondary-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 4px;
-        }
-        .segmented-control button {
-            background: none;
-            border: none;
-            padding: 0.5rem 1rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        .segmented-control button.active {
-            background-color: var(--card-bg);
-            color: var(--text-primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
-            align-items: start;
-        }
-
-        .pricing-card {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .pricing-card.popular {
-            border-color: var(--accent-neon);
-        }
-        
-        .popular-badge {
-            content: 'Most Popular';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent-neon);
-            color: var(--primary-bg);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .pricing-card:hover {
-            transform: translateY(-10px) scale(1.04);
-            border-color: var(--accent-neon);
-        }
-
-        .pricing-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .pricing-card-subtitle {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            min-height: 40px;
-        }
-
-        .price {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-        .price-subtitle {
-             color: var(--text-secondary);
-             margin-bottom: 1rem;
-             min-height: 20px; /* Add min-height for stability */
-        }
-
-        .pricing-features {
-            list-style: none;
-            margin: 2rem 0;
-            text-align: left;
-            flex-grow: 1;
-        }
-
-        .pricing-features li {
-            padding: 0.5rem 0;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: start;
-        }
-
-        .pricing-features li svg {
-            color: var(--success-color);
-            margin-right: 0.75rem;
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        /* My POs Section */
-        #my-pos .po-header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        #my-pos .po-header-info {
-            color: var(--text-secondary);
-        }
-        #my-pos .po-header-info span {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        #my-pos .po-actions-bar {
-            background-color: rgba(31, 31, 31, 0.5);
-            padding: 1rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-        }
-        #my-pos .po-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        #poGrid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        .po-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .po-card.selected-card {
-            border-color: var(--accent-neon);
-            box-shadow: 0 0 15px rgba(74, 189, 237, 0.2);
-        }
-        .po-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-neon);
-        }
-        .po-card-checkbox {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 10;
-        }
-        .po-card-checkbox input {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--accent-neon);
-        }
-        .po-card-content {
-            padding: 1.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .po-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-        .po-card-po-number {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--accent-neon);
-        }
-        .po-card-status {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            white-space: nowrap;
-        }
-        .status-approved { background-color: rgba(52, 211, 153, 0.1); color: var(--success-color); }
-        .status-pending, .status-regenerated { background-color: rgba(251, 191, 36, 0.1); color: #FBBF24; }
-        .status-error { background-color: rgba(239, 68, 68, 0.1); color: var(--error-color); }
-        
-        .po-card-vendor {
-            font-size: 1rem;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-            font-weight: 500;
-        }
-        .po-card-amount {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        .po-card-date {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-        .po-card-footer {
-            margin-top: auto;
-        }
-
-        #noPOsActionContainer {
-            text-align: center;
-            padding: 4rem 2rem;
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            color: var(--text-secondary);
-        }
-        #noPOsActionContainer h3 {
-            font-size: 1.5rem;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
+        .pricing-toggle-container { display: flex; justify-content: center; align-items: center; margin-bottom: -1rem; }
+        .segmented-control { display: inline-flex; background-color: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 4px; }
+        .segmented-control button { background: none; border: none; padding: 0.5rem 1rem; color: var(--text-secondary); font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.3s ease; }
+        .segmented-control button.active { background-color: var(--card-bg); color: var(--text-primary); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; align-items: start; }
+        .pricing-card { background: var(--card-bg); padding: 2.5rem; border-radius: 6px; border: 1px solid var(--border-color); text-align: center; position: relative; transition: all 0.3s ease; display: flex; flex-direction: column; height: 100%; z-index: 1; }
+        .pricing-card.popular { border-color: var(--accent-neon); }
+        .popular-badge { content: 'Most Popular'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-neon); color: var(--primary-bg); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .pricing-card:hover { transform: translateY(-10px) scale(1.04); border-color: var(--accent-neon); }
+        .pricing-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .pricing-card-subtitle { color: var(--text-secondary); margin-bottom: 1.5rem; min-height: 40px; }
+        .price { font-size: 3rem; font-weight: bold; color: var(--text-primary); }
+        .price-subtitle { color: var(--text-secondary); margin-bottom: 1rem; min-height: 20px; }
+        .pricing-features { list-style: none; margin: 2rem 0; text-align: left; flex-grow: 1; }
+        .pricing-features li { padding: 0.5rem 0; color: var(--text-secondary); display: flex; align-items: start; }
+        .pricing-features li svg { color: var(--success-color); margin-right: 0.75rem; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+        .btn-disabled { background: #333; color: #888; cursor: not-allowed; border: 1px solid #444; width: 100%; }
 
         /* Trusted By Marquee */
-        .trusted-by {
-            text-align: center;
-            padding: 8rem 0;
-        }
-        .logo-flipper-container {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap; /* MODIFIED for mobile */
-            margin-top: 2rem;
-            opacity: 0.6;
-        }
-        .logo-flipper-column {
-            height: 4rem;
-            overflow: hidden;
-        }
-        .logo-flipper-column .flipper-inner {
-            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-        .company-name-logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            height: 4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .trusted-by { text-align: center; padding: 8rem 0; }
+        .logo-flipper-container { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; opacity: 0.6; }
+        .logo-flipper-column { height: 4rem; overflow: hidden; }
+        .logo-flipper-column .flipper-inner { transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1); }
+        .company-name-logo { font-size: 1.5rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; height: 4rem; display: flex; align-items: center; justify-content: center; }
 
         /* FAQ Section */
-        #faq .faq-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 4rem;
-            margin-top: 3rem;
-        }
-        @media (min-width: 768px) {
-            #faq .faq-grid {
-                grid-template-columns: 1fr 2fr;
-            }
-        }
-        #faq .faq-grid-title h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: bold;
-            line-height: 1.2;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-neon));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .faq-accordion {
-            text-align: left;
-        }
-
-        .faq-item {
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .faq-item:first-of-type {
-            border-top: 1px solid var(--border-color);
-        }
-
-        .faq-question {
-            width: 100%;
-            background: none;
-            border: none;
-            padding: 1.5rem 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        .faq-question span {
-            text-align: left; /* MODIFIED for mobile */
-        }
-        
-        .faq-icon {
-            width: 1rem;
-            height: 1rem;
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
-            margin-left: 1rem;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(45deg);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-            color: var(--text-secondary);
-        }
-
-        .faq-answer p {
-             padding: 0 0.5rem 1.5rem 0.5rem;
-             line-height: 1.7;
-        }
+        #faq .faq-grid { display: grid; grid-template-columns: 1fr; gap: 4rem; margin-top: 3rem; }
+        @media (min-width: 768px) { #faq .faq-grid { grid-template-columns: 1fr 2fr; } }
+        #faq .faq-grid-title h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: bold; line-height: 1.2; background: linear-gradient(135deg, var(--text-primary), var(--accent-neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .faq-accordion { text-align: left; }
+        .faq-item { border-bottom: 1px solid var(--border-color); }
+        .faq-item:first-of-type { border-top: 1px solid var(--border-color); }
+        .faq-question { width: 100%; background: none; border: none; padding: 1.5rem 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--text-primary); font-size: 1.1rem; font-weight: 500; }
+        .faq-question span { text-align: left; }
+        .faq-icon { width: 1rem; height: 1rem; transition: transform 0.3s ease; flex-shrink: 0; margin-left: 1rem; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; color: var(--text-secondary); }
+        .faq-answer p { padding: 0 0.5rem 1.5rem 0.5rem; line-height: 1.7; }
 
         /* Footer */
-        .footer {
-            background: var(--secondary-bg);
-            padding: 4rem 2rem 2rem;
-            margin-top: 6rem;
-            position: relative;
-            z-index: 5;
-        }
+        .footer { background: var(--secondary-bg); padding: 4rem 2rem 2rem; margin-top: 6rem; position: relative; z-index: 5; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+        @media (min-width: 768px) { .footer-content { grid-template-columns: 2fr repeat(4, 1fr); } } /* MODIFIED - Added column for Legal */
+        .footer-section h3 { color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; }
+        .footer-section ul { list-style: none; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section ul li a { color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease; }
+        .footer-section ul li a:hover { color: var(--accent-neon); }
+        .footer-bottom { text-align: center; padding-top: 2rem; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-secondary); }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 3rem;
-        }
-        @media (min-width: 768px) {
-            .footer-content {
-                grid-template-columns: 2fr repeat(3, 1fr);
-            }
-        }
-        .footer-section h3 {
-            color: var(--text-primary);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-        .footer-section ul {
-            list-style: none;
-        }
-        .footer-section ul li {
-            margin-bottom: 0.75rem;
-        }
-        .footer-section ul li a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .footer-section ul li a:hover {
-            color: var(--accent-neon);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        /* Form Group (used in modals) */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
+        /* Form Group (used in modals and app) */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--primary-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            color: var(--text-primary);
-            transition: border-color 0.3s ease;
+            width: 100%; padding: 0.75rem; background: var(--primary-bg);
+            border: 1px solid var(--border-color); border-radius: 3px;
+            color: var(--text-primary); transition: border-color 0.3s ease;
         }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent-neon);
-        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent-neon); }
 
         /* Modals */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
+            z-index: 2000; justify-content: center; align-items: center; padding: 1rem;
         }
-
         .modal-content {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 6px;
-            max-width: 450px;
-            width: 100%;
-            position: relative;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: var(--card-bg); padding: 2rem; border-radius: 6px;
+            max-width: 450px; width: 100%; position: relative;
+            border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
         .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            line-height: 1;
+            position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+            color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; line-height: 1;
         }
-        .modal-close:hover {
-            color: var(--text-primary);
-        }
+        .modal-close:hover { color: var(--text-primary); }
 
         /* Review PO Modal */
-        #reviewModal .modal-content {
-            max-width: 90vw;
-            width: 100%;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
-        #reviewModal .review-modal-body {
-            display: flex;
-            gap: 2rem;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-        #reviewModal .pdf-viewer-area {
-            flex: 1 1 55%;
-            min-width: 0;
-        }
-        #reviewModal .pdf-viewer-area iframe {
-            width: 100%;
-            height: 100%;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-        }
-        #reviewModal .form-area {
-            flex: 1 1 45%;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        #reviewModal .form-scroll-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 1rem; /* for scrollbar */
-        }
-        #reviewModal .form-scroll-container .form-group {
-            margin-bottom: 1rem;
-        }
-        #reviewModal .form-scroll-container label {
-            font-size: 0.8rem;
-        }
-        #reviewModal .form-scroll-container input,
-        #reviewModal .form-scroll-container select,
-        #reviewModal .form-scroll-container textarea {
-            padding: 0.5rem;
-            font-size: 0.9rem;
-        }
-        #reviewModal .line-item-grid {
-            display: grid;
-            grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        #reviewModal .line-item-grid input {
-            font-size: 0.8rem;
-            padding: 0.4rem;
-        }
-        #reviewModal .line-item-grid button {
-            background: none; border: none; color: var(--error-color); cursor: pointer;
-        }
-        #reviewModal .modal-footer {
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
+        #reviewModal .modal-content { max-width: 90vw; width: 100%; max-height: 90vh; display: flex; flex-direction: column; }
+        #reviewModal .review-modal-body { display: flex; gap: 2rem; flex-grow: 1; overflow: hidden; }
+        #reviewModal .pdf-viewer-area { flex: 1 1 55%; min-width: 0; }
+        #reviewModal .pdf-viewer-area iframe { width: 100%; height: 100%; border: 1px solid var(--border-color); border-radius: 4px; }
+        #reviewModal .form-area { flex: 1 1 45%; min-width: 0; display: flex; flex-direction: column; }
+        #reviewModal .form-scroll-container { flex-grow: 1; overflow-y: auto; padding-right: 1rem; }
+        #reviewModal .form-scroll-container .form-group { margin-bottom: 1rem; }
+        #reviewModal .form-scroll-container label { font-size: 0.8rem; }
+        #reviewModal .form-scroll-container input, #reviewModal .form-scroll-container select, #reviewModal .form-scroll-container textarea { padding: 0.5rem; font-size: 0.9rem; }
+        #reviewModal .line-item-grid { display: grid; grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+        #reviewModal .line-item-grid input { font-size: 0.8rem; padding: 0.4rem; }
+        #reviewModal .line-item-grid button { background: none; border: none; color: var(--error-color); cursor: pointer; }
+        #reviewModal .modal-footer { padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; margin-top: 1rem; }
 
-        /* Processing Modal */
-        #processingModal .step-indicator {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 2rem;
-            position: relative;
+        /* App Page Structure */
+        #appPageContainer { display: none; min-height: 100vh; padding-top: 8rem; }
+        .app-layout { display: flex; max-width: 1600px; margin: 0 auto; gap: 2rem; padding: 0 2rem; }
+        .app-sidebar { flex: 0 0 220px; }
+        .app-sidebar nav ul { list-style: none; }
+        .app-sidebar nav button {
+            display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem;
+            background: none; border: none; border-radius: 6px; color: var(--text-secondary);
+            font-size: 1rem; text-align: left; cursor: pointer; transition: all 0.2s ease;
         }
-        #processingModal .step { text-align: center; color: var(--text-secondary); }
-        #processingModal .step-circle {
-            width: 40px; height: 40px; border-radius: 50%;
-            border: 2px solid var(--border-color);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 0.5rem;
-            transition: all 0.3s ease;
+        .app-sidebar nav button:hover { background: var(--secondary-bg); color: var(--text-primary); }
+        .app-sidebar nav button.active { background: var(--accent-neon); color: var(--primary-bg); font-weight: 600; }
+        .app-content { flex-grow: 1; min-width: 0; }
+        .app-view { display: none; }
+        .app-view.active { display: block; }
+        .app-section-title { font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary); }
+
+        /* Guided Step Cards */
+        .guided-step-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2.5rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
         }
-        #processingModal .step.active .step-circle {
-            border-color: var(--accent-neon);
-            background-color: rgba(74, 189, 237, 0.1);
+        .guided-step-card h3 { font-size: 1.5rem; color: var(--accent-neon); margin-bottom: 1rem; }
+        .guided-step-card p { color: var(--text-secondary); margin-bottom: 2rem; }
+
+        /* My POs - Dashboard */
+        .po-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .po-header-info { color: var(--text-secondary); }
+        .po-header-info span { font-weight: 600; color: var(--text-primary); }
+        .po-actions-bar { background-color: rgba(31, 31, 31, 0.5); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 2rem; }
+        .po-filters { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+        /* MODIFIED - Dark theme filter inputs */
+        .po-filters input, .po-filters select {
+            background-color: var(--primary-bg); border: 1px solid var(--border-color);
+            color: var(--text-primary); border-radius: 4px; padding: 0.6rem;
         }
-        #processingModal .step.completed .step-circle {
-            border-color: var(--success-color);
-            background-color: rgba(52, 211, 153, 0.1);
-            color: var(--success-color);
+        .po-filters input:focus, .po-filters select:focus { border-color: var(--accent-neon); outline: none; }
+        #poGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .po-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; transition: all 0.3s ease; position: relative; z-index: 1; display: flex; flex-direction: column; }
+        .po-card.selected-card { border-color: var(--accent-neon); box-shadow: 0 0 15px rgba(74, 189, 237, 0.2); }
+        .po-card:hover { transform: translateY(-5px); border-color: var(--accent-neon); }
+        .po-card-checkbox { position: absolute; top: 1rem; right: 1rem; z-index: 10; }
+        .po-card-checkbox input { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-neon); }
+        .po-card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .po-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .po-card-po-number { font-size: 1.25rem; font-weight: 600; color: var(--accent-neon); }
+        .po-card-status { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 20px; white-space: nowrap; }
+        .status-approved { background-color: rgba(52, 211, 153, 0.1); color: var(--success-color); }
+        .status-pending, .status-regenerated { background-color: rgba(251, 191, 36, 0.1); color: #FBBF24; }
+        .status-error { background-color: rgba(239, 68, 68, 0.1); color: var(--error-color); }
+        .po-card-vendor { font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; font-weight: 500; }
+        .po-card-amount { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .po-card-date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .po-card-footer { margin-top: auto; }
+        #noPOsActionContainer { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-secondary); }
+        #noPOsActionContainer h3 { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1rem; }
+
+        /* Settings Page */
+        .settings-card { background: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
+        .settings-card h3 { font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .settings-card.danger-zone { border-color: var(--error-color); }
+        .settings-card.danger-zone h3 { color: var(--error-color); }
+        #currentPlanDisplay { font-size: 1.5rem; font-weight: 600; color: var(--accent-neon); }
+        #tierDescription { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* NEW - Progress Bar Styles */
+        .progress-container {
+            width: 100%;
+            background: rgba(26, 35, 50, 0.8);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(45, 95, 130, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-        #processingModal .step-content { display: none; }
-        #processingModal .step-content.active { display: block; }
-        #processingModal .progress-bar-container {
-            width: 100%; background: var(--primary-bg); border-radius: 5px; overflow: hidden;
-            border: 1px solid var(--border-color); height: 1.25rem; margin-bottom: 0.5rem;
-        }
-        #processingModal .progress-bar-fill {
-            height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-neon));
-            width: 0%; transition: width 0.5s ease;
-        }
+        .progress-container .header { text-align: center; margin-bottom: 40px; }
+        .progress-container .title { font-size: 2.5rem; color: #4ABDED; margin-bottom: 10px; text-shadow: 0 0 20px rgba(74, 189, 237, 0.5); }
+        .progress-container .subtitle { color: #8A9BA8; font-size: 1.1rem; }
+        .progress-track { position: relative; height: 80px; background: linear-gradient(90deg, #1a2332 0%, #2a3441 100%); border-radius: 40px; margin: 30px 0; overflow: hidden; border: 2px solid rgba(45, 95, 130, 0.3); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #2D5F82 0%, #3B7BA8 50%, #2D5F82 100%); border-radius: 40px; width: 0%; transition: width 0.5s ease; position: relative; overflow: hidden; }
+        .progress-fill::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+        .neural-network { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+        .neuron { position: absolute; width: 6px; height: 6px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: organicPulse 3s infinite ease-in-out; }
+        @keyframes organicPulse { 0%, 100% { transform: scale(0.8) translateY(0px); opacity: 0.4; box-shadow: 0 0 3px rgba(255, 255, 255, 0.3); } 25% { transform: scale(1.2) translateY(-2px); opacity: 0.9; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); } 50% { transform: scale(1) translateY(1px); opacity: 0.7; box-shadow: 0 0 5px rgba(255, 255, 255, 0.4); } 75% { transform: scale(1.1) translateY(-1px); opacity: 0.8; box-shadow: 0 0 6px rgba(255, 255, 255, 0.5); } }
+        .connection { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform-origin: left center; animation: organicDataFlow 4s infinite ease-in-out; border-radius: 1px; }
+        @keyframes organicDataFlow { 0%, 100% { opacity: 0.2; transform: scaleX(0.8); } 25% { opacity: 0.6; transform: scaleX(1.1); } 50% { opacity: 0.8; transform: scaleX(1); } 75% { opacity: 0.4; transform: scaleX(0.9); } }
+        .data-stream { position: absolute; width: 3px; height: 3px; background: rgba(59, 123, 168, 0.8); border-radius: 50%; animation: streamFlow 5s infinite linear; }
+        @keyframes streamFlow { 0% { left: -5px; opacity: 0; transform: scale(0.5); } 10% { opacity: 1; transform: scale(1); } 90% { opacity: 1; transform: scale(0.8); } 100% { left: 100%; opacity: 0; transform: scale(0.3); } }
+        .vendor-display { text-align: center; margin: 30px 0; padding: 30px; background: rgba(45, 95, 130, 0.15); border-radius: 20px; border: 1px solid rgba(45, 95, 130, 0.3); }
+        .current-vendor { font-size: 2.2rem; color: #4ABDED; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 15px rgba(74, 189, 237, 0.5); min-height: 40px;}
+        .vendor-stats { display: flex; justify-content: center; gap: 40px; margin-top: 15px; }
+        .vendor-stat { text-align: center; }
+        .stat-value { font-size: 1.8rem; color: #3B7BA8; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { color: #8A9BA8; font-size: 0.9rem; }
+        .status-message { text-align: center; margin-top: 20px; padding: 15px; background: rgba(45, 95, 130, 0.1); border-radius: 15px; border-left: 4px solid #4ABDED; }
+        .status-text { color: #4ABDED; font-weight: 500; font-size: 1.1rem; min-height: 24px;}
 
 
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-container {
-                display: flex;
-                justify-content: space-between;
-            }
-            .nav-right {
-                display: none;
-            }
-            .menu-toggle {
-                display: flex;
-            }
+            .nav-container { display: flex; justify-content: space-between; }
+            .nav-right { display: none; }
+            .menu-toggle { display: flex; }
             .hero-cta { flex-direction: column; align-items: center; }
             .stats { flex-direction: column; gap: 1rem; }
             .section { padding: 4rem 1rem; }
@@ -1171,19 +546,15 @@
             #faq .faq-grid-title h2 { text-align: center; }
             .logo-flipper-container { gap: 1rem; }
             .company-name-logo { font-size: 1.2rem; }
+            .app-layout { flex-direction: column; }
+            .app-sidebar { flex: 0 0 auto; display: flex; overflow-x: auto; padding-bottom: 0.5rem;}
+            .app-sidebar nav { width: 100%; }
+            .app-sidebar nav ul { display: flex; gap: 0.5rem; }
         }
 
         /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
@@ -1194,8 +565,8 @@
     <header class="header">
         <nav class="nav-container">
             <div class="nav-left">
-                <a href="#" class="logo-container">
-                    <img src="assets/POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
+                <a class="logo-container" onclick="showLandingPage()">
+                    <img src="https://assets-global.website-files.com/6451a1bb049a83437c6a3857/646cf35b0936dfe6284852e9_POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
                     <div class="logo-text-wrapper">
                         <span class="logo-text">Wizard</span>
                     </div>
@@ -1203,11 +574,10 @@
             </div>
             <div class="nav-right">
                 <ul class="nav-links">
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li id="nav-link-my-pos" style="display: none;"><a href="#my-pos">My POs</a></li>
-                    <li><a href="#faq">FAQ</a></li>
+                    <li><a onclick="scrollToSection('#features')">Features</a></li>
+                    <li><a onclick="scrollToSection('#pricing')">Pricing</a></li>
+                    <li><a onclick="scrollToSection('#testimonials')">Testimonials</a></li>
+                    <li><a onclick="scrollToSection('#faq')">FAQ</a></li>
                 </ul>
                 <div id="nav-auth-buttons" class="nav-buttons">
                     <!-- This will be populated by JS -->
@@ -1224,512 +594,190 @@
     <div class="mobile-nav-overlay" id="mobileNavOverlay">
         <button class="mobile-nav-close">&times;</button>
         <ul class="mobile-nav-links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-            <li><a href="#testimonials">Testimonials</a></li>
-            <li id="mobile-nav-link-my-pos" style="display: none;"><a href="#my-pos">My POs</a></li>
-            <li><a href="#faq">FAQ</a></li>
+            <li><a onclick="scrollToSection('#features')">Features</a></li>
+            <li><a onclick="scrollToSection('#pricing')">Pricing</a></li>
+            <li><a onclick="scrollToSection('#testimonials')">Testimonials</a></li>
+            <li><a onclick="scrollToSection('#faq')">FAQ</a></li>
         </ul>
         <div class="mobile-nav-buttons" id="mobileNavAuthButtons">
             <!-- Mobile Auth Buttons Populated by JS -->
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Transform <span class="highlight-chaos">Post-Production Chaos</span> into <span class="highlight-precision">Precision</span></h1>
-            <p class="hero-subtitle">AI-powered purchase order generation for production coordinators, saving 10+ hours per wrap with 99% accuracy and seamless vendor integration.</p>
-            <div class="hero-cta">
-                <a href="#pricing" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Start Free Trial</a>
-                <a href="#how-it-works" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">Watch Demo</a>
-            </div>
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Hours Saved</div>
+    <main id="landingPageContainer">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Transform <span class="highlight-chaos">Post-Production Chaos</span> into <span class="highlight-precision">Precision</span></h1>
+                <p class="hero-subtitle">AI-powered purchase order generation for production coordinators, saving 10+ hours per wrap with 99% accuracy and seamless vendor integration.</p>
+                <div class="hero-cta">
+                    <a onclick="handleGetStartedClick()" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Start Free Trial</a>
+                    <a onclick="scrollToSection('#how-it-works')" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">Watch Demo</a>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">99%</div>
-                    <div class="stat-label">Accuracy</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">500+</div>
-                    <div class="stat-label">Productions</div>
+                <div class="stats">
+                    <div class="stat"><div class="stat-number">10+</div><div class="stat-label">Hours Saved</div></div>
+                    <div class="stat"><div class="stat-number">99%</div><div class="stat-label">Accuracy</div></div>
+                    <div class="stat"><div class="stat-number">500+</div><div class="stat-label">Productions</div></div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Video Demo Section -->
-    <section class="section-fullwidth" id="how-it-works">
-        <video style="width: 100%; height: auto; display: block;" autoplay loop muted playsinline>
-            <source src="https://cdn.dribbble.com/userupload/12470914/file/original-b98a3a8a0d33a7def6e4b3734138e4a7.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </section>
+        <!-- Video Demo Section -->
+        <section class="section-fullwidth" id="how-it-works">
+            <video style="width: 100%; height: auto; display: block;" autoplay loop muted playsinline>
+                <source src="https://cdn.dribbble.com/userupload/12470914/file/original-b98a3a8a0d33a7def6e4b3734138e4a7.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </section>
 
-    <!-- Features -->
-    <section class="section" id="features">
-        <h2 class="section-title">Features</h2>
-        <div class="features">
-            <div class="feature fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="feature-icon">🎯</div>
-                <h3>99% Accuracy</h3>
-                <p>AI-powered data extraction and validation ensures error-free purchase orders every time.</p>
+        <!-- Features -->
+        <section class="section" id="features">
+            <h2 class="section-title">Features</h2>
+            <div class="features">
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">🎯</div><h3>99% Accuracy</h3><p>AI-powered data extraction and validation ensures error-free purchase orders every time.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">📊</div><h3>Complete Audit Trail</h3><p>Track every change, approval, and communication with comprehensive audit logging.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">⚡</div><h3>Lightning Fast</h3><p>Generate professional POs in seconds, not hours. No more manual data entry.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">🔗</div><h3>Seamless Integration</h3><p>Works with your existing accounting software and production management tools.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">💰</div><h3>Faster Payments</h3><p>Automated vendor notifications and approval workflows accelerate payment processing.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">🛡️</div><h3>Enterprise Security</h3><p>Bank-level encryption and compliance with industry security standards.</p></div>
             </div>
-            <div class="feature fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="feature-icon">📊</div>
-                <h3>Complete Audit Trail</h3>
-                <p>Track every change, approval, and communication with comprehensive audit logging.</p>
-            </div>
-            <div class="feature fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="feature-icon">⚡</div>
-                <h3>Lightning Fast</h3>
-                <p>Generate professional POs in seconds, not hours. No more manual data entry.</p>
-            </div>
-            <div class="feature fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="feature-icon">🔗</div>
-                <h3>Seamless Integration</h3>
-                <p>Works with your existing accounting software and production management tools.</p>
-            </div>
-            <div class="feature fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="feature-icon">💰</div>
-                <h3>Faster Payments</h3>
-                <p>Automated vendor notifications and approval workflows accelerate payment processing.</p>
-            </div>
-            <div class="feature fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="feature-icon">🛡️</div>
-                <h3>Enterprise Security</h3>
-                <p>Bank-level encryption and compliance with industry security standards.</p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- My POs Section -->
-    <section class="section" id="my-pos">
-        <h2 class="section-title">My Purchase Orders</h2>
-        <div class="po-header">
-            <div class="po-header-info">
-                <p>Job: <span id="displayJobNumber_dashboard">N/A</span> | Project: <span id="displayProjectName_dashboard">N/A</span></p>
-                <p id="poCount">0 POs Generated</p>
+        <!-- Testimonials -->
+        <section class="section" id="testimonials">
+            <div class="testimonials-container">
+                <h2 class="section-title">Trusted by Industry Leaders</h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial fade-in"><p class="testimonial-quote">"PO Wizard cut our post-production admin time by 80%. It's a game-changer for production coordinators."</p><div class="testimonial-author"><div class="author-avatar">SM</div><div><strong>Sarah Mitchell</strong><br><small>Production Coordinator, Netflix</small></div></div></div>
+                    <div class="testimonial fade-in"><p class="testimonial-quote">"The accuracy and speed are incredible. We've eliminated PO errors completely since implementing PO Wizard."</p><div class="testimonial-author"><div class="author-avatar">JD</div><div><strong>James Davidson</strong><br><small>Finance Manager, HBO</small></div></div></div>
+                    <div class="testimonial fade-in"><p class="testimonial-quote">"Finally, a tool that understands the complexity of film production. PO Wizard is essential for any serious production."</p><div class="testimonial-author"><div class="author-avatar">MR</div><div><strong>Maria Rodriguez</strong><br><small>Producer, A24</small></div></div></div>
+                </div>
             </div>
-            <button id="newPOBatchBtn" class="btn btn-primary">New PO Batch</button>
-        </div>
-        
-        <div id="batchActionControls" class="po-actions-bar" style="display: none;">
-            <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                <button id="approveSelectedButton" class="btn btn-secondary" style="--bs-btn-color: var(--success-color); border-color: var(--success-color);" disabled>Approve</button>
-                <button id="deleteSelectedButton" class="btn btn-secondary" style="--bs-btn-color: var(--error-color); border-color: var(--error-color);" disabled>Delete</button>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section" id="pricing">
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <div class="pricing-toggle-container">
+                <div class="segmented-control"><button id="monthlyBtn" class="active">MONTHLY</button><button id="yearlyBtn">YEARLY (SAVE 20%)</button></div>
             </div>
-        </div>
-
-        <div class="po-actions-bar">
-            <div class="po-filters">
-                <select id="filterStatus" class="form-group" style="margin-bottom: 0; min-width: 150px;"><option value="all">All Status</option><option value="pending">Pending</option><option value="approved">Approved</option></select>
-                <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." class="form-group" style="margin-bottom: 0; flex-grow: 1;">
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Free</h3><p class="pricing-card-subtitle">Perfect for small productions</p><div class="price">Free</div><p class="price-subtitle">Requires Google Sign-In</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Up to 5 vendors per production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Single production processing</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Basic AI scanning</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Standard PO templates with Watermark</li></ul><a href="#" class="btn btn-secondary pricing-button" data-plan="free" style="width: 100%;">Get Started Free</a></div>
+                <div class="pricing-card popular fade-in card-light-effect"><div class="light-blob"></div><div class="popular-badge">Most Popular</div><h3>Pro</h3><p class="pricing-card-subtitle">For growing productions</p><div class="price" id="proPrice" data-monthly="29">$29<small>/month</small></div><p class="price-subtitle" id="proSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited production amounts</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited iterations on 1 production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Advanced AI with 99% accuracy</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>No Watermark on POs</li></ul><a href="#" class="btn btn-primary pricing-button" data-plan="pro" style="width: 100%;">Start Free Trial</a></div>
+                <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Enterprise</h3><p class="pricing-card-subtitle">For production companies</p><div class="price" id="enterprisePrice" data-monthly="99">$99<small>/month</small></div><p class="price-subtitle" id="enterpriseSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited productions</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Cross-tracking between productions</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Microsoft Excel integration</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Fully custom, unbranded designs</li></ul><button class="btn btn-disabled" disabled>Coming Soon</button></div>
             </div>
-        </div>
-        
-        <div id="poGrid">
-            <!-- PO Cards will be generated here by JavaScript -->
-        </div>
+        </section>
 
-        <div id="noPOsActionContainer" style="display: none;">
-            <h3>No Purchase Orders Found</h3>
-            <p id="noPOsMessage">Get started by creating a new batch.</p>
-            <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Create New PO Batch</button>
-        </div>
-    </section>
+        <!-- Trusted By -->
+        <section class="section trusted-by">
+            <h2 class="section-title">Trusted by Leading Production Companies</h2>
+            <div class="logo-flipper-container"></div>
+        </section>
 
-    <!-- Testimonials -->
-    <section class="section" id="testimonials">
-       <div class="testimonials-container">
-            <h2 class="section-title">Trusted by Industry Leaders</h2>
-            <div class="testimonial-grid">
-                <div class="testimonial fade-in">
-                    <p class="testimonial-quote">"PO Wizard cut our post-production admin time by 80%. It's a game-changer for production coordinators."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SM</div>
-                        <div>
-                            <strong>Sarah Mitchell</strong><br>
-                            <small>Production Coordinator, Netflix</small>
+        <!-- FAQ Section -->
+        <section class="section" id="faq">
+            <div class="faq-grid">
+                <div class="faq-grid-title"><h2>Questions about PO Wizard</h2></div>
+                <div class="faq-accordion">
+                    <!-- FAQ Items will be populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                 <div class="footer-section">
+                    <h3 style="color: var(--accent-neon); margin-bottom: 1rem;">PO Wizard</h3>
+                    <p style="color: var(--text-secondary);">Automate without limits.</p>
+                </div>
+                <div class="footer-section"><h3>Product</h3><ul><li><a onclick="scrollToSection('#features')">Features</a></li><li><a onclick="scrollToSection('#pricing')">Pricing</a></li><li><a onclick="handleGetStartedClick()">My POs</a></li><li><a href="#">Security</a></li></ul></div>
+                <div class="footer-section"><h3>Resources</h3><ul><li><a href="#">Documentation</a></li><li><a onclick="scrollToSection('#faq')">FAQ</a></li><li><a href="#">Blog</a></li></ul></div>
+                <div class="footer-section"><h3>Company</h3><ul><li><a href="#">About Us</a></li><li><a href="#">Contact Us</a></li></ul></div>
+                <div class="footer-section"><h3>Legal</h3><ul><li><a href="privacy.html" target="_blank">Privacy Policy</a></li><li><a href="terms.html" target="_blank">Terms of Service</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>© 2025 PO Wizard. All rights reserved.</p></div>
+        </footer>
+    </main>
+    
+    <!-- APP PAGE CONTAINER -->
+    <div id="appPageContainer">
+        <div class="app-layout">
+            <aside class="app-sidebar">
+                <nav>
+                    <ul>
+                        <li><button id="navBtnDashboard" onclick="showAppView('dashboardView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M7.5 14.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v9zM8 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-3zM.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H.5zM1 5.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zM1 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zm0 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3z"/></svg>
+                            <span>Dashboard</span>
+                        </button></li>
+                        <li><button id="navBtnSettings" onclick="showAppView('settingsView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1 .872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1-.872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705-1.987-1.987l-.169-.311a1.464 1.464 0 0 1-.872-2.105l.34-.1c1.4-.413-1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1 .872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/></svg>
+                            <span>Settings</span>
+                        </button></li>
+                    </ul>
+                </nav>
+            </aside>
+            <div class="app-content">
+                <!-- Dashboard View -->
+                <div id="dashboardView" class="app-view">
+                    <h2 class="app-section-title">Dashboard</h2>
+                    <div id="dashboard-content">
+                        <!-- Guided steps will be injected here by JS -->
+                    </div>
+                </div>
+                <!-- Settings View -->
+                <div id="settingsView" class="app-view">
+                    <h2 class="app-section-title">Settings</h2>
+                    <div id="settings-content">
+                        <!-- Profile Card -->
+                        <div class="settings-card">
+                            <h3>Profile Information</h3>
+                            <form id="profileSettingsForm" class="form-group-container">
+                                <div class="form-group"><label for="settingsFullName">Full Name</label><input type="text" id="settingsFullName" placeholder="Your Full Name"></div>
+                                <div class="form-group"><label for="settingsCompanyName">Company Name (Optional)</label><input type="text" id="settingsCompanyName" placeholder="Your Company LLC"></div>
+                                <div class="form-group"><label for="settingsAddress">Company Address (Optional)</label><textarea id="settingsAddress" rows="3" placeholder="123 Production Way, Hollywood, CA"></textarea></div>
+                                <button type="button" onclick="alert('Save Profile - Not Implemented Yet')" class="btn btn-secondary">Save Profile</button>
+                            </form>
+                        </div>
+                        <!-- Billing Card -->
+                        <div class="settings-card">
+                            <h3>Billing & Subscription</h3>
+                            <p class="text-secondary" style="margin-bottom: 1.5rem;">Manage your subscription. Switching tiers is enabled for testing.</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <p class="text-secondary">Current Plan</p>
+                                    <p id="currentPlanDisplay">Loading...</p>
+                                </div>
+                                <button id="switchTierButton" onclick="switchUserTier()" class="btn btn-primary">Switch Tier</button>
+                            </div>
+                            <p id="tierDescription" style="margin-top: 1rem;">Loading tier details...</p>
+                        </div>
+                        <!-- Dropbox Card -->
+                        <div class="settings-card">
+                             <h3>Dropbox Connection</h3>
+                             <p class="text-secondary" style="margin-bottom: 1.5rem;">Update your Dropbox Access Token. This is stored temporarily for the current session only.</p>
+                             <div class="form-group">
+                                 <label for="settingsDropboxToken">New Dropbox Access Token</label>
+                                 <input type="password" id="settingsDropboxToken" placeholder="Paste new token here">
+                             </div>
+                             <button type="button" onclick="updateDropboxTokenFromSettings()" class="btn btn-primary">Update Token</button>
+                        </div>
+                        <!-- Danger Zone -->
+                        <div class="settings-card danger-zone">
+                            <h3>Danger Zone</h3>
+                            <p class="text-secondary" style="margin-bottom: 1.5rem;">This action cannot be undone. All your data will be scheduled for deletion.</p>
+                            <button type="button" onclick="alert('Deactivate Account - Not Implemented Yet')" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);">Deactivate My Account</button>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial fade-in">
-                    <p class="testimonial-quote">"The accuracy and speed are incredible. We've eliminated PO errors completely since implementing PO Wizard."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">JD</div>
-                        <div>
-                            <strong>James Davidson</strong><br>
-                            <small>Finance Manager, HBO</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial fade-in">
-                    <p class="testimonial-quote">"Finally, a tool that understands the complexity of film production. PO Wizard is essential for any serious production."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">MR</div>
-                        <div>
-                            <strong>Maria Rodriguez</strong><br>
-                            <small>Producer, A24</small>
-                        </div>
-                    </div>
-                </div>
             </div>
-       </div>
-    </section>
+        </div>
+    </div>
 
-    <!-- Pricing -->
-    <section class="section" id="pricing">
-        <h2 class="section-title">Simple, Transparent Pricing</h2>
-        
-        <div class="pricing-toggle-container">
-            <div class="segmented-control">
-                <button id="monthlyBtn" class="active">MONTHLY</button>
-                <button id="yearlyBtn">YEARLY (SAVE 20%)</button>
-            </div>
-        </div>
-
-        <div class="pricing-grid">
-            <!-- Free Tier -->
-            <div class="pricing-card fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <h3>Free</h3>
-                <p class="pricing-card-subtitle">Perfect for small productions</p>
-                <div class="price">Free</div>
-                <p class="price-subtitle">Requires Google Sign-In</p>
-                <ul class="pricing-features">
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Up to 5 vendors per production</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Single production processing</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Basic AI scanning</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Standard PO templates with Watermark</li>
-                </ul>
-                <a href="#" class="btn btn-free pricing-button" data-plan="free">Get Started Free</a>
-            </div>
-            <!-- Pro Tier -->
-            <div class="pricing-card popular fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <div class="popular-badge">Most Popular</div>
-                <h3>Pro</h3>
-                <p class="pricing-card-subtitle">For growing productions</p>
-                <div class="price" id="proPrice" data-monthly="29">$29<small>/month</small></div>
-                <p class="price-subtitle" id="proSubtitle">&nbsp;</p>
-                <ul class="pricing-features">
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited production amounts</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited iterations on 1 production</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Advanced AI with 99% accuracy</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>No Watermark on POs</li>
-                </ul>
-                <a href="#" class="btn btn-primary pricing-button" data-plan="pro" style="width: 100%;">Start Free Trial</a>
-            </div>
-            <!-- Enterprise Tier -->
-            <div class="pricing-card fade-in card-light-effect">
-                <div class="light-blob"></div>
-                <h3>Enterprise</h3>
-                <p class="pricing-card-subtitle">For production companies</p>
-                <div class="price" id="enterprisePrice" data-monthly="99">$99<small>/month</small></div>
-                <p class="price-subtitle" id="enterpriseSubtitle">&nbsp;</p>
-                <ul class="pricing-features">
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited productions</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Cross-tracking between productions</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Microsoft Excel integration</li>
-                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Fully custom, unbranded designs</li>
-                </ul>
-                <button class="btn btn-disabled" disabled>Coming Soon</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trusted By -->
-    <section class="section trusted-by">
-        <h2 class="section-title">Trusted by Leading Production Companies</h2>
-        <div class="logo-flipper-container">
-            <!-- Columns will be populated by JS -->
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="section" id="faq">
-        <div class="faq-grid">
-            <div class="faq-grid-title">
-                <h2>Questions about PO Wizard</h2>
-            </div>
-            <div class="faq-accordion">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What is PO Wizard?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>PO Wizard is an AI-powered software designed for production coordinators to automate the creation of purchase orders. It drastically reduces manual data entry, minimizes errors, and saves significant time during the production wrap process.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How does the Dropbox integration work?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>You grant PO Wizard temporary, session-based access to a specific folder in your Dropbox. You simply drop all your receipts, invoices, and vendor documents into this folder. Our AI scans the contents, processes them, and organizes the generated POs back into your Dropbox, keeping your workflow centralized.</p>
-                    </div>
-                </div>
-                 <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What if a vendor has multiple invoices?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>PO Wizard is built for this exact scenario. Our AI intelligently groups all documents from the same vendor into a single, consolidated Purchase Order. It automatically creates line items for each invoice or receipt, ensuring a clean and comprehensive PO that's easy for accounting to process.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Is my production data and Dropbox token secure?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely. Security is our top priority. Your Dropbox token is stored only in your browser's session storage, meaning it's deleted the moment you close the tab and is never saved on our servers. All data transfer uses bank-grade TLS encryption, and we only ever read the files you specify for processing.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Can I use this for multiple productions at once?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>The Pro plan is designed for one production at a time. However, our Enterprise plan is built for production companies and freelance coordinators juggling multiple projects. It allows you to create and manage separate, secure workspaces for each production, with cross-tracking capabilities for vendors used across different jobs.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How does this integrate with accounting software like Global Vista?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>PO Wizard generates clean, professional PDF purchase orders with all necessary information, including vendor details, line items, amounts, and job codes. These PDFs are formatted for easy submission to any major production accounting system. The Enterprise plan also offers direct data export options (e.g., CSV, Excel) for seamless import into software like Global Vista or Media Services.</p>
-                    </div>
-                </div>
-                 <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What happens if I upload a blurry receipt?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Our AI is trained to handle a wide variety of document qualities. If a document is too blurry or unreadable, the system will flag it for manual review. You will be able to see the problematic document and manually enter the correct information in the review step, ensuring no data is lost or guessed.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Can I edit a PO after it has been generated?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes. Every PO goes through a review stage where you have full control to edit any field. You can correct vendor names, adjust line items, add notes, and modify amounts. Once you approve the PO, a final, clean version is created, but you can always revisit and create a new version if needed.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Does this work for both union and non-union productions?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely. PO Wizard is agnostic to union status. It is designed to handle vendor invoices, receipts, and standard paperwork common to all types of film, television, and commercial productions, regardless of guild affiliations.</p>
-                    </div>
-                </div>
-                 <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What are the system requirements?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>PO Wizard is a web-based application, so there are no downloads or installations required. It runs on any modern web browser (like Chrome, Firefox, Safari, or Edge) on both Mac and PC. All you need is an internet connection and a Dropbox account.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Can I cancel my subscription at any time?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes, you can cancel your Pro or Enterprise subscription at any time through your account settings. You will retain access to the paid features until the end of your current billing period. There are no long-term contracts or cancellation fees.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How is this different from just using a spreadsheet?</span>
-                        <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>While spreadsheets are great for tracking, PO Wizard eliminates the most time-consuming part of the process: manual data entry. Instead of you typing out every vendor, date, and amount, our AI does it for you in seconds. It also standardizes the format, groups related expenses, and creates professional, submittable PDF documents, saving you hours of administrative work compared to a manual spreadsheet workflow.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-             <div class="footer-section">
-                <h3 style="color: var(--accent-neon); margin-bottom: 1rem;">PO Wizard</h3>
-                <p style="color: var(--text-secondary);">Automate without limits.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Product</h3>
-                <ul>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#my-pos">My POs</a></li>
-                    <li><a href="#">Security</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#">Case Studies</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-             <div class="footer-section">
-                <h3>Company</h3>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Partners</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2025 PO Wizard. All rights reserved.</p>
-        </div>
-    </footer>
 
     <!-- MODALS -->
-
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('loginModal')">×</button>
-            <h2 style="margin-bottom: 1.5rem; color: var(--text-primary);">Login to PO Wizard</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 2rem; text-align: center;">Sign in securely with your Google account to access your dashboard.</p>
-            <button id="googleSignInBtn" class="btn btn-primary" style="width: 100%;">
-                Sign In with Google
-            </button>
-        </div>
-    </div>
-
-    <!-- Processing Modal -->
-    <div class="modal" id="processingModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('processingModal')">×</button>
-            <h2 style="text-align:center; margin-bottom: 1rem; color: var(--text-primary);">New PO Batch</h2>
-            <div class="step-indicator">
-                <div id="tokenStepIndicator" class="step"><div class="step-circle">1</div>Connect</div>
-                <div id="configureStepIndicator" class="step"><div class="step-circle">2</div>Configure</div>
-                <div id="processDocsStepIndicator" class="step"><div class="step-circle">3</div>Process</div>
-            </div>
-
-            <!-- Step 1: Dropbox Token -->
-            <div id="step1_token_input" class="step-content">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Connect to Dropbox</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Enter your temporary Dropbox Access Token to allow PO Wizard to access your files for this session.</p>
-                <div class="form-group">
-                    <label for="dropboxAccessTokenInput">Dropbox Access Token</label>
-                    <input type="password" id="dropboxAccessTokenInput" placeholder="Paste your token here">
-                </div>
-                <button id="submitTokenButton" class="btn btn-primary" style="width: 100%;">Submit & Continue</button>
-            </div>
-
-            <!-- Step 2: Configure Job -->
-            <div id="step2_configure_job" class="step-content">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Configure Job & Paths</h3>
-                <div class="form-group">
-                    <label for="inputJobNumber">Job Number</label>
-                    <input type="text" id="inputJobNumber" placeholder="e.g., 85319">
-                </div>
-                <div class="form-group">
-                    <label for="inputProjectName">Project Name</label>
-                    <input type="text" id="inputProjectName" placeholder="e.g., Macy's Holiday Shoot">
-                </div>
-                <div class="form-group">
-                    <label for="dropboxSourcePath">Dropbox Source Path</label>
-                    <input type="text" id="dropboxSourcePath" value="/POWizardCompany/SourceDocs">
-                </div>
-                <button id="confirmPathsButton" class="btn btn-primary" style="width: 100%;">Confirm & Start Processing</button>
-            </div>
-
-            <!-- Step 3: Processing -->
-            <div id="step3_processing_docs" class="step-content">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1rem; text-align: center;">Processing Documents...</h3>
-                <div class="progress-bar-container">
-                    <div id="progressFill" class="progress-bar-fill"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-                    <span id="progressPercent">0%</span>
-                    <span id="estimatedTime">Calculating...</span>
-                </div>
-                <div id="stageDescription" style="text-align: center; color: var(--text-secondary); min-height: 40px;">Initializing...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Review/Edit PO Modal -->
-    <div class="modal" id="reviewModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('reviewModal')">×</button>
-            <h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2>
-            <div class="review-modal-body">
-                <div class="pdf-viewer-area">
-                    <iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe>
-                </div>
-                <div class="form-area">
-                    <div class="form-scroll-container">
-                        <form id="reviewForm">
-                            <input type="hidden" id="editPoIdOnGrid">
-                            <div class="form-group">
-                                <label for="editVendor">Vendor Name</label>
-                                <input type="text" id="editVendor" name="vendor_name">
-                            </div>
-                            <div class="form-group">
-                                <label for="editVendorAddress">Vendor Address</label>
-                                <textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div>
-                                <div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div>
-                            </div>
-                             <h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4>
-                            <div id="editLineItemsContainer"></div>
-                            <button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount"></div>
-                                <div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str"></div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;">Save Changes</button>
-                        <button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);">Approve PO</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <div class="modal" id="loginModal"> <div class="modal-content"><button class="modal-close" onclick="closeModal('loginModal')">×</button><h2 style="margin-bottom: 1.5rem; color: var(--text-primary);">Login to PO Wizard</h2><p style="color: var(--text-secondary); margin-bottom: 2rem; text-align: center;">Sign in securely with your Google account to access your dashboard.</p><button id="googleSignInBtn" class="btn btn-primary" style="width: 100%;">Sign In with Google</button></div></div>
+    <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm"><input type="hidden" id="editPoIdOnGrid"><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str"></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;">Save Changes</button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);">Approve PO</button></div></div></div></div></div>
 
     <script>
         // --- CONFIG ---
@@ -1747,37 +795,69 @@
 
         // --- DOM ELEMENTS ---
         const navAuthButtons = document.getElementById('nav-auth-buttons');
-        const poGrid = document.getElementById('poGrid');
-        const noPOsContainer = document.getElementById('noPOsActionContainer');
-        const noPOsMessage = document.getElementById('noPOsMessage');
-        const myPosNavLink = document.getElementById('nav-link-my-pos');
-
+        const landingPageContainer = document.getElementById('landingPageContainer');
+        const appPageContainer = document.getElementById('appPageContainer');
+        
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', async () => {
             await handleAuthCallback();
             await checkAuthOnLoad();
             initializeEventListeners();
             updateAuthUI();
+            
+            // Populate dynamic content
+            populateFaq();
+            createNeuralNetwork('neuralNetwork');
         });
 
-        function initializeEventListeners() {
-            // Smooth scrolling
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        const headerOffset = document.querySelector('.header').offsetHeight + 32; // Add offset for floating header
-                        const elementPosition = targetElement.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    } else if (targetId === '#') {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            });
+        // --- PAGE/VIEW ROUTING ---
+        function showLandingPage() {
+            landingPageContainer.style.display = 'block';
+            appPageContainer.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
+        function showAppPage(viewId = 'dashboardView') {
+            if (!isAuthenticated) {
+                openModal('loginModal');
+                return;
+            }
+            landingPageContainer.style.display = 'none';
+            appPageContainer.style.display = 'block';
+            showAppView(viewId);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        function showAppView(viewId) {
+            document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.app-sidebar button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(viewId)?.classList.add('active');
+            const navBtnId = viewId.replace('View', '');
+            document.getElementById(`navBtn${navBtnId.charAt(0).toUpperCase() + navBtnId.slice(1)}`)?.classList.add('active');
+
+            if (viewId === 'dashboardView') {
+                renderMyPOsPage();
+            } else if (viewId === 'settingsView') {
+                populateSettingsForm();
+                fetchUserTier();
+            }
+        }
+
+        function scrollToSection(selector) {
+            showLandingPage();
+            const targetElement = document.querySelector(selector);
+            if(targetElement) {
+                 setTimeout(() => { // Timeout ensures page is visible before scrolling
+                    const headerOffset = document.querySelector('.header').offsetHeight + 32;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                 }, 100);
+            }
+        }
+
+        function initializeEventListeners() {
             // Animations
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -1804,7 +884,6 @@
             // Pricing Toggle
             const monthlyBtn = document.getElementById('monthlyBtn');
             const yearlyBtn = document.getElementById('yearlyBtn');
-            
             const updatePricing = (isYearly) => {
                 const proPriceEl = document.getElementById('proPrice');
                 const proSubtitleEl = document.getElementById('proSubtitle');
@@ -1829,53 +908,25 @@
                     yearlyBtn.classList.remove('active');
                 }
             };
-
             monthlyBtn.addEventListener('click', () => updatePricing(false));
             yearlyBtn.addEventListener('click', () => updatePricing(true));
-
-
-            // PO Page controls
-            document.getElementById('newPOBatchBtn').addEventListener('click', () => openModal('processingModal'));
-            document.getElementById('noPOsCreateBtn').addEventListener('click', () => openModal('processingModal'));
-            document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
-            document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
-
-            // Processing Modal controls
-            document.getElementById('submitTokenButton').addEventListener('click', submitDropboxToken);
-            document.getElementById('confirmPathsButton').addEventListener('click', confirmPathsAndProceed);
 
             // Review Modal controls
             document.getElementById('addLineItemBtn').addEventListener('click', () => addLineItemField());
             document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => submitPOChanges(false));
             document.getElementById('reviewModalApproveButton').addEventListener('click', () => submitPOChanges(true));
             
-            // Batch Actions
-            document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
-            document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
-
-            // FAQ Accordion
-            document.querySelectorAll('.faq-question').forEach(button => {
-                button.addEventListener('click', () => {
-                    const faqItem = button.parentElement;
-                    const faqAnswer = faqItem.querySelector('.faq-answer');
-                    const wasActive = faqItem.classList.contains('active');
-                    faqItem.classList.toggle('active');
-                    faqAnswer.style.maxHeight = wasActive ? null : faqAnswer.scrollHeight + 'px';
-                });
-            });
+            // FAQ Accordion populated by JS, listeners added there.
 
             // Organic movement scripts
             (() => {
                 const light = document.querySelector('.mouse-aware-light');
                 if (!light) return;
-
                 let lightPos = { x: 0, y: 0 }, lightTarget = { x: 0, y: 0 };
-
                 document.body.addEventListener('mousemove', e => {
                     lightTarget.x = e.clientX;
                     lightTarget.y = e.clientY;
                 });
-
                 function animateElements() {
                     lightPos.x += (lightTarget.x - lightPos.x) * 0.1;
                     lightPos.y += (lightTarget.y - lightPos.y) * 0.1;
@@ -1884,7 +935,6 @@
                 }
                 animateElements();
             })();
-
             (() => {
                 document.querySelectorAll('.card-light-effect').forEach(card => {
                     card.addEventListener('mousemove', e => {
@@ -1910,208 +960,76 @@
             if (statsSection) statsObserver.observe(statsSection);
 
             // Logo Flipper
-            const companies = [
-                ['NETFLIX', 'HBO', 'WARNER BROS.', 'A24'],
-                ['PARAMOUNT', 'SONY PICTURES', 'DISNEY', 'AMAZON STUDIOS'],
-                ['UNIVERSAL', 'LIONSGATE', 'LEGENDARY', 'BLUMHOUSE'],
-                ['PLAN B', 'ANNAPURNA', 'SEARCHLIGHT', 'FOCUS FEATURES']
-            ];
+            const companies = [['NETFLIX', 'HBO', 'WARNER BROS.', 'A24'],['PARAMOUNT', 'SONY PICTURES', 'DISNEY', 'AMAZON STUDIOS'],['UNIVERSAL', 'LIONSGATE', 'LEGENDARY', 'BLUMHOUSE'],['PLAN B', 'ANNAPURNA', 'SEARCHLIGHT', 'FOCUS FEATURES']];
             const flipperContainer = document.querySelector('.logo-flipper-container');
             if(flipperContainer) {
                 companies.forEach(companyList => {
-                    const column = document.createElement('div');
-                    column.className = 'logo-flipper-column';
-                    const inner = document.createElement('div');
-                    inner.className = 'flipper-inner';
-                    
-                    // Duplicate first item at the end for seamless loop
-                    [...companyList, companyList[0]].forEach(name => {
-                        const div = document.createElement('div');
-                        div.className = 'company-name-logo';
-                        div.textContent = name;
-                        inner.appendChild(div);
-                    });
-                    column.appendChild(inner);
-                    flipperContainer.appendChild(column);
+                    const column = document.createElement('div'); column.className = 'logo-flipper-column';
+                    const inner = document.createElement('div'); inner.className = 'flipper-inner';
+                    [...companyList, companyList[0]].forEach(name => { const div = document.createElement('div'); div.className = 'company-name-logo'; div.textContent = name; inner.appendChild(div); });
+                    column.appendChild(inner); flipperContainer.appendChild(column);
                 });
-
                 document.querySelectorAll('.logo-flipper-column').forEach((column, i) => {
-                    const inner = column.querySelector('.flipper-inner');
-                    const items = inner.querySelectorAll('.company-name-logo');
-                    const itemHeight = items[0].offsetHeight;
-                    let currentIndex = 0;
-                    
+                    const inner = column.querySelector('.flipper-inner'); const items = inner.querySelectorAll('.company-name-logo');
+                    const itemHeight = items[0].offsetHeight; let currentIndex = 0;
                     setInterval(() => {
-                        currentIndex++;
-                        inner.style.transition = 'transform 0.8s cubic-bezier(0.77, 0, 0.175, 1)';
-                        inner.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
-
-                        if (currentIndex >= items.length - 1) {
-                            setTimeout(() => {
-                                inner.style.transition = 'none';
-                                currentIndex = 0;
-                                inner.style.transform = 'translateY(0)';
-                            }, 800);
-                        }
-                    }, 2000 + i * 300); // Staggered interval
+                        currentIndex++; inner.style.transition = 'transform 0.8s cubic-bezier(0.77, 0, 0.175, 1)'; inner.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
+                        if (currentIndex >= items.length - 1) { setTimeout(() => { inner.style.transition = 'none'; currentIndex = 0; inner.style.transform = 'translateY(0)'; }, 800); }
+                    }, 2000 + i * 300);
                 });
             }
 
             // Canvas Background
-            const canvas = document.getElementById('backgroundCanvas');
-            const ctx = canvas.getContext('2d');
+            const canvas = document.getElementById('backgroundCanvas'); const ctx = canvas.getContext('2d');
             let blobs = [];
-
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            class Blob {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.radius = Math.random() * 200 + 150;
-                    this.vx = (Math.random() - 0.5) * 0.5;
-                    this.vy = (Math.random() - 0.5) * 0.5;
-                    this.color = `rgba(${Math.random() > 0.5 ? '74, 189, 237' : '30, 58, 138'}, 0.15)`;
-                }
-
-                update() {
-                    this.x += this.vx;
-                    this.y += this.vy;
-
-                    if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) this.vx *= -1;
-                    if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) this.vy *= -1;
-                }
-
-                draw() {
-                    ctx.beginPath();
-                    const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.1, this.x, this.y, this.radius);
-                    gradient.addColorStop(0, this.color);
-                    gradient.addColorStop(1, 'rgba(10, 10, 10, 0)');
-                    ctx.fillStyle = gradient;
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            
-            for (let i = 0; i < 4; i++) {
-                blobs.push(new Blob());
-            }
-            
-            function animateCanvas() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                blobs.forEach(blob => {
-                    blob.update();
-                    blob.draw();
-                });
-                requestAnimationFrame(animateCanvas);
-            }
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resizeCanvas); resizeCanvas();
+            class Blob { constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.radius = Math.random() * 200 + 150; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.color = `rgba(${Math.random() > 0.5 ? '74, 189, 237' : '30, 58, 138'}, 0.15)`; } update() { this.x += this.vx; this.y += this.vy; if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) this.vx *= -1; if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) this.vy *= -1; } draw() { ctx.beginPath(); const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.1, this.x, this.y, this.radius); gradient.addColorStop(0, this.color); gradient.addColorStop(1, 'rgba(10, 10, 10, 0)'); ctx.fillStyle = gradient; ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); } }
+            for (let i = 0; i < 4; i++) { blobs.push(new Blob()); }
+            function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); blobs.forEach(blob => { blob.update(); blob.draw(); }); requestAnimationFrame(animateCanvas); }
             animateCanvas();
 
             // Logo Text Animation
             const logoText = document.querySelector('.logo-text');
-            if (logoText) {
-                setTimeout(() => {
-                    logoText.classList.add('is-hidden');
-                }, 2000);
-            }
+            if (logoText) { setTimeout(() => { logoText.classList.add('is-hidden'); }, 2000); }
 
             // Mobile Menu Toggle
             const menuToggle = document.querySelector('.menu-toggle');
             const mobileNavOverlay = document.getElementById('mobileNavOverlay');
             const mobileNavClose = document.querySelector('.mobile-nav-close');
-
-            menuToggle.addEventListener('click', () => {
-                mobileNavOverlay.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            });
-
-            mobileNavClose.addEventListener('click', () => {
-                mobileNavOverlay.classList.remove('open');
-                document.body.style.overflow = 'auto';
-            });
-            
-            mobileNavOverlay.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileNavOverlay.classList.remove('open');
-                    document.body.style.overflow = 'auto';
-                });
-            });
+            menuToggle.addEventListener('click', () => { mobileNavOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; });
+            mobileNavClose.addEventListener('click', () => { mobileNavOverlay.classList.remove('open'); document.body.style.overflow = 'auto'; });
+            mobileNavOverlay.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { mobileNavOverlay.classList.remove('open'); document.body.style.overflow = 'auto'; }); });
         }
-
-        function animateStats() {
-            document.querySelectorAll('.stat-number').forEach(stat => {
-                const targetText = stat.textContent;
-                const target = parseInt(targetText.replace(/[^0-9]/g, ''));
-                if (isNaN(target)) return;
-                const suffix = targetText.replace(/[0-9]/g, '');
-                let current = 0;
-                const duration = 1500; // ms
-                const stepTime = 20; // ms
-                const steps = duration / stepTime;
-                const increment = target / steps;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
-                    stat.textContent = `${Math.floor(current)}${suffix}`;
-                }, stepTime);
-            });
+        
+        function animateStats() { document.querySelectorAll('.stat-number').forEach(stat => { const targetText = stat.textContent; const target = parseInt(targetText.replace(/[^0-9]/g, '')); if (isNaN(target)) return; const suffix = targetText.replace(/[0-9]/g, ''); let current = 0; const duration = 1500, stepTime = 20, steps = duration / stepTime, increment = target / steps; const timer = setInterval(() => { current += increment; if (current >= target) { current = target; clearInterval(timer); } stat.textContent = `${Math.floor(current)}${suffix}`; }, stepTime); }); }
+        
+        function populateFaq() {
+            const faqContainer = document.querySelector('.faq-accordion');
+            const faqs = [ { q: "What is PO Wizard?", a: "PO Wizard is an AI-powered software designed for production coordinators to automate the creation of purchase orders. It drastically reduces manual data entry, minimizes errors, and saves significant time during the production wrap process." }, { q: "How does the Dropbox integration work?", a: "You grant PO Wizard temporary, session-based access to a specific folder in your Dropbox. You simply drop all your receipts, invoices, and vendor documents into this folder. Our AI scans the contents, processes them, and organizes the generated POs back into your Dropbox, keeping your workflow centralized." }, { q: "What if a vendor has multiple invoices?", a: "PO Wizard is built for this exact scenario. Our AI intelligently groups all documents from the same vendor into a single, consolidated Purchase Order. It automatically creates line items for each invoice or receipt, ensuring a clean and comprehensive PO that's easy for accounting to process." }, { q: "Is my production data and Dropbox token secure?", a: "Absolutely. Security is our top priority. Your Dropbox token is stored only in your browser's session storage, meaning it's deleted the moment you close the tab and is never saved on our servers. All data transfer uses bank-grade TLS encryption, and we only ever read the files you specify for processing." }, { q: "Can I use this for multiple productions at once?", a: "The Pro plan is designed for one production at a time. However, our Enterprise plan is built for production companies and freelance coordinators juggling multiple projects. It allows you to create and manage separate, secure workspaces for each production, with cross-tracking capabilities for vendors used across different jobs." }, { q: "How does this integrate with accounting software like Global Vista?", a: "PO Wizard generates clean, professional PDF purchase orders with all necessary information, including vendor details, line items, amounts, and job codes. These PDFs are formatted for easy submission to any major production accounting system. The Enterprise plan also offers direct data export options (e.g., CSV, Excel) for seamless import into software like Global Vista or Media Services." }, { q: "What happens if I upload a blurry receipt?", a: "Our AI is trained to handle a wide variety of document qualities. If a document is too blurry or unreadable, the system will flag it for manual review. You will be able to see the problematic document and manually enter the correct information in the review step, ensuring no data is lost or guessed." }, { q: "Can I edit a PO after it has been generated?", a: "Yes. Every PO goes through a review stage where you have full control to edit any field. You can correct vendor names, adjust line items, add notes, and modify amounts. Once you approve the PO, a final, clean version is created, but you can always revisit and create a new version if needed." }, { q: "Does this work for both union and non-union productions?", a: "Absolutely. PO Wizard is agnostic to union status. It is designed to handle vendor invoices, receipts, and standard paperwork common to all types of film, television, and commercial productions, regardless of guild affiliations." }, { q: "What are the system requirements?", a: "PO Wizard is a web-based application, so there are no downloads or installations required. It runs on any modern web browser (like Chrome, Firefox, Safari, or Edge) on both Mac and PC. All you need is an internet connection and a Dropbox account." }, { q: "Can I cancel my subscription at any time?", a: "Yes, you can cancel your Pro or Enterprise subscription at any time through your account settings. You will retain access to the paid features until the end of your current billing period. There are no long-term contracts or cancellation fees." }, { q: "How is this different from just using a spreadsheet?", a: "While spreadsheets are great for tracking, PO Wizard eliminates the most time-consuming part of the process: manual data entry. Instead of you typing out every vendor, date, and amount, our AI does it for you in seconds. It also standardizes the format, groups related expenses, and creates professional, submittable PDF documents, saving you hours of administrative work compared to a manual spreadsheet workflow." }];
+            if (!faqContainer) return;
+            faqContainer.innerHTML = faqs.map(faq => ` <div class="faq-item"> <button class="faq-question"> <span>${faq.q}</span> <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </button> <div class="faq-answer"> <p>${faq.a}</p> </div> </div> `).join('');
+            faqContainer.querySelectorAll('.faq-question').forEach(button => { button.addEventListener('click', () => { const item = button.parentElement; const answer = item.querySelector('.faq-answer'); const wasActive = item.classList.contains('active'); document.querySelectorAll('.faq-item.active').forEach(i => { i.classList.remove('active'); i.querySelector('.faq-answer').style.maxHeight = null; }); if (!wasActive) { item.classList.add('active'); answer.style.maxHeight = answer.scrollHeight + 'px'; } }); });
         }
 
         // --- AUTHENTICATION ---
         function updateAuthUI() {
-            if (!navAuthButtons || !myPosNavLink) return;
+            if (!navAuthButtons) return;
             const mobileNavAuthButtons = document.getElementById('mobileNavAuthButtons');
-            const mobileMyPosLink = document.getElementById('mobile-nav-link-my-pos');
-            
             navAuthButtons.innerHTML = '';
             mobileNavAuthButtons.innerHTML = '';
-
             if (isAuthenticated && currentUser) {
-                // User is logged in
-                myPosNavLink.style.display = 'list-item';
-                mobileMyPosLink.style.display = 'list-item';
-                document.getElementById('my-pos').style.display = 'block';
-
-                const userDropdownHTML = `
-                    <a href="#my-pos" class="btn btn-primary">My POs</a>
-                    <div class="user-dropdown">
-                        <button class="user-dropdown-toggle">
-                            <span>${currentUser.displayName}</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <div class="user-dropdown-menu">
-                            <a href="#" id="signOutBtn">Sign Out</a>
-                        </div>
-                    </div>`;
+                const userDropdownHTML = ` <a href="#" onclick="showAppPage(); return false;" class="btn btn-primary">My Dashboard</a> <div class="user-dropdown"> <button class="user-dropdown-toggle"> <span>${currentUser.displayName}</span> <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </button> <div class="user-dropdown-menu"> <a onclick="showAppPage('settingsView')">Settings</a> <a id="signOutBtn">Sign Out</a> </div> </div>`;
                 navAuthButtons.innerHTML = userDropdownHTML;
                 document.getElementById('signOutBtn').addEventListener('click', signOut);
-                
-                const mobileSignOutHTML = `<a href="#" class="btn btn-secondary" id="mobileSignOutBtn">Sign Out</a>`;
+                const mobileSignOutHTML = `<a href="#" onclick="showAppPage(); return false;" class="btn btn-primary">My Dashboard</a><a href="#" class="btn btn-secondary" id="mobileSignOutBtn">Sign Out</a>`;
                 mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
                 document.getElementById('mobileSignOutBtn').addEventListener('click', signOut);
-
             } else {
-                // User is logged out
-                myPosNavLink.style.display = 'none';
-                mobileMyPosLink.style.display = 'none';
-                document.getElementById('my-pos').style.display = 'none';
-
-                const loginButtonsHTML = `
-                    <a href="#" class="btn btn-secondary" id="loginBtn">Login</a>
-                    <a href="#pricing" class="btn btn-primary">Start Free Trial</a>`;
+                const loginButtonsHTML = ` <a href="#" class="btn btn-secondary" id="loginBtn">Login</a> <a onclick="handleGetStartedClick()" class="btn btn-primary">Start Free Trial</a>`;
                 navAuthButtons.innerHTML = loginButtonsHTML;
                 document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
                 document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
-
                 mobileNavAuthButtons.innerHTML = loginButtonsHTML;
                 mobileNavAuthButtons.querySelector('#loginBtn').addEventListener('click', () => openModal('loginModal'));
             }
@@ -2127,7 +1045,6 @@
                     localStorage.setItem('user_displayName', currentUser.displayName);
                     localStorage.setItem('user_email', currentUser.email);
                     dropboxAccessToken = sessionStorage.getItem('dropbox_access_token') || "";
-                    await fetchGeneratedPOs();
                 }
             }
             updateAuthUI();
@@ -2140,162 +1057,162 @@
                 history.pushState("", document.title, window.location.pathname + window.location.search);
                 await checkAuthOnLoad();
                 closeModal('loginModal');
-                const myPosSection = document.getElementById('my-pos');
-                if (myPosSection) {
-                     const headerOffset = document.querySelector('.header').offsetHeight;
-                     const elementPosition = myPosSection.getBoundingClientRect().top;
-                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                     window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                }
+                showAppPage('dashboardView');
             }
         }
 
-        function signInWithGoogle() {
-            window.location.href = `${API_BASE_URL}/auth/google/login`;
-        }
+        function signInWithGoogle() { window.location.href = `${API_BASE_URL}/auth/google/login`; }
 
         function signOut(e) {
             if(e) e.preventDefault();
-            localStorage.clear();
-            sessionStorage.clear();
-            isAuthenticated = false;
-            currentUser = null;
-            dropboxAccessToken = "";
-            allFetchedPOs = [];
+            localStorage.clear(); sessionStorage.clear();
+            isAuthenticated = false; currentUser = null; dropboxAccessToken = ""; allFetchedPOs = [];
+            currentJobNumberContext = ""; currentProjectNameContext = ""; // Reset job context on sign out
             updateAuthUI();
-            renderPOGrid([]); // Clear the grid
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showLandingPage();
         }
 
-        async function fetchUserDetails(token) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/users/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) {
-                    if (response.status === 401) signOut();
-                    return null;
-                }
-                const userData = await response.json();
-                return {
-                    displayName: userData.full_name || userData.email.split('@')[0],
-                    email: userData.email,
-                };
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function handleGetStartedClick() {
-            if (isAuthenticated) {
-                openModal('processingModal');
-            } else {
-                openModal('loginModal');
-            }
-        }
+        async function fetchUserDetails(token) { try { const response = await fetch(`${API_BASE_URL}/users/me`, { headers: { 'Authorization': `Bearer ${token}` } }); if (!response.ok) { if (response.status === 401) signOut(); return null; } const userData = await response.json(); return { displayName: userData.full_name || userData.email.split('@')[0], email: userData.email, }; } catch (error) { return null; } }
+        function handleGetStartedClick() { if (isAuthenticated) { showAppPage(); } else { openModal('loginModal'); } }
 
         // --- MODAL & UI HELPERS ---
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-                if(modalId === 'processingModal') {
-                    resetAndShowProcessingStep(1);
-                }
-            }
-        }
+        function openModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+        function closeModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
 
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        }
+        // --- APP PAGE: MY POs LOGIC ---
+        function renderMyPOsPage() {
+            const container = document.getElementById('dashboard-content');
+            container.innerHTML = '';
 
-        // --- PO PROCESSING FLOW ---
-        function resetAndShowProcessingStep(stepNum) {
-            // Hide all steps
-            document.querySelectorAll('#processingModal .step-content').forEach(el => el.style.display = 'none');
-            // Deactivate all indicators
-            document.querySelectorAll('#processingModal .step').forEach(el => el.classList.remove('active', 'completed'));
-            
-            if(stepNum >= 1) {
-                document.getElementById('tokenStepIndicator').classList.add('completed');
-            }
-            if(stepNum >= 2) {
-                document.getElementById('configureStepIndicator').classList.add('completed');
-            }
-            if(stepNum >= 3) {
-                document.getElementById('processDocsStepIndicator').classList.add('completed');
-            }
-
-            // Show and activate the current step
-            const currentStepContent = document.getElementById(`step${stepNum}_${stepNum === 1 ? 'token_input' : stepNum === 2 ? 'configure_job' : 'processing_docs'}`);
-            const currentStepIndicator = document.getElementById(`${stepNum === 1 ? 'token' : stepNum === 2 ? 'configure' : 'processDocs'}StepIndicator`);
-            
-            if(currentStepContent) currentStepContent.style.display = 'block';
-            if(currentStepIndicator) {
-                currentStepIndicator.classList.remove('completed');
-                currentStepIndicator.classList.add('active');
-            }
-        }
-
-        function submitDropboxToken() {
-            const token = document.getElementById('dropboxAccessTokenInput').value.trim();
-            if (!token) {
-                alert("Please enter your Dropbox Access Token.");
+            // Step 1: Connect to Dropbox
+            if (!dropboxAccessToken) {
+                container.innerHTML = `
+                    <div id="connectDropboxStep" class="guided-step-card">
+                        <h3>Step 1: Connect to Dropbox</h3>
+                        <p>To begin, please provide a temporary Dropbox Access Token. This allows PO Wizard to securely access your files for this session only.</p>
+                        <div class="form-group">
+                            <label for="dashboardDropboxToken">Dropbox Access Token</label>
+                            <input type="password" id="dashboardDropboxToken" placeholder="Paste your token here">
+                        </div>
+                        <button id="submitTokenButton" class="btn btn-primary" style="width: 100%;">Connect & Continue</button>
+                    </div>`;
+                document.getElementById('submitTokenButton').addEventListener('click', () => {
+                    const token = document.getElementById('dashboardDropboxToken').value.trim();
+                    if (token) {
+                        dropboxAccessToken = token;
+                        sessionStorage.setItem('dropbox_access_token', token);
+                        renderMyPOsPage();
+                    } else {
+                        alert('Please enter a valid token.');
+                    }
+                });
                 return;
             }
-            dropboxAccessToken = token;
-            sessionStorage.setItem('dropbox_access_token', token);
-            resetAndShowProcessingStep(2);
-        }
 
-        function confirmPathsAndProceed() {
-            currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
-            currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
-            const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
-
-            if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath) {
-                alert("All fields are required.");
+            // Step 2: Configure Job
+            if (!currentJobNumberContext) {
+                 container.innerHTML = `
+                    <div id="configureJobStep" class="guided-step-card">
+                        <h3>Step 2: Configure Job & Paths</h3>
+                        <p>Provide the Job Number, Project Name, and the Dropbox folder path containing your vendor documents.</p>
+                        <div class="form-group"><label for="inputJobNumber">Job Number</label><input type="text" id="inputJobNumber" placeholder="e.g., 85319"></div>
+                        <div class="form-group"><label for="inputProjectName">Project Name</label><input type="text" id="inputProjectName" placeholder="e.g., Macy's Holiday Shoot"></div>
+                        <div class="form-group"><label for="dropboxSourcePath">Dropbox Source Path</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/SourceDocs"></div>
+                        <button id="confirmPathsButton" class="btn btn-primary" style="width: 100%;">Start Processing</button>
+                    </div>`;
+                document.getElementById('confirmPathsButton').addEventListener('click', () => {
+                    currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
+                    currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
+                    const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
+                    if (currentJobNumberContext && currentProjectNameContext && sourcePath) {
+                        startDocumentProcessing(sourcePath);
+                    } else {
+                        alert("All fields are required.");
+                    }
+                });
                 return;
             }
-            resetAndShowProcessingStep(3);
-            startDocumentProcessing(sourcePath);
+            
+            // Step 4: PO Dashboard
+            container.innerHTML = `
+                <div id="poDashboardStep">
+                    <div class="po-header">
+                        <div class="po-header-info">
+                            <p>Job: <span id="displayJobNumber_dashboard">${currentJobNumberContext}</span> | Project: <span id="displayProjectName_dashboard">${currentProjectNameContext}</span></p>
+                            <p id="poCount">0 POs Generated</p>
+                        </div>
+                        <button id="newPOBatchBtn" class="btn btn-secondary">New PO Batch</button>
+                    </div>
+                    <div id="batchActionControls" class="po-actions-bar" style="display: none;">
+                         <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
+                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                             <button id="approveSelectedButton" class="btn btn-secondary" style="border-color: var(--success-color); color: var(--success-color);" disabled>Approve</button>
+                             <button id="deleteSelectedButton" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);" disabled>Delete</button>
+                         </div>
+                    </div>
+                    <div class="po-actions-bar">
+                        <div class="po-filters">
+                            <select id="filterStatus"><option value="all">All Status</option><option value="pending">Pending</option><option value="approved">Approved</option></select>
+                            <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." style="flex-grow: 1;">
+                        </div>
+                    </div>
+                    <div id="poGrid"></div>
+                    <div id="noPOsActionContainer" style="display: none;">
+                        <h3>No Purchase Orders Found</h3>
+                        <p id="noPOsMessage">Get started by creating a new batch.</p>
+                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Create New PO Batch</button>
+                    </div>
+                </div>`;
+            
+            document.getElementById('newPOBatchBtn').addEventListener('click', resetAndStartNewBatch);
+            document.getElementById('noPOsCreateBtn').addEventListener('click', resetAndStartNewBatch);
+            document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
+            document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
+            document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
+            document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
+            
+            fetchGeneratedPOs();
+        }
+        
+        function resetAndStartNewBatch() {
+            currentJobNumberContext = "";
+            currentProjectNameContext = "";
+            allFetchedPOs = [];
+            renderMyPOsPage();
         }
 
         async function startDocumentProcessing(sourcePath) {
-            updateProgressUI(0, "Initializing job submission...");
+            const container = document.getElementById('dashboard-content');
+            container.innerHTML = `
+                <div id="processingStep" class="progress-container">
+                    <div class="header">
+                        <h1 class="title">AI Wizard Document Scanner</h1>
+                        <p class="subtitle">Our AI Wizard is scanning all your documents and making magic happen</p>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill"><div class="neural-network" id="neuralNetworkProcessing"></div></div>
+                    </div>
+                    <div class="vendor-display">
+                        <div class="current-vendor" id="currentVendor">Initializing AI Wizard...</div>
+                        <div class="vendor-stats">
+                            <div class="vendor-stat"><div class="stat-value" id="vendorProgress">0/0</div><div class="stat-label">Vendors Scanned</div></div>
+                        </div>
+                    </div>
+                    <div class="status-message"><div class="status-text" id="statusMessage">🧙‍♂️ Preparing to scan your documents...</div></div>
+                </div>`;
+            createNeuralNetwork('neuralNetworkProcessing'); // Initialize animations
+
             const appToken = localStorage.getItem('app_token');
-            if (!isAuthenticated || !appToken) {
-                alert("Authentication error. Please sign in again.");
-                signOut();
-                return;
-            }
-
-            const payload = {
-                dropbox_access_token: dropboxAccessToken,
-                dropbox_source_path: sourcePath,
-                dropbox_output_path: "/POWizardCompany/OutputPOs", // Hardcoded for simplicity
-                job_number_context: currentJobNumberContext,
-                project_name_context: currentProjectNameContext,
-            };
-
+            const payload = { dropbox_access_token: dropboxAccessToken, dropbox_source_path: sourcePath, dropbox_output_path: "/POWizardCompany/OutputPOs", job_number_context: currentJobNumberContext, project_name_context: currentProjectNameContext };
             try {
-                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` },
-                    body: JSON.stringify(payload)
-                });
+                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` }, body: JSON.stringify(payload) });
                 if (!response.ok) throw new Error(`Failed to trigger processing: ${response.statusText}`);
-                
                 const data = await response.json();
-                updateProgressUI(5, "Job submitted. Waiting for worker...");
                 pollTaskStatus(data.task_id);
             } catch (error) {
-                updateProgressUI(0, `Error: ${error.message}`, true);
+                document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('statusMessage').parentElement.style.borderColor = 'var(--error-color)';
+                document.getElementById('statusMessage').style.color = 'var(--error-color)';
             }
         }
 
@@ -2304,59 +1221,67 @@
             statusPollInterval = setInterval(async () => {
                 try {
                     const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
-                    if (!response.ok) {
-                        clearInterval(statusPollInterval);
-                        updateProgressUI(null, `Error fetching status: ${response.statusText}`, true);
-                        return;
-                    }
+                    if (!response.ok) { clearInterval(statusPollInterval); throw new Error(`Error fetching status: ${response.statusText}`); }
+                    
                     const data = await response.json();
-                    updateProgressUI(data.progress_percent, data.current_step || data.status);
+                    updateProgressUI(data);
 
-                    if (data.status === 'SUCCESS') {
+                    if (data.status === 'SUCCESS' || data.status === 'FAILURE') {
                         clearInterval(statusPollInterval);
-                        updateProgressUI(100, "Processing complete!");
-                        setTimeout(async () => {
-                            closeModal('processingModal');
-                            await fetchGeneratedPOs();
-                        }, 1500);
-                    } else if (data.status === 'FAILURE') {
-                        clearInterval(statusPollInterval);
-                        const failureDetails = data.result?.error_message || JSON.stringify(data.result);
-                        updateProgressUI(null, `Processing failed: ${failureDetails}`, true);
+                        if(data.status === 'SUCCESS') {
+                            document.getElementById('statusMessage').textContent = "Processing complete! Loading dashboard...";
+                            document.getElementById('currentVendor').textContent = 'Scan Complete!';
+                            setTimeout(() => renderMyPOsPage(), 2000);
+                        } else {
+                             const failureDetails = data.result?.error_message || JSON.stringify(data.result);
+                             document.getElementById('statusMessage').textContent = `Processing failed: ${failureDetails}`;
+                             document.getElementById('statusMessage').parentElement.style.borderColor = 'var(--error-color)';
+                             document.getElementById('statusMessage').style.color = 'var(--error-color)';
+                        }
                     }
                 } catch (error) {
                     clearInterval(statusPollInterval);
-                    updateProgressUI(null, "Error polling status. Check console.", true);
+                    document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                    document.getElementById('statusMessage').parentElement.style.borderColor = 'var(--error-color)';
+                    document.getElementById('statusMessage').style.color = 'var(--error-color)';
                 }
             }, 3000);
         }
 
-        function updateProgressUI(percentage, statusText, isError = false) {
+        function updateProgressUI(data) {
             const progressFill = document.getElementById('progressFill');
-            const progressPercent = document.getElementById('progressPercent');
-            const stageDescription = document.getElementById('stageDescription');
+            const statusMessage = document.getElementById('statusMessage');
+            const vendorProgress = document.getElementById('vendorProgress');
+            const currentVendor = document.getElementById('currentVendor');
 
-            if (percentage !== null && progressFill && progressPercent) {
-                progressFill.style.width = percentage + '%';
-                progressPercent.textContent = percentage + '%';
-            }
-            if (stageDescription) stageDescription.textContent = statusText;
-            if (isError) {
-                if(progressFill) progressFill.style.background = 'var(--error-color)';
-                if(stageDescription) stageDescription.style.color = 'var(--error-color)';
-            } else {
-                 if(progressFill) progressFill.style.background = 'linear-gradient(90deg, var(--accent-blue), var(--accent-neon))';
-                 if(stageDescription) stageDescription.style.color = 'var(--text-secondary)';
+            if (progressFill) progressFill.style.width = `${data.progress_percent}%`;
+            if (statusMessage) statusMessage.textContent = data.current_step || data.status;
+
+            const vendorMatch = (data.current_step || "").match(/.*\((\d+)\/(\d+)\)/);
+            if(vendorProgress && vendorMatch) {
+                vendorProgress.textContent = `${vendorMatch[1]}/${vendorMatch[2]}`;
+                const vendorNameMatch = (data.current_step || "").match(/Processing vendor (.*?)\s*\(/);
+                if (currentVendor && vendorNameMatch) {
+                     currentVendor.textContent = `Scanning: ${vendorNameMatch[1]}`;
+                }
+            } else if(currentVendor && data.status === 'SUCCESS') {
+                currentVendor.textContent = 'Scan Complete!';
             }
         }
+        
+        function createNeuralNetwork(containerId) {
+            const networkContainer = document.getElementById(containerId);
+            if(!networkContainer) return;
+            networkContainer.innerHTML = '';
+            for (let i = 0; i < 25; i++) { const neuron = document.createElement('div'); neuron.className = 'neuron'; neuron.style.left = (Math.random() * 95) + '%'; neuron.style.top = (15 + Math.random() * 50) + '%'; neuron.style.animationDelay = (Math.random() * 4) + 's'; neuron.style.animationDuration = (2 + Math.random() * 2) + 's'; networkContainer.appendChild(neuron); }
+            for (let i = 0; i < 15; i++) { const connection = document.createElement('div'); connection.className = 'connection'; connection.style.left = (Math.random() * 80) + '%'; connection.style.top = (20 + Math.random() * 40) + '%'; connection.style.width = (20 + Math.random() * 40) + 'px'; connection.style.transform = `rotate(${(Math.random() - 0.5) * 60}deg)`; connection.style.animationDelay = (Math.random() * 3) + 's'; connection.style.animationDuration = (3 + Math.random() * 2) + 's'; networkContainer.appendChild(connection); }
+            for (let i = 0; i < 8; i++) { const stream = document.createElement('div'); stream.className = 'data-stream'; stream.style.top = (25 + Math.random() * 30) + '%'; stream.style.animationDelay = (Math.random() * 5) + 's'; stream.style.animationDuration = (4 + Math.random() * 3) + 's'; networkContainer.appendChild(stream); }
+        }
 
-        // --- PO MANAGEMENT ---
+        // --- PO MANAGEMENT (Dashboard View) ---
         async function fetchGeneratedPOs() {
-            if (!isAuthenticated || !dropboxAccessToken || !currentJobNumberContext) {
-                renderPOGrid([]); // Render empty to hide loader
-                return;
-            }
-            
+            const poGrid = document.getElementById('poGrid');
+            if (!poGrid) return; // Not on the dashboard view
             poGrid.innerHTML = `<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">Loading POs...</p>`;
             const appToken = localStorage.getItem('app_token');
 
@@ -2374,14 +1299,14 @@
         }
 
         function renderPOGrid(posToRender) {
-            document.getElementById('displayJobNumber_dashboard').textContent = currentJobNumberContext || "N/A";
-            document.getElementById('displayProjectName_dashboard').textContent = currentProjectNameContext || "N/A";
-            document.getElementById('poCount').textContent = `${posToRender.length} POs Generated`;
+            const poGrid = document.getElementById('poGrid');
+            const noPOsContainer = document.getElementById('noPOsActionContainer');
+            if(!poGrid || !noPOsContainer) return;
 
+            document.getElementById('poCount').textContent = `${posToRender.length} POs Generated`;
             if (posToRender.length === 0) {
                 poGrid.style.display = 'none';
                 noPOsContainer.style.display = 'block';
-                noPOsMessage.textContent = isAuthenticated ? "No Purchase Orders found for this job. Get started by creating a new batch." : "Please sign in to view your Purchase Orders.";
             } else {
                 poGrid.style.display = 'grid';
                 noPOsContainer.style.display = 'none';
@@ -2393,32 +1318,10 @@
 
         function createPOCard(po) {
             const card = document.createElement('div');
-            card.className = 'po-card card-light-effect';
-            card.id = `po-card-${po.po_id_on_grid}`;
-
+            card.className = 'po-card card-light-effect'; card.id = `po-card-${po.po_id_on_grid}`;
             const isApproved = po.status?.toLowerCase().includes('approved');
-            let statusClass = 'status-pending';
-            if(isApproved) statusClass = 'status-approved';
-            else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
-
-            card.innerHTML = `
-                <div class="light-blob"></div>
-                <div class="po-card-checkbox">
-                    <input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)">
-                </div>
-                <div class="po-card-content">
-                    <div class="po-card-header">
-                        <h4 class="po-card-po-number">${po.po_number}</h4>
-                        <span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span>
-                    </div>
-                    <p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p>
-                    <p class="po-card-amount">${po.total_amount || '$0.00'}</p>
-                    <p class="po-card-date">Date: ${po.po_date || 'N/A'}</p>
-                    <div class="po-card-footer">
-                        <button class="btn btn-secondary" style="width: 100%;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>
-                    </div>
-                </div>
-            `;
+            let statusClass = 'status-pending'; if(isApproved) statusClass = 'status-approved'; else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
+            card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${po.total_amount || '$0.00'}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="width: 100%;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button></div></div>`;
             return card;
         }
         
@@ -2426,73 +1329,20 @@
             let filteredPOs = [...allFetchedPOs];
             const statusFilter = document.getElementById('filterStatus').value;
             const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
-            
-            if (statusFilter !== 'all') {
-                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase().includes(statusFilter));
-            }
-            if (vendorNameFilter) {
-                filteredPOs = filteredPOs.filter(po => po.vendor_name?.toLowerCase().includes(vendorNameFilter));
-            }
+            if (statusFilter !== 'all') { filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase().includes(statusFilter)); }
+            if (vendorNameFilter) { filteredPOs = filteredPOs.filter(po => po.vendor_name?.toLowerCase().includes(vendorNameFilter)); }
             renderPOGrid(filteredPOs);
         }
         
-        // --- BATCH ACTIONS ---
-        function handlePOCheckboxChange(checkbox) {
-            const poId = checkbox.dataset.poId;
-            const cardElement = document.getElementById(`po-card-${poId}`);
-            if (checkbox.checked) {
-                selectedPOIds.add(poId);
-                cardElement?.classList.add('selected-card');
-            } else {
-                selectedPOIds.delete(poId);
-                cardElement?.classList.remove('selected-card');
-            }
-            updateBatchActionButtons();
-        }
-
-        function updateBatchActionButtons() {
-            const count = selectedPOIds.size;
-            const controls = document.getElementById('batchActionControls');
-            document.getElementById('selectedPoCount').textContent = count;
-            
-            document.getElementById('approveSelectedButton').disabled = count === 0;
-            document.getElementById('deleteSelectedButton').disabled = count === 0;
-
-            controls.style.display = count > 0 ? 'block' : 'none';
-        }
-
-        async function handleApproveSelected() {
-            if (selectedPOIds.size === 0 || !confirm(`Approve ${selectedPOIds.size} selected PO(s)?`)) return;
-            // Simplified: Just mark as approved on the frontend and re-render.
-            // A real implementation would loop and call the backend API for each.
-            allFetchedPOs.forEach(po => {
-                if (selectedPOIds.has(po.po_id_on_grid)) {
-                    po.status = 'Approved';
-                }
-            });
-            selectedPOIds.clear();
-            applyFiltersAndSort();
-            alert('POs marked as approved. (Note: This is a frontend demo of the action)');
-        }
-
-        async function handleDeleteSelected() {
-            if (selectedPOIds.size === 0 || !confirm(`DELETE ${selectedPOIds.size} selected PO(s)? This is a demo and will only remove them from view.`)) return;
-            // Simplified: Filter out from the main array and re-render.
-            allFetchedPOs = allFetchedPOs.filter(po => !selectedPOIds.has(po.po_id_on_grid));
-            selectedPOIds.clear();
-            applyFiltersAndSort();
-            alert('POs removed from view. (Note: This is a frontend demo of the action)');
-        }
-
+        function handlePOCheckboxChange(checkbox) { const poId = checkbox.dataset.poId; const cardElement = document.getElementById(`po-card-${poId}`); if (checkbox.checked) { selectedPOIds.add(poId); cardElement?.classList.add('selected-card'); } else { selectedPOIds.delete(poId); cardElement?.classList.remove('selected-card'); } updateBatchActionButtons(); }
+        function updateBatchActionButtons() { const count = selectedPOIds.size; const controls = document.getElementById('batchActionControls'); if(!controls) return; document.getElementById('selectedPoCount').textContent = count; document.getElementById('approveSelectedButton').disabled = count === 0; document.getElementById('deleteSelectedButton').disabled = count === 0; controls.style.display = count > 0 ? 'block' : 'none'; }
+        async function handleApproveSelected() { if (selectedPOIds.size === 0 || !confirm(`Approve ${selectedPOIds.size} selected PO(s)?`)) return; allFetchedPOs.forEach(po => { if (selectedPOIds.has(po.po_id_on_grid)) { po.status = 'Approved'; } }); selectedPOIds.clear(); applyFiltersAndSort(); alert('POs marked as approved. (Note: This is a frontend demo of the action)'); }
+        async function handleDeleteSelected() { if (selectedPOIds.size === 0 || !confirm(`DELETE ${selectedPOIds.size} selected PO(s)? This is a demo and will only remove them from view.`)) return; allFetchedPOs = allFetchedPOs.filter(po => !selectedPOIds.has(po.po_id_on_grid)); selectedPOIds.clear(); applyFiltersAndSort(); alert('POs removed from view. (Note: This is a frontend demo of the action)'); }
 
         // --- REVIEW MODAL LOGIC ---
         async function openReviewModal(poId) {
-            const poData = allFetchedPOs.find(p => p.po_id_on_grid === poId);
-            if (!poData) { alert('Could not find PO data.'); return; }
-            
-            // For demo, we'll use the summary data. A full implementation would fetch detailed data.
+            const poData = allFetchedPOs.find(p => p.po_id_on_grid === poId); if (!poData) { alert('Could not find PO data.'); return; }
             const fullData = poData.full_po_data_for_review || poData;
-            
             document.getElementById('reviewModalTitle').textContent = `Review PO: ${fullData.po_number}`;
             document.getElementById('editPoIdOnGrid').value = poId;
             document.getElementById('editVendor').value = fullData.vendor_name || '';
@@ -2501,55 +1351,69 @@
             document.getElementById('editPoDate').value = fullData.po_date || '';
             document.getElementById('editTaxAmount').value = (fullData.tax_amount || '0.00').replace('$', '');
             document.getElementById('editTotalAmount').value = (fullData.total_amount || '0.00').replace('$', '');
-
-            const lineItemsContainer = document.getElementById('editLineItemsContainer');
-            lineItemsContainer.innerHTML = '';
-            const lineItems = fullData.aggregated_line_items || [{ description: 'Misc Expenses', amount: fullData.total_amount }];
-            lineItems.forEach(item => addLineItemField(item));
-
-            const pdfViewer = document.getElementById('pdfViewer');
-            const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
-            if (pdfPath) {
-                pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
-            } else {
-                pdfViewer.src = 'about:blank';
-            }
-
+            const lineItemsContainer = document.getElementById('editLineItemsContainer'); lineItemsContainer.innerHTML = '';
+            const lineItems = fullData.aggregated_line_items || [{ description: 'Misc Expenses', amount: fullData.total_amount }]; lineItems.forEach(item => addLineItemField(item));
+            const pdfViewer = document.getElementById('pdfViewer'); const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
+            if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
             openModal('reviewModal');
         }
-
-        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) {
-            const container = document.getElementById('editLineItemsContainer');
-            const div = document.createElement('div');
-            div.className = 'line-item-grid';
-            div.innerHTML = `
-                <input type="text" value="${item.description || ''}" placeholder="Description">
-                <input type="text" value="${item.budget_code || ''}" placeholder="Code">
-                <input type="text" value="${item.quantity || '1'}" placeholder="Qty">
-                <input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right">
-                <input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right">
-                <button type="button" onclick="this.parentElement.remove()">×</button>
-            `;
-            container.appendChild(div);
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { const container = document.getElementById('editLineItemsContainer'); const div = document.createElement('div'); div.className = 'line-item-grid'; div.innerHTML = `<input type="text" value="${item.description || ''}" placeholder="Description"><input type="text" value="${item.budget_code || ''}" placeholder="Code"><input type="text" value="${item.quantity || '1'}" placeholder="Qty"><input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right"><input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right"><button type="button" onclick="this.parentElement.remove()">×</button>`; container.appendChild(div); }
+        async function submitPOChanges(isApproval) {
+            const poId = document.getElementById('editPoIdOnGrid').value; const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
+            if(poIndex > -1) { allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value; allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value; if(isApproval) { allFetchedPOs[poIndex].status = 'Approved'; } else { allFetchedPOs[poIndex].status = 'Regenerated'; } }
+            closeModal('reviewModal'); applyFiltersAndSort(); alert(`PO changes ${isApproval ? 'approved' : 'saved'}. (Note: This is a frontend demo)`);
+        }
+        
+        // --- SETTINGS PAGE LOGIC ---
+        function populateSettingsForm() {
+            if (currentUser) {
+                document.getElementById('settingsFullName').value = currentUser.displayName || '';
+                // Add more fields if needed from localStorage
+            }
+            const currentDbxToken = sessionStorage.getItem('dropbox_access_token');
+            const tokenInput = document.getElementById('settingsDropboxToken');
+            tokenInput.value = '';
+            tokenInput.placeholder = currentDbxToken ? "Token active (••••••••) - Enter new to update" : "No active token - Enter token here";
         }
 
-        async function submitPOChanges(isApproval) {
-            // This is a simplified version. A real app would gather form data and POST to the backend.
-            const poId = document.getElementById('editPoIdOnGrid').value;
-            const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
+        function updateDropboxTokenFromSettings() {
+            const newToken = document.getElementById('settingsDropboxToken').value.trim();
+            if (!newToken) { alert("Please enter a new Dropbox Access Token."); return; }
+            dropboxAccessToken = newToken;
+            sessionStorage.setItem('dropbox_access_token', newToken);
+            alert("Dropbox token updated for this session.");
+            populateSettingsForm();
+            renderMyPOsPage(); // Re-render dashboard to reflect new token status
+        }
 
-            if(poIndex > -1) {
-                allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value;
-                allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value;
-                if(isApproval) {
-                    allFetchedPOs[poIndex].status = 'Approved';
-                } else {
-                    allFetchedPOs[poIndex].status = 'Regenerated';
-                }
+        async function fetchUserTier() {
+            if (!isAuthenticated || !currentUser) return;
+            const planDisplay = document.getElementById('currentPlanDisplay');
+            const tierDesc = document.getElementById('tierDescription');
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me/tier`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('app_token')}` } });
+                if (!response.ok) throw new Error('Could not load tier');
+                const tier = await response.text();
+                planDisplay.textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
+                tierDesc.textContent = tier === 'free' ? 'Limited to 5 vendors per batch. POs include a watermark.' : 'Unlimited vendors per batch. No watermark on POs.';
+            } catch (error) {
+                planDisplay.textContent = 'Error'; tierDesc.textContent = 'Could not load tier information.';
             }
-            closeModal('reviewModal');
-            applyFiltersAndSort();
-            alert(`PO changes ${isApproval ? 'approved' : 'saved'}. (Note: This is a frontend demo)`);
+        }
+        
+        async function switchUserTier() {
+            if (!isAuthenticated || !currentUser) return;
+            const switchBtn = document.getElementById('switchTierButton');
+            switchBtn.disabled = true; switchBtn.textContent = 'Switching...';
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me/switch-tier`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('app_token')}` } });
+                if (!response.ok) alert('Failed to switch tier.');
+                await fetchUserTier();
+            } catch (error) {
+                alert('An error occurred while switching tiers.');
+            } finally {
+                switchBtn.disabled = false; switchBtn.textContent = 'Switch Tier';
+            }
         }
 
     </script>
