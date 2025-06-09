@@ -192,19 +192,20 @@
         .user-menu-toggle {
             display: flex;
             align-items: center;
-            padding: 0; /* Remove padding from btn class */
             border-radius: 3px;
             background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
             color: var(--primary-bg);
             font-weight: 600;
             transition: all 0.3s ease;
+            padding: 0; /* Clear padding for inner elements to control it */
+            cursor: pointer;
         }
         .user-menu-toggle:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(74, 189, 237, 0.25);
         }
 
-        .user-menu-toggle a {
+        .user-menu-toggle > a {
             padding: 0.75rem 1.5rem;
             color: inherit;
             text-decoration: none;
@@ -223,7 +224,8 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            cursor: pointer;
+            background-color: rgba(0,0,0,0.2);
+            height: 100%;
         }
         .user-menu-name-section .arrow-down {
              transition: transform 0.2s ease-in-out;
@@ -233,7 +235,8 @@
             display: none;
             position: absolute;
             right: 0;
-            top: 120%;
+            top: 100%; /* Position right below the button */
+            margin-top: 8px; /* Add small gap */
             background: var(--secondary-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -243,12 +246,14 @@
             opacity: 0;
             transform: translateY(-10px);
             transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
         }
         
         .user-menu-container:hover .user-dropdown-menu {
             display: block;
             opacity: 1;
             transform: translateY(0);
+            pointer-events: auto;
         }
         .user-menu-container:hover .user-menu-name-section .arrow-down {
             transform: rotate(180deg);
@@ -525,12 +530,16 @@
         #noPOsActionContainer { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-secondary); }
         #noPOsActionContainer h3 { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1rem; }
 
-        /* Settings Page */
+        /* Settings & Billing Page */
         .settings-card { background: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
         .settings-card h3 { font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
         .settings-card.danger-zone { border-color: var(--error-color); }
         .settings-card.danger-zone h3 { color: var(--error-color); }
-        #currentPlanDisplay { font-size: 1.5rem; font-weight: 600; color: var(--accent-neon); }
+        .billing-plan-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .billing-plan-card.active { border-color: var(--accent-neon); }
+        .billing-plan-name { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
+        .billing-plan-name.active { color: var(--accent-neon); }
+        .billing-plan-description { color: var(--text-secondary); font-size: 0.9rem; }
         #tierDescription { color: var(--text-secondary); font-size: 0.9rem; }
 
         /* NEW - Progress Bar Styles */
@@ -745,6 +754,10 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M7.5 14.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v9zM8 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-3zM.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H.5zM1 5.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zM1 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zm0 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3z"/></svg>
                             <span>Dashboard</span>
                         </button></li>
+                        <li><button id="navBtnBilling" onclick="showAppView('billingView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1z"/><path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm13 2v5H1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm-1 9H2a1 1 0 0 1-1-1v-1h14v1a1 1 0 0 1-1 1z"/></svg>
+                            <span>Billing</span>
+                        </button></li>
                         <li><button id="navBtnSettings" onclick="showAppView('settingsView')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1 .872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1-.872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705-1.987-1.987l-.169-.311a1.464 1.464 0 0 1-.872-2.105l.34-.1c1.4-.413-1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1 .872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/></svg>
                             <span>Settings</span>
@@ -755,9 +768,15 @@
             <div class="app-content">
                 <!-- Dashboard View -->
                 <div id="dashboardView" class="app-view">
-                    <h2 class="app-section-title">Dashboard</h2>
                     <div id="dashboard-content">
                         <!-- Guided steps will be injected here by JS -->
+                    </div>
+                </div>
+                <!-- Billing View -->
+                <div id="billingView" class="app-view">
+                    <h2 class="app-section-title">Billing & Subscription</h2>
+                    <div id="billing-content">
+                        <!-- Billing content will be rendered here by JS -->
                     </div>
                 </div>
                 <!-- Settings View -->
@@ -773,19 +792,6 @@
                                 <div class="form-group"><label for="settingsAddress">Company Address (Optional)</label><textarea id="settingsAddress" rows="3" placeholder="123 Production Way, Hollywood, CA"></textarea></div>
                                 <button type="button" onclick="alert('Save Profile - Not Implemented Yet')" class="btn btn-secondary">Save Profile</button>
                             </form>
-                        </div>
-                        <!-- Billing Card -->
-                        <div class="settings-card">
-                            <h3>Billing & Subscription</h3>
-                            <p class="text-secondary" style="margin-bottom: 1.5rem;">Manage your subscription. Switching tiers is enabled for testing.</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <p class="text-secondary">Current Plan</p>
-                                    <p id="currentPlanDisplay">Loading...</p>
-                                </div>
-                                <button id="switchTierButton" onclick="switchUserTier()" class="btn btn-primary">Switch Tier</button>
-                            </div>
-                            <p id="tierDescription" style="margin-top: 1rem;">Loading tier details...</p>
                         </div>
                         <!-- Dropbox Card -->
                         <div class="settings-card">
@@ -875,7 +881,8 @@
                 renderMyPOsPage();
             } else if (viewId === 'settingsView') {
                 populateSettingsForm();
-                fetchUserTier();
+            } else if (viewId === 'billingView') {
+                renderBillingPage();
             }
         }
 
@@ -905,14 +912,6 @@
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) closeModal(modal.id);
-                });
-            });
-            
-            // Pricing buttons
-            document.querySelectorAll('.pricing-button').forEach(btn => {
-                btn.addEventListener('click', e => {
-                    e.preventDefault();
-                    handleGetStartedClick();
                 });
             });
             
@@ -951,8 +950,6 @@
             document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => submitPOChanges(false));
             document.getElementById('reviewModalApproveButton').addEventListener('click', () => submitPOChanges(true));
             
-            // FAQ Accordion populated by JS, listeners added there.
-
             // Organic movement scripts
             (() => {
                 const light = document.querySelector('.mouse-aware-light');
@@ -1122,7 +1119,15 @@
         }
 
         async function fetchUserDetails(token) { try { const response = await fetch(`${API_BASE_URL}/users/me`, { headers: { 'Authorization': `Bearer ${token}` } }); if (!response.ok) { if (response.status === 401) signOut(); return null; } const userData = await response.json(); return { displayName: userData.full_name || userData.email.split('@')[0], email: userData.email, }; } catch (error) { return null; } }
-        function handleGetStartedClick() { if (isAuthenticated) { showAppPage(); } else { openModal('loginModal'); } }
+        
+        function handleGetStartedClick() {
+            if (isAuthenticated) {
+                showAppPage();
+            } else {
+                // For logged-out users, "Start Free Trial" directly initiates login
+                signInWithGoogle();
+            }
+        }
 
         // --- MODAL & UI HELPERS ---
         function openModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
@@ -1138,7 +1143,7 @@
                 container.innerHTML = `
                     <div id="connectDropboxStep" class="guided-step-card">
                         <h3>Step 1: Connect to Dropbox</h3>
-                        <p>To begin, please provide a temporary Dropbox Access Token. This allows PO Wizard to securely access your files for this session only.</p>
+                        <p>To begin, please provide a temporary Dropbox Access Token. This allows PO Wizard to securely access your files for this session only. You can generate a token from your Dropbox developer account.</p>
                         <div class="form-group">
                             <label for="dashboardDropboxToken">Dropbox Access Token</label>
                             <input type="password" id="dashboardDropboxToken" placeholder="Paste your token here">
@@ -1318,7 +1323,7 @@
             }
         }
         
-        function createNeuralNetwork(containerId = 'neuralNetworkProcessing') {
+        function createNeuralNetwork(containerId = 'neuralNetwork') {
             const networkContainer = document.getElementById(containerId);
             if(!networkContainer) return;
             networkContainer.innerHTML = '';
@@ -1413,11 +1418,22 @@
             closeModal('reviewModal'); applyFiltersAndSort(); alert(`PO changes ${isApproval ? 'approved' : 'saved'}. (Note: This is a frontend demo)`);
         }
         
-        // --- SETTINGS PAGE LOGIC ---
+        // --- BILLING & SETTINGS PAGE LOGIC ---
+        function renderBillingPage() {
+            const container = document.getElementById('billing-content');
+            container.innerHTML = `
+                <div class="settings-card">
+                    <h3>Current Plan</h3>
+                    <div id="billing-plan-info">
+                        <!-- Plan info will be rendered by fetchUserTier -->
+                    </div>
+                </div>`;
+            fetchUserTier(true); // Pass true to render the full billing card
+        }
+
         function populateSettingsForm() {
             if (currentUser) {
                 document.getElementById('settingsFullName').value = currentUser.displayName || '';
-                // Add more fields if needed from localStorage
             }
             const currentDbxToken = sessionStorage.getItem('dropbox_access_token');
             const tokenInput = document.getElementById('settingsDropboxToken');
@@ -1435,36 +1451,65 @@
             renderMyPOsPage(); // Re-render dashboard to reflect new token status
         }
 
-        async function fetchUserTier() {
+        async function fetchUserTier(renderFullCard = false) {
             if (!isAuthenticated || !currentUser) return;
-            const planDisplay = document.getElementById('currentPlanDisplay');
-            const tierDesc = document.getElementById('tierDescription');
+            const appToken = localStorage.getItem('app_token');
             try {
-                const response = await fetch(`${API_BASE_URL}/users/me/tier`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('app_token')}` } });
+                const response = await fetch(`${API_BASE_URL}/users/me/tier`, { headers: { 'Authorization': `Bearer ${appToken}` } });
                 if (!response.ok) throw new Error('Could not load tier');
-                const tier = await response.text();
-                planDisplay.textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
-                tierDesc.textContent = tier === 'free' ? 'Limited to 5 vendors per batch. POs include a watermark.' : 'Unlimited vendors per batch. No watermark on POs.';
+                
+                let tier = await response.text();
+                // Handle if the backend returns the string with quotes
+                tier = tier.replace(/"/g, ''); 
+
+                if (renderFullCard) {
+                    const billingContainer = document.getElementById('billing-plan-info');
+                    const isPro = tier === 'pro';
+                    billingContainer.innerHTML = `
+                        <div class="billing-plan-card ${isPro ? 'active' : ''}">
+                            <div>
+                                <div class="billing-plan-name ${isPro ? 'active' : ''}">Pro Plan</div>
+                                <div class="billing-plan-description">Unlimited vendors & no watermarks.</div>
+                            </div>
+                            <button onclick="switchUserTier()" class="btn ${isPro ? 'btn-secondary' : 'btn-primary'}" ${isPro ? '' : ''}>
+                                ${isPro ? 'Downgrade to Free' : 'Upgrade to Pro'}
+                            </button>
+                        </div>
+                        <div class="billing-plan-card ${!isPro ? 'active' : ''}" style="margin-top: 1rem;">
+                             <div>
+                                <div class="billing-plan-name ${!isPro ? 'active' : ''}">Free Plan</div>
+                                <div class="billing-plan-description">Up to 5 vendors per batch, with watermark.</div>
+                            </div>
+                            ${!isPro ? `<span style="color: var(--success-color); font-weight: 600;">Current Plan</span>` : ''}
+                        </div>
+                    `;
+                }
             } catch (error) {
-                planDisplay.textContent = 'Error'; tierDesc.textContent = 'Could not load tier information.';
+                if (renderFullCard) {
+                     document.getElementById('billing-plan-info').innerHTML = `<p style="color: var(--error-color);">Could not load your subscription details.</p>`;
+                }
             }
         }
         
         async function switchUserTier() {
             if (!isAuthenticated || !currentUser) return;
-            const switchBtn = document.getElementById('switchTierButton');
-            switchBtn.disabled = true; switchBtn.textContent = 'Switching...';
+            const switchBtn = document.querySelector('#billing-plan-info button');
+            if (switchBtn) {
+                switchBtn.disabled = true;
+                switchBtn.textContent = 'Switching...';
+            }
             try {
                 const response = await fetch(`${API_BASE_URL}/users/me/switch-tier`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('app_token')}` } });
-                if (!response.ok) alert('Failed to switch tier.');
-                await fetchUserTier();
+                if (!response.ok) throw new Error('Failed to switch tier');
+                await fetchUserTier(true); // Re-render the full card
             } catch (error) {
                 alert('An error occurred while switching tiers.');
-            } finally {
-                switchBtn.disabled = false; switchBtn.textContent = 'Switch Tier';
+                if (switchBtn) {
+                    // Reset button text based on what it was
+                    fetchUserTier(true);
+                }
             }
         }
-
     </script>
 </body>
 </html>
