@@ -1197,14 +1197,14 @@
                         <div class="form-group">
                             <label for="dropboxSourcePath">Dropbox Source Path</label>
                             <div class="form-group-inline">
-                                <input type="text" id="dropboxSourcePath" placeholder="Click 'Choose Folder' to select" readonly>
+                                <input type="text" id="dropboxSourcePath" placeholder="Click 'Choose folder' to select" readonly>
                                 <button class="btn btn-secondary" onclick="openDropboxPicker('source')">Choose folder</button>
                             </div>
                         </div>
                          <div class="form-group">
                             <label for="dropboxOutputPath">Dropbox Output Path</label>
                             <div class="form-group-inline">
-                                <input type="text" id="dropboxOutputPath" placeholder="Click 'Choose Folder' to select" readonly>
+                                <input type="text" id="dropboxOutputPath" placeholder="Click 'Choose folder' to select" readonly>
                                 <button class="btn btn-secondary" onclick="openDropboxPicker('output')">Choose folder</button>
                             </div>
                         </div>
@@ -1370,8 +1370,6 @@
             if(!networkContainer) return;
             networkContainer.innerHTML = '';
             for (let i = 0; i < 25; i++) { const neuron = document.createElement('div'); neuron.className = 'neuron'; neuron.style.left = (Math.random() * 95) + '%'; neuron.style.top = (15 + Math.random() * 50) + '%'; neuron.style.animationDelay = (Math.random() * 4) + 's'; neuron.style.animationDuration = (2 + Math.random() * 2) + 's'; networkContainer.appendChild(neuron); }
-            for (let i = 0; i < 15; i++) { const connection = document.createElement('div'); connection.className = 'connection'; connection.style.left = (Math.random() * 80) + '%'; connection.style.top = (20 + Math.random() * 40) + '%'; connection.style.width = (20 + Math.random() * 40) + 'px'; connection.style.transform = `rotate(${(Math.random() - 0.5) * 60}deg)`; connection.style.animationDelay = (Math.random() * 3) + 's'; connection.style.animationDuration = (3 + Math.random() * 2) + 's'; networkContainer.appendChild(connection); }
-            for (let i = 0; i < 8; i++) { const stream = document.createElement('div'); stream.className = 'data-stream'; stream.style.top = (25 + Math.random() * 30) + '%'; stream.style.animationDelay = (Math.random() * 5) + 's'; stream.style.animationDuration = (4 + Math.random() * 3) + 's'; networkContainer.appendChild(stream); }
         }
 
         // --- PO MANAGEMENT (Dashboard View) ---
@@ -1418,7 +1416,7 @@
             const isApproved = po.status?.toLowerCase().includes('approved');
             let statusClass = 'status-pending'; if(isApproved) statusClass = 'status-approved'; else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
             
-            const pdfPath = po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.generated_draft_po_pdf_path_dropbox;
+            const pdfPath = po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.final_dropbox_path;
             const shareButtonHtml = pdfPath ? `<button class="btn btn-secondary" style="flex: 1;" onclick="sharePDF('${pdfPath}')">Share</button>` : '';
 
             card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${po.total_amount || '$0.00'}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="flex: 2;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>${shareButtonHtml}</div></div>`;
@@ -1427,7 +1425,6 @@
 
         function sharePDF(pdfPath) {
             if (!pdfPath) return;
-            // A true sharing link would require another API call, for now we link to the file path
             const dropboxFileUrl = `https://www.dropbox.com/home${pdfPath}`;
             window.open(dropboxFileUrl, '_blank');
         }
@@ -1618,7 +1615,7 @@
         async function fetchAndRenderFolders(path, containerEl) {
             const appToken = localStorage.getItem('app_token');
             if (!appToken || !dropboxAccessToken) {
-                containerEl.innerHTML = `<li>Authentication or Dropbox token missing.</li>`;
+                containerEl.innerHTML = `<li style="color: var(--error-color);">Authentication or Dropbox token missing.</li>`;
                 return;
             }
 
@@ -1632,7 +1629,7 @@
                 });
 
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(()=>({detail: `HTTP error ${response.status}`}));
                     throw new Error(error.detail || `Failed to fetch folders: ${response.statusText}`);
                 }
 
