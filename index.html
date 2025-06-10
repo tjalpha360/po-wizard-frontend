@@ -222,7 +222,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            background-color: rgba(30, 30, 30, 0.4); /* MODIFIED - Gray background */
+            background-color: rgba(30, 30, 30, 0.4);
             height: 100%;
             color: var(--text-secondary);
         }
@@ -1040,7 +1040,7 @@
                 openModal('loginModal');
                 return;
             }
-            document.getElementById('landingNavLinks').style.display = 'none';
+            document.getElementById('landingNavLinks').style.display = 'none'; // FIX: Hide marketing links in-app
             landingPageContainer.style.display = 'none';
             appPageContainer.style.display = 'block';
             showAppView(viewId);
@@ -1232,6 +1232,7 @@
             mobileNavAuthButtons.innerHTML = '';
             
             if (isAuthenticated && currentUser) {
+                landingNavLinks.style.display = 'none'; // MODIFIED: Always show
                 const userMenuHTML = `
                     <div class="user-menu-container">
                         <div class="user-menu-toggle">
@@ -1244,9 +1245,9 @@
                         </div>
                         <div class="user-dropdown-menu">
                             <a onclick="showAppPage('dashboardView')">Dashboard</a>
-                            <a onclick="showAppPage('dropboxView')">Dropbox Connection</a>
-                            <a onclick="showAppPage('billingView')">Billing</a>
-                            <a onclick="showAppPage('settingsView')">Settings</a>
+                            <a onclick="showAppView('dropboxView')">Dropbox Connection</a>
+                            <a onclick="showAppView('billingView')">Billing</a>
+                            <a onclick="showAppView('settingsView')">Settings</a>
                             <a id="signOutBtn">Sign Out</a>
                         </div>
                     </div>`;
@@ -1256,6 +1257,7 @@
                 mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
                 document.getElementById('mobileSignOutBtn').addEventListener('click', signOut);
             } else {
+                landingNavLinks.style.display = 'flex';
                 const loginButtonsHTML = ` <a href="#" class="btn btn-secondary" id="loginBtn">Login</a> <a onclick="handleGetStartedClick()" class="btn btn-primary">Start Free Trial</a>`;
                 navAuthButtons.innerHTML = loginButtonsHTML;
                 document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
@@ -1567,21 +1569,71 @@
             document.getElementById('editVendor').value = fullData.vendor_name || '';
             document.getElementById('editVendorAddress').value = fullData.vendor_address || '';
             document.getElementById('editVendorPhone').value = fullData.vendor_phone || '';
+            document.getElementById('editVendorEmail').value = fullData.vendor_email || '';
+            document.getElementById('editVendorContact').value = fullData.vendor_contact || '';
+            document.getElementById('editVendorTIN').value = fullData.vendor_tin || '';
+            document.getElementById('editPoNumber').value = fullData.po_number || '';
             document.getElementById('editPoDate').value = fullData.po_date || '';
+            
+            const w9AttachedControl = document.getElementById('w9AttachedControl');
+            w9AttachedControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            w9AttachedControl.querySelector(`button[data-value="${fullData.has_w9_document}"]`)?.classList.add('active');
+
+            const incorpControl = document.getElementById('incorpControl');
+            incorpControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            incorpControl.querySelector(`button[data-value="${fullData.is_incorp_on_w9}"]`)?.classList.add('active');
+
             document.getElementById('editTaxAmount').value = (fullData.tax_amount || '0.00').replace('$', '');
-            document.getElementById('editTotalAmount').value = (fullData.total_amount || '0.00').replace('$', '');
+            
             const lineItemsContainer = document.getElementById('editLineItemsContainer'); lineItemsContainer.innerHTML = '';
             const lineItems = fullData.aggregated_line_items || [{ description: 'Misc Expenses', amount: fullData.total_amount }]; lineItems.forEach(item => addLineItemField(item));
+            
+            updateTotalFromManualInputs();
+            
             const pdfViewer = document.getElementById('pdfViewer'); const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
             if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&user_tier=${userTier}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
+            
+            // Add focus/blur listeners for highlighting
+            addHighlightListeners();
+
             openModal('reviewModal');
         }
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { const container = document.getElementById('editLineItemsContainer'); const div = document.createElement('div'); div.className = 'line-item-grid'; div.innerHTML = `<input type="text" value="${item.description || ''}" placeholder="Description"><input type="text" value="${item.budget_code || ''}" placeholder="Code"><input type="text" value="${item.quantity || '1'}" placeholder="Qty"><input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right"><input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right"><button type="button" onclick="this.parentElement.remove()">×</button>`; container.appendChild(div); }
-        async function submitPOChanges(isApproval) {
-            // Simplified demo version
-            const poId = document.getElementById('editPoIdOnGrid').value; const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
-            if(poIndex > -1) { allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value; allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value; if(isApproval) { allFetchedPOs[poIndex].status = 'Approved'; } else { allFetchedPOs[poIndex].status = 'Regenerated'; } }
-            closeModal('reviewModal'); applyFiltersAndSort(); alert(`PO changes ${isApproval ? 'approved' : 'saved'}. (Note: This is a frontend demo)`);
+        
+        function updateTotalFromManualInputs() {
+            let subtotal = 0;
+            const lineItems = document.querySelectorAll('#editLineItemsContainer .line-item-grid');
+            lineItems.forEach(item => {
+                const amountInput = item.querySelector('input:nth-of-type(5)');
+                subtotal += parseFloat(amountInput.value) || 0;
+            });
+            const tax = parseFloat(document.getElementById('editTaxAmount').value) || 0;
+            document.getElementById('editTotalAmount').value = (subtotal + tax).toFixed(2);
+        }
+
+        async function handleReviewModalSubmit(isApproval) {
+            const saveBtn = document.getElementById('reviewModalSaveChangesButton');
+            const approveBtn = document.getElementById('reviewModalApproveButton');
+            
+            const actionButton = isApproval ? approveBtn : saveBtn;
+            actionButton.classList.add('loading');
+            
+            // Simulate 5-second processing
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            
+            actionButton.classList.remove('loading');
+
+            const poId = document.getElementById('editPoIdOnGrid').value; 
+            const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
+            if(poIndex > -1) { 
+                allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value; 
+                allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value; 
+                if(isApproval) { allFetchedPOs[poIndex].status = 'Approved'; } 
+                else { allFetchedPOs[poIndex].status = 'Regenerated'; } 
+            }
+            closeModal('reviewModal'); 
+            applyFiltersAndSort(); 
+            alert(`PO changes ${isApproval ? 'approved' : 'saved'} successfully! (Note: This is a frontend demo of the action)`);
         }
         
         // --- BILLING & SETTINGS PAGE LOGIC ---
@@ -1710,7 +1762,7 @@
 
         // --- Dropbox Folder Picker ---
         function openDropboxPicker(target) {
-            currentPickerTarget = target;
+            currentPickerTarget = target; // e.g., 'source_wizard' or 'output_wizard'
             openModal('dropboxPickerModal');
             const pickerInfo = document.getElementById('dbx-picker-info');
             if (target.includes('output')) {
