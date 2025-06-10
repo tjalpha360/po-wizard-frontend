@@ -222,7 +222,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            background-color: rgba(30, 30, 30, 0.4);
+            background-color: rgba(30, 30, 30, 0.4); /* MODIFIED - Gray background */
             height: 100%;
             color: var(--text-secondary);
         }
@@ -1007,8 +1007,16 @@
         let statusPollInterval = null;
         let currentPickerTarget = null; // 'source_wizard' or 'output_wizard'
         
+        // --- DOM ELEMENTS ---
+        let navAuthButtons, landingPageContainer, appPageContainer;
+        
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', async () => {
+            // FIX: Assign DOM elements only after DOM is loaded
+            navAuthButtons = document.getElementById('nav-auth-buttons');
+            landingPageContainer = document.getElementById('landingPageContainer');
+            appPageContainer = document.getElementById('appPageContainer');
+            
             await handleAuthCallback();
             await checkAuthOnLoad();
             initializeEventListeners();
@@ -1032,7 +1040,7 @@
                 openModal('loginModal');
                 return;
             }
-            document.getElementById('landingNavLinks').style.display = 'flex';
+            document.getElementById('landingNavLinks').style.display = 'none';
             landingPageContainer.style.display = 'none';
             appPageContainer.style.display = 'block';
             showAppView(viewId);
@@ -1218,14 +1226,12 @@
 
         // --- AUTHENTICATION ---
         function updateAuthUI() {
-            if (!navAuthButtons) return;
             const mobileNavAuthButtons = document.getElementById('mobileNavAuthButtons');
             const landingNavLinks = document.getElementById('landingNavLinks');
             navAuthButtons.innerHTML = '';
             mobileNavAuthButtons.innerHTML = '';
             
             if (isAuthenticated && currentUser) {
-                landingNavLinks.style.display = 'flex'; // MODIFIED: Always show
                 const userMenuHTML = `
                     <div class="user-menu-container">
                         <div class="user-menu-toggle">
@@ -1238,9 +1244,9 @@
                         </div>
                         <div class="user-dropdown-menu">
                             <a onclick="showAppPage('dashboardView')">Dashboard</a>
-                            <a onclick="showAppView('dropboxView')">Dropbox Connection</a>
-                            <a onclick="showAppView('billingView')">Billing</a>
-                            <a onclick="showAppView('settingsView')">Settings</a>
+                            <a onclick="showAppPage('dropboxView')">Dropbox Connection</a>
+                            <a onclick="showAppPage('billingView')">Billing</a>
+                            <a onclick="showAppPage('settingsView')">Settings</a>
                             <a id="signOutBtn">Sign Out</a>
                         </div>
                     </div>`;
@@ -1250,7 +1256,6 @@
                 mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
                 document.getElementById('mobileSignOutBtn').addEventListener('click', signOut);
             } else {
-                landingNavLinks.style.display = 'flex';
                 const loginButtonsHTML = ` <a href="#" class="btn btn-secondary" id="loginBtn">Login</a> <a onclick="handleGetStartedClick()" class="btn btn-primary">Start Free Trial</a>`;
                 navAuthButtons.innerHTML = loginButtonsHTML;
                 document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
@@ -1324,7 +1329,7 @@
                 return;
             }
 
-            // Step 2: Configure Job via Onboarding Wizard
+            // Step 2: Configure Job
             if (!currentJobNumberContext) {
                  startOnboardingWizard();
                  return;
