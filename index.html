@@ -199,6 +199,7 @@
             transition: all 0.3s ease;
             padding: 0; /* Clear padding for inner elements to control it */
             cursor: pointer;
+            overflow: hidden; /* Ensures rounded corners on children */
         }
         .user-menu-toggle:hover {
             transform: translateY(-2px);
@@ -224,9 +225,14 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            background-color: rgba(0,0,0,0.2);
+            background-color: rgba(30, 30, 30, 0.4); /* MODIFIED - Gray background */
             height: 100%;
+            color: var(--text-secondary);
         }
+        .user-menu-name-section:hover {
+            color: var(--text-primary);
+        }
+
         .user-menu-name-section .arrow-down {
              transition: transform 0.2s ease-in-out;
         }
@@ -540,7 +546,6 @@
         .billing-plan-name { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
         .billing-plan-name.active { color: var(--accent-neon); }
         .billing-plan-description { color: var(--text-secondary); font-size: 0.9rem; }
-        #tierDescription { color: var(--text-secondary); font-size: 0.9rem; }
 
         /* NEW - Progress Bar Styles */
         .progress-container {
@@ -768,6 +773,7 @@
             <div class="app-content">
                 <!-- Dashboard View -->
                 <div id="dashboardView" class="app-view">
+                    <!-- Title is now part of the content that gets replaced -->
                     <div id="dashboard-content">
                         <!-- Guided steps will be injected here by JS -->
                     </div>
@@ -827,6 +833,7 @@
         // --- GLOBAL STATE ---
         let isAuthenticated = false;
         let currentUser = null;
+        let userTier = 'free'; // Default to free
         let dropboxAccessToken = "";
         let currentJobNumberContext = "";
         let currentProjectNameContext = "";
@@ -1091,6 +1098,7 @@
                     localStorage.setItem('user_displayName', currentUser.displayName);
                     localStorage.setItem('user_email', currentUser.email);
                     dropboxAccessToken = sessionStorage.getItem('dropbox_access_token') || "";
+                    await fetchUserTier(); // Fetch user tier on load
                 }
             }
             updateAuthUI();
@@ -1136,14 +1144,22 @@
         // --- APP PAGE: MY POs LOGIC ---
         function renderMyPOsPage() {
             const container = document.getElementById('dashboard-content');
-            container.innerHTML = '';
+            container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`; // Add title back
 
             // Step 1: Connect to Dropbox
             if (!dropboxAccessToken) {
-                container.innerHTML = `
+                container.innerHTML += `
                     <div id="connectDropboxStep" class="guided-step-card">
                         <h3>Step 1: Connect to Dropbox</h3>
-                        <p>To begin, please provide a temporary Dropbox Access Token. This allows PO Wizard to securely access your files for this session only. You can generate a token from your Dropbox developer account.</p>
+                        <p style="text-align: left;">To begin, PO Wizard needs temporary access to your Dropbox.
+                        <ol style="text-align: left; padding-left: 1.5rem; margin-bottom: 1.5rem;">
+                            <li>Go to the <a href="https://www.dropbox.com/developers/apps" target="_blank">Dropbox App Console</a> and create a new app.</li>
+                            <li>Choose 'Scoped access' and 'Full Dropbox'. Name it whatever you like.</li>
+                            <li>Under the 'Permissions' tab, enable the 'files.content.write' and 'files.content.read' permissions.</li>
+                            <li>Under the 'Settings' tab, find the 'Generated access token' section and click 'Generate'.</li>
+                            <li>Copy the generated token and paste it below. This token is only stored in your browser for this session.</li>
+                        </ol>
+                        </p>
                         <div class="form-group">
                             <label for="dashboardDropboxToken">Dropbox Access Token</label>
                             <input type="password" id="dashboardDropboxToken" placeholder="Paste your token here">
@@ -1165,9 +1181,9 @@
 
             // Step 2: Configure Job
             if (!currentJobNumberContext) {
-                 container.innerHTML = `
+                 container.innerHTML += `
                     <div id="configureJobStep" class="guided-step-card">
-                        <h3>Step 2: Configure Job & Paths</h3>
+                        <h3>Step 2: Configure Your Production</h3>
                         <p>Provide the Job Number, Project Name, and the Dropbox folder path containing your vendor documents.</p>
                         <div class="form-group"><label for="inputJobNumber">Job Number</label><input type="text" id="inputJobNumber" placeholder="e.g., 85319"></div>
                         <div class="form-group"><label for="inputProjectName">Project Name</label><input type="text" id="inputProjectName" placeholder="e.g., Macy's Holiday Shoot"></div>
@@ -1188,14 +1204,14 @@
             }
             
             // Step 4: PO Dashboard
-            container.innerHTML = `
+            container.innerHTML += `
                 <div id="poDashboardStep">
                     <div class="po-header">
                         <div class="po-header-info">
                             <p>Job: <span id="displayJobNumber_dashboard">${currentJobNumberContext}</span> | Project: <span id="displayProjectName_dashboard">${currentProjectNameContext}</span></p>
                             <p id="poCount">0 POs Generated</p>
                         </div>
-                        <button id="newPOBatchBtn" class="btn btn-secondary">New PO Batch</button>
+                        <button id="newPOBatchBtn" class="btn btn-secondary">Process New Job</button>
                     </div>
                     <div id="batchActionControls" class="po-actions-bar" style="display: none;">
                          <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
@@ -1213,8 +1229,8 @@
                     <div id="poGrid"></div>
                     <div id="noPOsActionContainer" style="display: none;">
                         <h3>No Purchase Orders Found</h3>
-                        <p id="noPOsMessage">Get started by creating a new batch.</p>
-                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Create New PO Batch</button>
+                        <p id="noPOsMessage">You can start by processing a new batch.</p>
+                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Process New Job</button>
                     </div>
                 </div>`;
             
@@ -1238,6 +1254,7 @@
         async function startDocumentProcessing(sourcePath) {
             const container = document.getElementById('dashboard-content');
             container.innerHTML = `
+                <h2 class="app-section-title">Processing Documents</h2>
                 <div id="processingStep" class="progress-container">
                     <div class="header">
                         <h1 class="title">AI Wizard Document Scanner</h1>
@@ -1408,11 +1425,12 @@
             const lineItemsContainer = document.getElementById('editLineItemsContainer'); lineItemsContainer.innerHTML = '';
             const lineItems = fullData.aggregated_line_items || [{ description: 'Misc Expenses', amount: fullData.total_amount }]; lineItems.forEach(item => addLineItemField(item));
             const pdfViewer = document.getElementById('pdfViewer'); const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
-            if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
+            if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&user_tier=${userTier}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
             openModal('reviewModal');
         }
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { const container = document.getElementById('editLineItemsContainer'); const div = document.createElement('div'); div.className = 'line-item-grid'; div.innerHTML = `<input type="text" value="${item.description || ''}" placeholder="Description"><input type="text" value="${item.budget_code || ''}" placeholder="Code"><input type="text" value="${item.quantity || '1'}" placeholder="Qty"><input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right"><input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right"><button type="button" onclick="this.parentElement.remove()">×</button>`; container.appendChild(div); }
         async function submitPOChanges(isApproval) {
+            // Simplified demo version
             const poId = document.getElementById('editPoIdOnGrid').value; const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
             if(poIndex > -1) { allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value; allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value; if(isApproval) { allFetchedPOs[poIndex].status = 'Approved'; } else { allFetchedPOs[poIndex].status = 'Regenerated'; } }
             closeModal('reviewModal'); applyFiltersAndSort(); alert(`PO changes ${isApproval ? 'approved' : 'saved'}. (Note: This is a frontend demo)`);
@@ -1423,7 +1441,7 @@
             const container = document.getElementById('billing-content');
             container.innerHTML = `
                 <div class="settings-card">
-                    <h3>Current Plan</h3>
+                    <h3>Your Subscription</h3>
                     <div id="billing-plan-info">
                         <!-- Plan info will be rendered by fetchUserTier -->
                     </div>
@@ -1458,13 +1476,15 @@
                 const response = await fetch(`${API_BASE_URL}/users/me/tier`, { headers: { 'Authorization': `Bearer ${appToken}` } });
                 if (!response.ok) throw new Error('Could not load tier');
                 
-                let tier = await response.text();
+                let tierData = await response.text();
                 // Handle if the backend returns the string with quotes
-                tier = tier.replace(/"/g, ''); 
+                userTier = tierData.replace(/"/g, ''); 
 
                 if (renderFullCard) {
                     const billingContainer = document.getElementById('billing-plan-info');
-                    const isPro = tier === 'pro';
+                    if (!billingContainer) return;
+
+                    const isPro = userTier === 'pro';
                     billingContainer.innerHTML = `
                         <div class="billing-plan-card ${isPro ? 'active' : ''}">
                             <div>
@@ -1485,8 +1505,10 @@
                     `;
                 }
             } catch (error) {
+                userTier = 'free'; // Default to free on error
                 if (renderFullCard) {
-                     document.getElementById('billing-plan-info').innerHTML = `<p style="color: var(--error-color);">Could not load your subscription details.</p>`;
+                     const billingContainer = document.getElementById('billing-plan-info');
+                     if(billingContainer) billingContainer.innerHTML = `<p style="color: var(--error-color);">Could not load your subscription details.</p>`;
                 }
             }
         }
@@ -1510,6 +1532,7 @@
                 }
             }
         }
+
     </script>
 </body>
 </html>
