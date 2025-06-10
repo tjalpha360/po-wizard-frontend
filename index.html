@@ -498,7 +498,17 @@
         }
         .guided-step-card h3 { font-size: 1.5rem; color: var(--accent-neon); margin-bottom: 1rem; }
         .guided-step-card p { color: var(--text-secondary); margin-bottom: 2rem; }
-        .guided-step-card ol { color: var(--text-secondary); }
+        .guided-step-card ol { color: var(--text-secondary); text-align: left; padding-left: 1.5rem; margin-bottom: 1.5rem;}
+        .token-success-message {
+            color: var(--success-color);
+            background-color: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
         /* My POs - Dashboard */
         .po-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; }
@@ -938,7 +948,7 @@
                 <div class="form-group" style="width: 100%;">
                     <div class="form-group-inline">
                         <input type="text" id="wizard_dropboxSourcePath" placeholder="Click 'Choose folder' to select" readonly>
-                        <button class="btn btn-secondary" onclick="openDropboxPicker('source')">Choose folder</button>
+                        <button class="btn btn-secondary" onclick="openDropboxPicker('source_wizard')">Choose folder</button>
                     </div>
                 </div>
                 <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(4)">Next</button></div>
@@ -950,7 +960,7 @@
                  <div class="form-group" style="width: 100%;">
                     <div class="form-group-inline">
                         <input type="text" id="wizard_dropboxOutputPath" placeholder="Click 'Choose folder' to select" readonly>
-                        <button class="btn btn-secondary" onclick="openDropboxPicker('output')">Choose folder</button>
+                        <button class="btn btn-secondary" onclick="openDropboxPicker('output_wizard')">Choose folder</button>
                     </div>
                 </div>
                 <div class="wizard-navigation"><button class="btn btn-primary" onclick="finishWizard()">Start Processing</button></div>
@@ -973,12 +983,7 @@
         let allFetchedPOs = [];
         let selectedPOIds = new Set();
         let statusPollInterval = null;
-        let currentPickerTarget = null; // 'source' or 'output'
-
-        // --- DOM ELEMENTS ---
-        const navAuthButtons = document.getElementById('nav-auth-buttons');
-        const landingPageContainer = document.getElementById('landingPageContainer');
-        const appPageContainer = document.getElementById('appPageContainer');
+        let currentPickerTarget = null; // 'source_wizard' or 'output_wizard'
         
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', async () => {
@@ -996,6 +1001,7 @@
             document.getElementById('landingNavLinks').style.display = 'flex';
             landingPageContainer.style.display = 'block';
             appPageContainer.style.display = 'none';
+            document.getElementById('onboardingWizard').classList.remove('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1004,7 +1010,7 @@
                 openModal('loginModal');
                 return;
             }
-            document.getElementById('landingNavLinks').style.display = 'flex';
+            document.getElementById('landingNavLinks').style.display = 'none';
             landingPageContainer.style.display = 'none';
             appPageContainer.style.display = 'block';
             showAppView(viewId);
@@ -1359,12 +1365,12 @@
                         <div class="progress-fill" id="progressFill"><div class="neural-network" id="neuralNetworkProcessing"></div></div>
                     </div>
                     <div class="vendor-display">
-                        <div class="current-vendor" id="currentVendor">Initializing AI Wizard...</div>
+                        <div class="current-vendor" id="currentVendor">Initializing PO Wizard...</div>
                         <div class="vendor-stats">
                             <div class="vendor-stat"><div class="stat-value" id="vendorProgress">0/0</div><div class="stat-label">Vendors Scanned</div></div>
                         </div>
                     </div>
-                    <div class="status-message"><div class="status-text" id="statusMessage">🧙‍♂️ Preparing to scan your documents...</div></div>
+                    <div class="status-message"><div class="status-text" id="statusMessage">🧙‍♂️ Merlin the PO Wizard is preparing to scan your documents...</div></div>
                 </div>`;
             createNeuralNetwork('neuralNetworkProcessing'); // Initialize animations
 
@@ -1585,6 +1591,7 @@
                         <input type="password" id="appDropboxToken" placeholder="Paste new token here">
                     </div>
                     <button id="submitAppTokenButton" class="btn btn-primary" style="width: 100%;">Update & Save Token</button>
+                    <div id="token-success-message" class="token-success-message" style="opacity: 0;"></div>
                 </div>`;
             
             document.getElementById('submitAppTokenButton').addEventListener('click', () => {
@@ -1592,8 +1599,12 @@
                 if (token) {
                     dropboxAccessToken = token;
                     sessionStorage.setItem('dropbox_access_token', token);
-                    alert("Dropbox token updated for this session.");
-                    showAppView('dashboardView'); // Guide user back to dashboard
+                    const successMsg = document.getElementById('token-success-message');
+                    successMsg.textContent = '✅ Token updated successfully!';
+                    successMsg.style.opacity = '1';
+                    setTimeout(() => {
+                         showAppView('dashboardView'); // Guide user back to dashboard
+                    }, 1500);
                 } else {
                     alert('Please enter a valid token.');
                 }
@@ -1672,8 +1683,14 @@
 
         // --- Dropbox Folder Picker ---
         function openDropboxPicker(target) {
-            currentPickerTarget = target;
+            currentPickerTarget = target; // e.g., 'source_wizard' or 'output_wizard'
             openModal('dropboxPickerModal');
+            const pickerInfo = document.getElementById('dbx-picker-info');
+            if (target.includes('output')) {
+                pickerInfo.textContent = "Choose the destination folder for your generated POs. A new subfolder for this job will be created inside your selection.";
+            } else {
+                pickerInfo.textContent = "Choose the main folder that contains all of your individual vendor folders. All subfolders inside your selection will be scanned.";
+            }
             const folderList = document.getElementById('dbx-folder-list');
             folderList.innerHTML = '<li>Loading folders...</li>';
             fetchAndRenderFolders("", folderList);
@@ -1681,7 +1698,7 @@
             document.getElementById('dbx-confirm-selection').onclick = () => {
                 const selectedRadio = document.querySelector('input[name="dbx-folder"]:checked');
                 if (selectedRadio) {
-                    const targetInputId = currentPickerTarget === 'source' ? 'wizard_dropboxSourcePath' : 'wizard_dropboxOutputPath';
+                    const targetInputId = currentPickerTarget.includes('source') ? 'wizard_dropboxSourcePath' : 'wizard_dropboxOutputPath';
                     document.getElementById(targetInputId).value = selectedRadio.value;
                     closeModal('dropboxPickerModal');
                 } else {
