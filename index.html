@@ -1635,6 +1635,13 @@
             applyFiltersAndSort(); 
             alert(`PO changes ${isApproval ? 'approved' : 'saved'} successfully! (Note: This is a frontend demo of the action)`);
         }
+
+        // --- NEW FUNCTION TO FIX REFERENCE ERROR ---
+        function addHighlightListeners() {
+            // This function is intended to highlight areas on the PDF when a form field is focused.
+            // The logic for mapping fields to PDF coordinates is not yet implemented.
+            // This empty function prevents the "is not defined" error, allowing the modal to open.
+        }
         
         // --- BILLING & SETTINGS PAGE LOGIC ---
         function renderBillingPage() {
