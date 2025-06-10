@@ -550,7 +550,11 @@
         #dbx-folder-list { list-style: none; }
         #dbx-folder-list ul { list-style: none; padding-left: 1.5rem; }
         .folder-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; }
-        .folder-item-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; flex-grow: 1; }
+        .folder-item-label { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; flex-grow: 1; }
+        .folder-item-label input[type="radio"] { -webkit-appearance: none; appearance: none; background-color: var(--primary-bg); margin: 0; font: inherit; color: currentColor; width: 1.5em; height: 1.5em; border: 0.15em solid currentColor; border-radius: 50%; transform: translateY(-0.075em); display: grid; place-content: center; cursor: pointer; }
+        .folder-item-label input[type="radio"]::before { content: ""; width: 0.75em; height: 0.75em; border-radius: 50%; transform: scale(0); transition: 120ms transform ease-in-out; box-shadow: inset 1em 1em var(--accent-neon); }
+        .folder-item-label input[type="radio"]:checked::before { transform: scale(1); }
+        .folder-item-label input[type="radio"]:checked { border-color: var(--accent-neon); }
         .folder-expand-icon { cursor: pointer; width: 20px; text-align: center; color: var(--text-secondary); }
         .folder-expand-icon.loading { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -829,7 +833,7 @@
     <div class="modal" id="dropboxPickerModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('dropboxPickerModal')">×</button>
-            <h2 style="margin-bottom: 1rem;">Select Source Folder</h2>
+            <h2 id="dropboxPickerTitle" style="margin-bottom: 1rem;">Select Folder</h2>
             <p id="dbx-picker-info">Choose the main folder that contains all of your individual vendor folders. All subfolders inside your selection will be scanned.</p>
             <div id="dbx-folder-list-container">
                 <ul id="dbx-folder-list">
@@ -859,6 +863,7 @@
         let allFetchedPOs = [];
         let selectedPOIds = new Set();
         let statusPollInterval = null;
+        let currentPickerTarget = null; // 'source' or 'output'
 
         // --- DOM ELEMENTS ---
         const navAuthButtons = document.getElementById('nav-auth-buttons');
@@ -1192,8 +1197,15 @@
                         <div class="form-group">
                             <label for="dropboxSourcePath">Dropbox Source Path</label>
                             <div class="form-group-inline">
-                                <input type="text" id="dropboxSourcePath" value="/POWizardCompany/SourceDocs" readonly>
-                                <button class="btn btn-secondary" onclick="openDropboxPicker()">Select Folder</button>
+                                <input type="text" id="dropboxSourcePath" placeholder="Click 'Choose Folder' to select" readonly>
+                                <button class="btn btn-secondary" onclick="openDropboxPicker('source')">Choose folder</button>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="dropboxOutputPath">Dropbox Output Path</label>
+                            <div class="form-group-inline">
+                                <input type="text" id="dropboxOutputPath" placeholder="Click 'Choose Folder' to select" readonly>
+                                <button class="btn btn-secondary" onclick="openDropboxPicker('output')">Choose folder</button>
                             </div>
                         </div>
                         <button id="confirmPathsButton" class="btn btn-primary" style="width: 100%;">Start Processing</button>
@@ -1202,10 +1214,11 @@
                     currentJobNumberContext = document.getElementById('inputJobNumber').value.trim();
                     currentProjectNameContext = document.getElementById('inputProjectName').value.trim();
                     const sourcePath = document.getElementById('dropboxSourcePath').value.trim();
-                    if (currentJobNumberContext && currentProjectNameContext && sourcePath) {
-                        startDocumentProcessing(sourcePath);
+                    const outputPath = document.getElementById('dropboxOutputPath').value.trim();
+                    if (currentJobNumberContext && currentProjectNameContext && sourcePath && outputPath) {
+                        startDocumentProcessing(sourcePath, outputPath);
                     } else {
-                        alert("All fields are required.");
+                        alert("All fields, including source and output paths, are required.");
                     }
                 });
                 return;
@@ -1259,7 +1272,7 @@
             renderMyPOsPage();
         }
 
-        async function startDocumentProcessing(sourcePath) {
+        async function startDocumentProcessing(sourcePath, outputPath) {
             showAppView('progressView');
             const container = document.getElementById('progress-content');
             container.innerHTML = `
@@ -1281,7 +1294,7 @@
             const payload = { 
                 dropbox_access_token: dropboxAccessToken, 
                 dropbox_source_path: sourcePath, 
-                dropbox_output_path: "/POWizardCompany/OutputPOs", 
+                dropbox_output_path: outputPath, 
                 job_number_context: currentJobNumberContext, 
                 project_name_context: currentProjectNameContext,
                 user_tier: userTier // Send user tier for watermark logic
@@ -1583,17 +1596,18 @@
         }
 
         // --- Dropbox Folder Picker ---
-        function openDropboxPicker() {
+        function openDropboxPicker(target) {
+            currentPickerTarget = target;
             openModal('dropboxPickerModal');
             const folderList = document.getElementById('dbx-folder-list');
             folderList.innerHTML = '<li>Loading folders...</li>';
-            fetchAndRenderFolders('', folderList); // Fetch root folders
+            fetchAndRenderFolders("", folderList);
 
-            // Attach listener for confirm button
             document.getElementById('dbx-confirm-selection').onclick = () => {
                 const selectedRadio = document.querySelector('input[name="dbx-folder"]:checked');
                 if (selectedRadio) {
-                    document.getElementById('dropboxSourcePath').value = selectedRadio.value;
+                    const targetInputId = currentPickerTarget === 'source' ? 'dropboxSourcePath' : 'dropboxOutputPath';
+                    document.getElementById(targetInputId).value = selectedRadio.value;
                     closeModal('dropboxPickerModal');
                 } else {
                     alert('Please select a folder.');
@@ -1603,82 +1617,71 @@
 
         async function fetchAndRenderFolders(path, containerEl) {
             const appToken = localStorage.getItem('app_token');
-            if(!appToken || !dropboxAccessToken) return;
-            
-            // This is a placeholder for the actual API call
-            // In a real app, this would fetch from a backend proxy to the Dropbox API
-            console.log(`Fetching Dropbox folders for path: '${path}'`);
-            
-            // --- FAKE DATA FOR DEMONSTRATION ---
-            // Replace this with your actual fetch call
-            const fakeApiResponse = {
-                entries: [
-                    { '.tag': 'folder', name: 'POWizardCompany', path_lower: '/powizardcompany' },
-                    { '.tag': 'folder', name: 'Photos', path_lower: '/photos' },
-                    { '.tag': 'folder', name: 'Work', path_lower: '/work' },
-                    { '.tag': 'file', name: 'document.docx', path_lower: '/document.docx'},
-                ],
-                cursor: '...', has_more: false
-            };
-             if (path === '/powizardcompany') {
-                fakeApiResponse.entries = [
-                     { '.tag': 'folder', name: 'SourceDocs', path_lower: '/powizardcompany/sourcedocs' },
-                     { '.tag': 'folder', name: 'OutputPOs', path_lower: '/powizardcompany/outputpos' },
-                ]
-            }
-            // --- END FAKE DATA ---
-
-            // Clear the container
-            containerEl.innerHTML = '';
-            
-            const folders = fakeApiResponse.entries.filter(entry => entry['.tag'] === 'folder');
-            
-            if (folders.length === 0) {
-                containerEl.innerHTML = '<li>No subfolders found.</li>';
+            if (!appToken || !dropboxAccessToken) {
+                containerEl.innerHTML = `<li>Authentication or Dropbox token missing.</li>`;
                 return;
             }
 
-            folders.forEach(folder => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <div class="folder-item">
-                        <span class="folder-expand-icon" data-path="${folder.path_lower}">▶</span>
-                        <input type="radio" name="dbx-folder" value="${folder.path_lower}" id="radio-${folder.path_lower}">
-                        <label for="radio-${folder.path_lower}" class="folder-item-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .54-1.31zM2.19 4a1 1 0 0 0-.996.817l.637 7a1 1 0 0 0 .995.883h10.348a1 1 0 0 0 .995-.883l.637-7A1 1 0 0 0 13.81 4H2.19z"/></svg>
-                            <span>${folder.name}</span>
-                        </label>
-                    </div>
-                `;
-                containerEl.appendChild(li);
-
-                li.querySelector('.folder-expand-icon').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const icon = e.target;
-                    const sublist = li.querySelector('ul');
-                    if (sublist) {
-                        sublist.remove();
-                        icon.textContent = '▶';
-                    } else {
-                        const newUl = document.createElement('ul');
-                        li.appendChild(newUl);
-                        newUl.innerHTML = '<li>Loading...</li>';
-                        icon.textContent = '▼';
-                        // In a real app, you would call: fetchAndRenderFolders(folder.path_lower, newUl);
-                        // For this demo, we'll just show a message.
-                        setTimeout(() => { 
-                            if(path === '/powizardcompany') {
-                                 newUl.innerHTML = '<li><i>No further subfolders in demo.</i></li>';
-                            } else {
-                                fetchAndRenderFolders(folder.path_lower, newUl);
-                            }
-                        }, 500);
+            try {
+                const response = await fetch(`${API_BASE_URL}/dropbox/list-folders?path=${encodeURIComponent(path)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${appToken}`,
+                        'X-Dropbox-Access-Token': dropboxAccessToken
                     }
                 });
-            });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || `Failed to fetch folders: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const folders = data.entries || [];
+                
+                containerEl.innerHTML = '';
+                if (folders.length === 0) {
+                    containerEl.innerHTML = '<li><i>No subfolders found.</i></li>';
+                    return;
+                }
+
+                folders.forEach(folder => {
+                    const li = document.createElement('li');
+                    const uniqueId = `radio-${folder.path_lower.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                    li.innerHTML = `
+                        <div class="folder-item">
+                            <span class="folder-expand-icon" data-path="${folder.path_lower}">▶</span>
+                            <label for="${uniqueId}" class="folder-item-label">
+                                <input type="radio" name="dbx-folder" value="${folder.path_lower}" id="${uniqueId}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .54-1.31zM2.19 4a1 1 0 0 0-.996.817l.637 7a1 1 0 0 0 .995.883h10.348a1 1 0 0 0 .995-.883l.637-7A1 1 0 0 0 13.81 4H2.19z"/></svg>
+                                <span>${folder.name}</span>
+                            </label>
+                        </div>
+                    `;
+                    containerEl.appendChild(li);
+
+                    li.querySelector('.folder-expand-icon').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const icon = e.target;
+                        const sublist = li.querySelector('ul');
+                        if (sublist) {
+                            sublist.remove();
+                            icon.textContent = '▶';
+                        } else {
+                            const newUl = document.createElement('ul');
+                            li.appendChild(newUl);
+                            newUl.innerHTML = '<li>Loading...</li>';
+                            icon.textContent = '▼';
+                            fetchAndRenderFolders(folder.path_lower, newUl);
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error("Error fetching Dropbox folders:", error);
+                containerEl.innerHTML = `<li style="color: var(--error-color);">${error.message}</li>`;
+            }
         }
-
-
     </script>
 </body>
 </html>
