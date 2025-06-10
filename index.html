@@ -894,7 +894,7 @@
                 openModal('loginModal');
                 return;
             }
-            document.getElementById('landingNavLinks').style.display = 'none';
+            document.getElementById('landingNavLinks').style.display = 'flex'; // MODIFIED: Always show
             landingPageContainer.style.display = 'none';
             appPageContainer.style.display = 'block';
             showAppView(viewId);
@@ -1087,7 +1087,7 @@
             mobileNavAuthButtons.innerHTML = '';
             
             if (isAuthenticated && currentUser) {
-                landingNavLinks.style.display = 'none';
+                landingNavLinks.style.display = 'flex'; // MODIFIED: Always show
                 const userMenuHTML = `
                     <div class="user-menu-container">
                         <div class="user-menu-toggle">
@@ -1632,9 +1632,9 @@
                     const error = await response.json().catch(()=>({detail: `HTTP error ${response.status}`}));
                     // Handle 401 Unauthorized specifically
                     if (response.status === 401) {
-                        signOut(); // Force sign out
-                        alert("Your session has expired. Please sign in again.");
                         closeModal('dropboxPickerModal');
+                        alert("Your session has expired. Please sign in again.");
+                        signOut(); // Force sign out
                         return; // Stop execution
                     }
                     throw new Error(error.detail || `Failed to fetch folders: ${response.statusText}`);
