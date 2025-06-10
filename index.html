@@ -532,7 +532,7 @@
         .po-card-vendor { font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; font-weight: 500; }
         .po-card-amount { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
         .po-card-date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; }
-        .po-card-footer { margin-top: auto; }
+        .po-card-footer { margin-top: auto; display: flex; gap: 0.5rem; }
         #noPOsActionContainer { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-secondary); }
         #noPOsActionContainer h3 { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1rem; }
 
@@ -622,7 +622,7 @@
                 </a>
             </div>
             <div class="nav-right">
-                <ul class="nav-links">
+                <ul class="nav-links" id="landingNavLinks">
                     <li><a onclick="scrollToSection('#features')">Features</a></li>
                     <li><a onclick="scrollToSection('#pricing')">Pricing</a></li>
                     <li><a onclick="scrollToSection('#testimonials')">Testimonials</a></li>
@@ -711,8 +711,8 @@
                 <div class="segmented-control"><button id="monthlyBtn" class="active">MONTHLY</button><button id="yearlyBtn">YEARLY (SAVE 20%)</button></div>
             </div>
             <div class="pricing-grid">
-                <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Free</h3><p class="pricing-card-subtitle">Perfect for small productions</p><div class="price">Free</div><p class="price-subtitle">Requires Google Sign-In</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Up to 5 vendors per production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Single production processing</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Basic AI scanning</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Standard PO templates with Watermark</li></ul><a href="#" class="btn btn-secondary pricing-button" data-plan="free" style="width: 100%;">Get Started Free</a></div>
-                <div class="pricing-card popular fade-in card-light-effect"><div class="light-blob"></div><div class="popular-badge">Most Popular</div><h3>Pro</h3><p class="pricing-card-subtitle">For growing productions</p><div class="price" id="proPrice" data-monthly="29">$29<small>/month</small></div><p class="price-subtitle" id="proSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited production amounts</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited iterations on 1 production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Advanced AI with 99% accuracy</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>No Watermark on POs</li></ul><a href="#" class="btn btn-primary pricing-button" data-plan="pro" style="width: 100%;">Start Free Trial</a></div>
+                <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Free</h3><p class="pricing-card-subtitle">Perfect for small productions</p><div class="price">Free</div><p class="price-subtitle">Requires Google Sign-In</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Up to 5 vendors per production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Single production processing</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Basic AI scanning</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Standard PO templates with Watermark</li></ul><a href="#" class="btn btn-secondary pricing-button" data-plan="free" style="width: 100%;" onclick="handleGetStartedClick()">Get Started Free</a></div>
+                <div class="pricing-card popular fade-in card-light-effect"><div class="light-blob"></div><div class="popular-badge">Most Popular</div><h3>Pro</h3><p class="pricing-card-subtitle">For growing productions</p><div class="price" id="proPrice" data-monthly="29">$29<small>/month</small></div><p class="price-subtitle" id="proSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited production amounts</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited iterations on 1 production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Advanced AI with 99% accuracy</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>No Watermark on POs</li></ul><a href="#" class="btn btn-primary pricing-button" data-plan="pro" style="width: 100%;" onclick="handleGetStartedClick()">Start Free Trial</a></div>
                 <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Enterprise</h3><p class="pricing-card-subtitle">For production companies</p><div class="price" id="enterprisePrice" data-monthly="99">$99<small>/month</small></div><p class="price-subtitle" id="enterpriseSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited productions</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Cross-tracking between productions</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Microsoft Excel integration</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Fully custom, unbranded designs</li></ul><button class="btn btn-disabled" disabled>Coming Soon</button></div>
             </div>
         </section>
@@ -759,6 +759,10 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M7.5 14.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v9zM8 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-3zM.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H.5zM1 5.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zM1 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zm0 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3z"/></svg>
                             <span>Dashboard</span>
                         </button></li>
+                        <li><button id="navBtnDropbox" onclick="showAppView('dropboxView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8.01 4.555 4.005 7.11 8.01 9.665 4.005 12.22 0 9.651l4.005-2.555L0 4.555 4.005 2 8.01 4.555Zm-4.005 5.11 4.005 2.556 4.005-2.556-4.005-2.555-4.005 2.555Zm8.01-5.11L8.01 2 11.995 4.555 8.01 7.11 11.995 9.665l4.005-2.555L11.995 4.555Z"/></svg>
+                            <span>Dropbox</span>
+                        </button></li>
                         <li><button id="navBtnBilling" onclick="showAppView('billingView')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1z"/><path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm13 2v5H1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm-1 9H2a1 1 0 0 1-1-1v-1h14v1a1 1 0 0 1-1 1z"/></svg>
                             <span>Billing</span>
@@ -773,10 +777,15 @@
             <div class="app-content">
                 <!-- Dashboard View -->
                 <div id="dashboardView" class="app-view">
-                    <!-- Title is now part of the content that gets replaced -->
                     <div id="dashboard-content">
                         <!-- Guided steps will be injected here by JS -->
                     </div>
+                </div>
+                <!-- Dropbox View -->
+                <div id="dropboxView" class="app-view">
+                     <div id="dropbox-content">
+                        <!-- Dropbox connection content will be rendered here -->
+                     </div>
                 </div>
                 <!-- Billing View -->
                 <div id="billingView" class="app-view">
@@ -798,16 +807,6 @@
                                 <div class="form-group"><label for="settingsAddress">Company Address (Optional)</label><textarea id="settingsAddress" rows="3" placeholder="123 Production Way, Hollywood, CA"></textarea></div>
                                 <button type="button" onclick="alert('Save Profile - Not Implemented Yet')" class="btn btn-secondary">Save Profile</button>
                             </form>
-                        </div>
-                        <!-- Dropbox Card -->
-                        <div class="settings-card">
-                             <h3>Dropbox Connection</h3>
-                             <p class="text-secondary" style="margin-bottom: 1.5rem;">Update your Dropbox Access Token. This is stored temporarily for the current session only.</p>
-                             <div class="form-group">
-                                 <label for="settingsDropboxToken">New Dropbox Access Token</label>
-                                 <input type="password" id="settingsDropboxToken" placeholder="Paste new token here">
-                             </div>
-                             <button type="button" onclick="updateDropboxTokenFromSettings()" class="btn btn-primary">Update Token</button>
                         </div>
                         <!-- Danger Zone -->
                         <div class="settings-card danger-zone">
@@ -860,6 +859,7 @@
 
         // --- PAGE/VIEW ROUTING ---
         function showLandingPage() {
+            document.getElementById('landingNavLinks').style.display = 'flex';
             landingPageContainer.style.display = 'block';
             appPageContainer.style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -870,6 +870,7 @@
                 openModal('loginModal');
                 return;
             }
+            document.getElementById('landingNavLinks').style.display = 'none';
             landingPageContainer.style.display = 'none';
             appPageContainer.style.display = 'block';
             showAppView(viewId);
@@ -890,6 +891,8 @@
                 populateSettingsForm();
             } else if (viewId === 'billingView') {
                 renderBillingPage();
+            } else if (viewId === 'dropboxView') {
+                renderDropboxPage();
             }
         }
 
@@ -1055,9 +1058,12 @@
         function updateAuthUI() {
             if (!navAuthButtons) return;
             const mobileNavAuthButtons = document.getElementById('mobileNavAuthButtons');
+            const landingNavLinks = document.getElementById('landingNavLinks');
             navAuthButtons.innerHTML = '';
             mobileNavAuthButtons.innerHTML = '';
+            
             if (isAuthenticated && currentUser) {
+                landingNavLinks.style.display = 'none';
                 const userMenuHTML = `
                     <div class="user-menu-container">
                         <div class="user-menu-toggle">
@@ -1079,6 +1085,7 @@
                 mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
                 document.getElementById('mobileSignOutBtn').addEventListener('click', signOut);
             } else {
+                landingNavLinks.style.display = 'flex';
                 const loginButtonsHTML = ` <a href="#" class="btn btn-secondary" id="loginBtn">Login</a> <a onclick="handleGetStartedClick()" class="btn btn-primary">Start Free Trial</a>`;
                 navAuthButtons.innerHTML = loginButtonsHTML;
                 document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
@@ -1148,34 +1155,7 @@
 
             // Step 1: Connect to Dropbox
             if (!dropboxAccessToken) {
-                container.innerHTML += `
-                    <div id="connectDropboxStep" class="guided-step-card">
-                        <h3>Step 1: Connect to Dropbox</h3>
-                        <p style="text-align: left;">To begin, PO Wizard needs temporary access to your Dropbox.
-                        <ol style="text-align: left; padding-left: 1.5rem; margin-bottom: 1.5rem;">
-                            <li>Go to the <a href="https://www.dropbox.com/developers/apps" target="_blank">Dropbox App Console</a> and create a new app.</li>
-                            <li>Choose 'Scoped access' and 'Full Dropbox'. Name it whatever you like.</li>
-                            <li>Under the 'Permissions' tab, enable the 'files.content.write' and 'files.content.read' permissions.</li>
-                            <li>Under the 'Settings' tab, find the 'Generated access token' section and click 'Generate'.</li>
-                            <li>Copy the generated token and paste it below. This token is only stored in your browser for this session.</li>
-                        </ol>
-                        </p>
-                        <div class="form-group">
-                            <label for="dashboardDropboxToken">Dropbox Access Token</label>
-                            <input type="password" id="dashboardDropboxToken" placeholder="Paste your token here">
-                        </div>
-                        <button id="submitTokenButton" class="btn btn-primary" style="width: 100%;">Connect & Continue</button>
-                    </div>`;
-                document.getElementById('submitTokenButton').addEventListener('click', () => {
-                    const token = document.getElementById('dashboardDropboxToken').value.trim();
-                    if (token) {
-                        dropboxAccessToken = token;
-                        sessionStorage.setItem('dropbox_access_token', token);
-                        renderMyPOsPage();
-                    } else {
-                        alert('Please enter a valid token.');
-                    }
-                });
+                showAppPage('dropboxView'); // Redirect to dropbox connection page
                 return;
             }
 
@@ -1183,8 +1163,8 @@
             if (!currentJobNumberContext) {
                  container.innerHTML += `
                     <div id="configureJobStep" class="guided-step-card">
-                        <h3>Step 2: Configure Your Production</h3>
-                        <p>Provide the Job Number, Project Name, and the Dropbox folder path containing your vendor documents.</p>
+                        <h3>Step 1: Configure Your Production</h3>
+                        <p>You're connected to Dropbox! Now, provide the Job Number, Project Name, and the Dropbox folder path containing your vendor documents.</p>
                         <div class="form-group"><label for="inputJobNumber">Job Number</label><input type="text" id="inputJobNumber" placeholder="e.g., 85319"></div>
                         <div class="form-group"><label for="inputProjectName">Project Name</label><input type="text" id="inputProjectName" placeholder="e.g., Macy's Holiday Shoot"></div>
                         <div class="form-group"><label for="dropboxSourcePath">Dropbox Source Path</label><input type="text" id="dropboxSourcePath" value="/POWizardCompany/SourceDocs"></div>
@@ -1203,7 +1183,7 @@
                 return;
             }
             
-            // Step 4: PO Dashboard
+            // Step 3: PO Dashboard
             container.innerHTML += `
                 <div id="poDashboardStep">
                     <div class="po-header">
@@ -1274,7 +1254,14 @@
             createNeuralNetwork('neuralNetworkProcessing'); // Initialize animations
 
             const appToken = localStorage.getItem('app_token');
-            const payload = { dropbox_access_token: dropboxAccessToken, dropbox_source_path: sourcePath, dropbox_output_path: "/POWizardCompany/OutputPOs", job_number_context: currentJobNumberContext, project_name_context: currentProjectNameContext };
+            const payload = { 
+                dropbox_access_token: dropboxAccessToken, 
+                dropbox_source_path: sourcePath, 
+                dropbox_output_path: "/POWizardCompany/OutputPOs", 
+                job_number_context: currentJobNumberContext, 
+                project_name_context: currentProjectNameContext,
+                user_tier: userTier // Send user tier for watermark logic
+            };
             try {
                 const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` }, body: JSON.stringify(payload) });
                 if (!response.ok) throw new Error(`Failed to trigger processing: ${response.statusText}`);
@@ -1340,7 +1327,7 @@
             }
         }
         
-        function createNeuralNetwork(containerId = 'neuralNetwork') {
+        function createNeuralNetwork(containerId = 'neuralNetworkProcessing') {
             const networkContainer = document.getElementById(containerId);
             if(!networkContainer) return;
             networkContainer.innerHTML = '';
@@ -1392,15 +1379,29 @@
             card.className = 'po-card card-light-effect'; card.id = `po-card-${po.po_id_on_grid}`;
             const isApproved = po.status?.toLowerCase().includes('approved');
             let statusClass = 'status-pending'; if(isApproved) statusClass = 'status-approved'; else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
-            card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${po.total_amount || '$0.00'}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="width: 100%;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button></div></div>`;
+            
+            const pdfPath = po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.generated_draft_po_pdf_path_dropbox;
+            const shareButtonHtml = pdfPath ? `<button class="btn btn-secondary" style="flex: 1;" onclick="sharePDF('${pdfPath}')">Share</button>` : '';
+
+            card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${po.total_amount || '$0.00'}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="flex: 2;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>${shareButtonHtml}</div></div>`;
             return card;
+        }
+
+        function sharePDF(pdfPath) {
+            if (!pdfPath) return;
+            const dropboxShareUrl = `https://www.dropbox.com/home${pdfPath}`;
+            window.open(dropboxShareUrl, '_blank');
         }
         
         function applyFiltersAndSort() {
             let filteredPOs = [...allFetchedPOs];
             const statusFilter = document.getElementById('filterStatus').value;
             const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
-            if (statusFilter !== 'all') { filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase().includes(statusFilter)); }
+            if (statusFilter === 'pending') {
+                filteredPOs = filteredPOs.filter(po => !po.status || po.status.toLowerCase().includes('pending') || po.status.toLowerCase().includes('regenerated'));
+            } else if (statusFilter !== 'all') { 
+                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase().includes(statusFilter)); 
+            }
             if (vendorNameFilter) { filteredPOs = filteredPOs.filter(po => po.vendor_name?.toLowerCase().includes(vendorNameFilter)); }
             renderPOGrid(filteredPOs);
         }
@@ -1449,24 +1450,51 @@
             fetchUserTier(true); // Pass true to render the full billing card
         }
 
+        function renderDropboxPage() {
+            const container = document.getElementById('dropbox-content');
+            container.innerHTML = `
+                <h2 class="app-section-title">Dropbox Connection</h2>
+                <div class="guided-step-card">
+                    <h3>Connect to Dropbox</h3>
+                    <p style="text-align: left;">
+                        To process documents, PO Wizard needs temporary access to your Dropbox.
+                        <ol style="text-align: left; padding-left: 1.5rem; margin-bottom: 1.5rem;">
+                            <li>Go to the <a href="https://www.dropbox.com/developers/apps" target="_blank" style="text-decoration: underline;">Dropbox App Console</a> and create a new app.</li>
+                            <li>Choose 'Scoped access' and 'Full Dropbox'. Name it whatever you like.</li>
+                            <li>Under the 'Permissions' tab, enable the 'files.content.write' and 'files.content.read' permissions and submit.</li>
+                            <li>Under the 'Settings' tab, find the 'Generated access token' section and click 'Generate'.</li>
+                            <li>Copy the generated token and paste it below. This token is only stored in your browser for this session and is never saved on our servers.</li>
+                        </ol>
+                    </p>
+                    <div class="form-group">
+                        <label for="appDropboxToken">New Dropbox Access Token</label>
+                        <input type="password" id="appDropboxToken" placeholder="Paste new token here">
+                    </div>
+                    <button id="submitAppTokenButton" class="btn btn-primary" style="width: 100%;">Update & Save Token</button>
+                </div>`;
+            
+            document.getElementById('submitAppTokenButton').addEventListener('click', () => {
+                const token = document.getElementById('appDropboxToken').value.trim();
+                if (token) {
+                    dropboxAccessToken = token;
+                    sessionStorage.setItem('dropbox_access_token', token);
+                    alert("Dropbox token updated for this session.");
+                    showAppView('dashboardView'); // Guide user back to dashboard
+                } else {
+                    alert('Please enter a valid token.');
+                }
+            });
+        }
+
+
         function populateSettingsForm() {
             if (currentUser) {
                 document.getElementById('settingsFullName').value = currentUser.displayName || '';
             }
-            const currentDbxToken = sessionStorage.getItem('dropbox_access_token');
-            const tokenInput = document.getElementById('settingsDropboxToken');
-            tokenInput.value = '';
-            tokenInput.placeholder = currentDbxToken ? "Token active (••••••••) - Enter new to update" : "No active token - Enter token here";
         }
 
-        function updateDropboxTokenFromSettings() {
-            const newToken = document.getElementById('settingsDropboxToken').value.trim();
-            if (!newToken) { alert("Please enter a new Dropbox Access Token."); return; }
-            dropboxAccessToken = newToken;
-            sessionStorage.setItem('dropbox_access_token', newToken);
-            alert("Dropbox token updated for this session.");
-            populateSettingsForm();
-            renderMyPOsPage(); // Re-render dashboard to reflect new token status
+        function updateDropboxTokenFromSettings() { // This is now handled in renderDropboxPage
+            showAppView('dropboxView');
         }
 
         async function fetchUserTier(renderFullCard = false) {
