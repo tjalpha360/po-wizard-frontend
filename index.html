@@ -727,8 +727,38 @@
         .vendor-stat { text-align: center; }
         .stat-value { font-size: 1.8rem; color: #3B7BA8; font-weight: bold; margin-bottom: 5px; }
         .stat-label { color: #8A9BA8; font-size: 0.9rem; }
-        .status-message { text-align: center; margin-top: 20px; padding: 15px; background: rgba(45, 95, 130, 0.1); border-radius: 15px; border-left: 4px solid #4ABDED; }
-        .status-text { color: #4ABDED; font-weight: 500; font-size: 1.1rem; min-height: 24px;}
+        
+        /* NEW Processing Status Bar Animation */
+        .status-message { 
+            text-align: center; margin-top: 20px; padding: 15px; 
+            background: rgba(45, 95, 130, 0.1); border-radius: 15px; 
+            border-left: 4px solid #4ABDED;
+            position: relative;
+            overflow: hidden;
+        }
+        .status-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            background-color: rgba(74, 189, 237, 0.25);
+            border-radius: 15px;
+            animation: slide-in-out 5s ease-in-out infinite;
+        }
+        .status-text { 
+            color: #4ABDED; font-weight: 500; font-size: 1.1rem; min-height: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes slide-in-out {
+            0% { width: 0%; left: 0; right: auto; }
+            45% { width: 100%; left: 0; right: auto; }
+            50% { width: 100%; left: auto; right: 0; }
+            95% { width: 0%; left: auto; right: 0; }
+            100% { width: 0%; left: 0; right: auto; }
+        }
 
         /* Fullscreen Onboarding Wizard */
         #onboardingWizard {
@@ -1792,9 +1822,13 @@
             const jobCompleteBanner = document.getElementById('jobCompleteBanner');
             if(!poGrid || !noPOsContainer || !jobCompleteBanner) return;
             
-            renderProjectSwitcher(); // Re-render switcher to update status dot
+            renderProjectSwitcher(); 
 
-            document.getElementById('poCount').textContent = `${posToRender.length} POs Generated`;
+            const poCountEl = document.getElementById('poCount');
+            if (poCountEl) {
+                poCountEl.textContent = `${posToRender.length} POs Generated`;
+            }
+
             if (posToRender.length === 0) {
                 poGrid.style.display = 'none';
                 noPOsContainer.style.display = 'block';
@@ -1968,7 +2002,7 @@
             poDataToRegenerate.is_incorp_on_w9 = document.querySelector('#incorpControl button.active')?.dataset.value || 'Unknown';
             poDataToRegenerate.tax_amount = document.getElementById('editTaxAmount').value;
             poDataToRegenerate.total_vendor_amount_str = document.getElementById('editTotalAmount').value;
-            poDataToRegenerate.status = isApproval ? 'Approved' : 'Regenerated';
+            poDataToRegenerate.status = isApproval ? 'Approved' : 'Pending Review';
             
             poDataToRegenerate.aggregated_line_items = [];
             document.querySelectorAll('#editLineItemsContainer .line-item-grid').forEach(itemRow => {
