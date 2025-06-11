@@ -563,6 +563,17 @@
         .po-card-footer { margin-top: auto; display: flex; gap: 0.5rem; }
         #noPOsActionContainer { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-secondary); }
         #noPOsActionContainer h3 { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1rem; }
+        
+        /* NEW - Approved PO Card Styling */
+        .po-card.po-card-approved {
+            border-color: var(--success-color);
+            background: rgba(52, 211, 153, 0.05);
+        }
+        .po-card.po-card-approved:hover {
+            transform: translateY(-5px);
+            border-color: var(--success-color);
+            background: rgba(52, 211, 153, 0.1);
+        }
 
         /* Settings & Billing Page */
         .settings-card { background: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
@@ -1130,6 +1141,26 @@
             document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => handleReviewModalSubmit(false));
             document.getElementById('reviewModalApproveButton').addEventListener('click', () => handleReviewModalSubmit(true));
             
+            // NEW: Add listeners for the W9 and Incorp toggles
+            const w9Control = document.getElementById('w9AttachedControl');
+            if (w9Control) {
+                w9Control.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        w9Control.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
+                });
+            }
+            const incorpControl = document.getElementById('incorpControl');
+            if (incorpControl) {
+                incorpControl.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        incorpControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
+                });
+            }
+
             // Organic movement scripts
             (() => {
                 const light = document.querySelector('.mouse-aware-light');
@@ -1323,21 +1354,25 @@
         // --- APP PAGE: MY POs LOGIC ---
         function renderMyPOsPage() {
             const container = document.getElementById('dashboard-content');
-            container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`; // Add title back
+            container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`;
 
-            // Step 1: Check for Dropbox token. If missing, redirect.
             if (!dropboxAccessToken) {
                 showAppView('dropboxView');
                 return;
             }
 
-            // Step 2: Configure Job
             if (!currentJobNumberContext) {
-                 startOnboardingWizard();
-                 return;
+                container.innerHTML += `
+                    <div class="guided-step-card" style="margin-top: 2rem; text-align: center;">
+                        <h3>Welcome to Your Dashboard</h3>
+                        <p>It looks like you don't have an active job. Let's get you set up to process your first batch of Purchase Orders.</p>
+                        <button id="dashboardGetStartedBtn" class="btn btn-primary">Get Started</button>
+                    </div>
+                `;
+                document.getElementById('dashboardGetStartedBtn').addEventListener('click', startOnboardingWizard);
+                return;
             }
             
-            // Step 3: PO Dashboard
             container.innerHTML += `
                 <div id="poDashboardStep">
                     <div class="po-header">
@@ -1525,9 +1560,17 @@
 
         function createPOCard(po) {
             const card = document.createElement('div');
-            card.className = 'po-card card-light-effect'; card.id = `po-card-${po.po_id_on_grid}`;
+            card.className = 'po-card card-light-effect';
+            card.id = `po-card-${po.po_id_on_grid}`;
             const isApproved = po.status?.toLowerCase().includes('approved');
-            let statusClass = 'status-pending'; if(isApproved) statusClass = 'status-approved'; else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
+            
+            if (isApproved) {
+                card.classList.add('po-card-approved');
+            }
+
+            let statusClass = 'status-pending';
+            if(isApproved) statusClass = 'status-approved';
+            else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
             
             const pdfPath = po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.final_dropbox_path;
             const shareButtonHtml = pdfPath ? `<button class="btn btn-secondary" style="flex: 1;" onclick="sharePDF('${pdfPath}')">Share</button>` : '';
@@ -1593,7 +1636,6 @@
             const pdfViewer = document.getElementById('pdfViewer'); const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
             if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&user_tier=${userTier}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
             
-            // Add focus/blur listeners for highlighting
             addHighlightListeners();
 
             openModal('reviewModal');
@@ -1618,29 +1660,43 @@
             const actionButton = isApproval ? approveBtn : saveBtn;
             actionButton.classList.add('loading');
             
-            // Simulate 5-second processing
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate processing
             
             actionButton.classList.remove('loading');
 
             const poId = document.getElementById('editPoIdOnGrid').value; 
             const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
-            if(poIndex > -1) { 
-                allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value; 
-                allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value; 
-                if(isApproval) { allFetchedPOs[poIndex].status = 'Approved'; } 
-                else { allFetchedPOs[poIndex].status = 'Regenerated'; } 
+            if(poIndex > -1) {
+                const poToUpdate = allFetchedPOs[poIndex];
+                const dataToUpdate = poToUpdate.full_po_data_for_review || poToUpdate;
+
+                const newVendorName = document.getElementById('editVendor').value;
+                dataToUpdate.vendor_name = newVendorName;
+                poToUpdate.vendor_name = newVendorName;
+                
+                const newTotal = '$' + document.getElementById('editTotalAmount').value;
+                dataToUpdate.total_amount = newTotal;
+                poToUpdate.total_amount = newTotal;
+
+                const w9Value = document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true';
+                const incorpValue = document.querySelector('#incorpControl button.active')?.dataset.value;
+                dataToUpdate.has_w9_document = w9Value;
+                dataToUpdate.is_incorp_on_w9 = incorpValue;
+                
+                if(isApproval) { 
+                    poToUpdate.status = 'Approved'; 
+                } else { 
+                    poToUpdate.status = 'Regenerated'; 
+                } 
             }
             closeModal('reviewModal'); 
             applyFiltersAndSort(); 
             alert(`PO changes ${isApproval ? 'approved' : 'saved'} successfully! (Note: This is a frontend demo of the action)`);
         }
 
-        // --- NEW FUNCTION TO FIX REFERENCE ERROR ---
         function addHighlightListeners() {
             // This function is intended to highlight areas on the PDF when a form field is focused.
             // The logic for mapping fields to PDF coordinates is not yet implemented.
-            // This empty function prevents the "is not defined" error, allowing the modal to open.
         }
         
         // --- BILLING & SETTINGS PAGE LOGIC ---
@@ -1711,7 +1767,6 @@
                 if (!response.ok) throw new Error('Could not load tier');
                 
                 let tierData = await response.text();
-                // Handle if the backend returns the string with quotes
                 userTier = tierData.replace(/"/g, ''); 
 
                 if (renderFullCard) {
@@ -1761,7 +1816,6 @@
             } catch (error) {
                 alert('An error occurred while switching tiers.');
                 if (switchBtn) {
-                    // Reset button text based on what it was
                     fetchUserTier(true);
                 }
             }
@@ -1874,6 +1928,23 @@
         }
 
         function wizardNext(step) {
+            const currentSlide = document.querySelector('.wizard-slide.active');
+            if (currentSlide) {
+                const currentStep = currentSlide.dataset.step;
+                if (currentStep === "1" && !document.getElementById('wizard_inputJobNumber').value.trim()) {
+                    alert("Job Number is required.");
+                    return;
+                }
+                if (currentStep === "2" && !document.getElementById('wizard_inputProjectName').value.trim()) {
+                    alert("Project Name is required.");
+                    return;
+                }
+                if (currentStep === "3" && !document.getElementById('wizard_dropboxSourcePath').value.trim()) {
+                    alert("A Dropbox Source Folder must be selected.");
+                    return;
+                }
+            }
+
             document.querySelectorAll('.wizard-slide').forEach(s => s.classList.remove('active'));
             const nextSlide = document.querySelector(`.wizard-slide[data-step="${step}"]`);
             if (nextSlide) {
@@ -1887,12 +1958,13 @@
             const sourcePath = document.getElementById('wizard_dropboxSourcePath').value.trim();
             const outputPath = document.getElementById('wizard_dropboxOutputPath').value.trim();
             
-            if (currentJobNumberContext && currentProjectNameContext && sourcePath && outputPath) {
-                document.getElementById('onboardingWizard').classList.remove('active');
-                startDocumentProcessing(sourcePath, outputPath);
-            } else {
-                alert("All fields, including source and output paths, are required.");
+            if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath || !outputPath) {
+                alert("All fields, including source and output folders, are required to start processing.");
+                return;
             }
+            
+            document.getElementById('onboardingWizard').classList.remove('active');
+            startDocumentProcessing(sourcePath, outputPath);
         }
     </script>
 </body>
