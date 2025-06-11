@@ -1789,7 +1789,7 @@
         async function handleReviewModalSubmit(isApproval) {
             const poId = document.getElementById('editPoIdOnGrid').value;
             const originalPO = allFetchedPOs.find(p => p.po_id_on_grid === poId);
-            if (!originalPO) {
+            if (!originalPO || !originalPO.full_po_data_for_review) {
                 showLoadingSuccessModal('error', 'Could not find original PO data.');
                 return;
             }
@@ -1797,24 +1797,27 @@
             const actionText = isApproval ? 'Approving PO...' : 'Saving Changes...';
             showLoadingSuccessModal('loading', actionText);
 
-            const poDataToRegenerate = {
-                ...originalPO.full_po_data_for_review,
-                po_number: document.getElementById('editPoNumber').value,
-                po_date: document.getElementById('editPoDate').value,
-                vendor_name: document.getElementById('editVendor').value,
-                vendor_address: document.getElementById('editVendorAddress').value,
-                vendor_phone: document.getElementById('editVendorPhone').value,
-                vendor_email: document.getElementById('editVendorEmail').value,
-                vendor_contact: document.getElementById('editVendorContact').value,
-                vendor_tin: document.getElementById('editVendorTIN').value,
-                has_w9_document: document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true',
-                is_incorp_on_w9: document.querySelector('#incorpControl button.active')?.dataset.value || 'Unknown',
-                tax_amount: document.getElementById('editTaxAmount').value,
-                total_vendor_amount_str: document.getElementById('editTotalAmount').value,
-                status: isApproval ? 'Approved' : 'Regenerated',
-                aggregated_line_items: [],
-            };
+            // **CORRECTED PAYLOAD CONSTRUCTION**
+            // Start with a deep copy of the original full data to preserve all fields
+            const poDataToRegenerate = JSON.parse(JSON.stringify(originalPO.full_po_data_for_review));
 
+            // Overwrite with values from the form
+            poDataToRegenerate.po_number = document.getElementById('editPoNumber').value;
+            poDataToRegenerate.po_date = document.getElementById('editPoDate').value;
+            poDataToRegenerate.vendor_name = document.getElementById('editVendor').value;
+            poDataToRegenerate.vendor_address = document.getElementById('editVendorAddress').value;
+            poDataToRegenerate.vendor_phone = document.getElementById('editVendorPhone').value;
+            poDataToRegenerate.vendor_email = document.getElementById('editVendorEmail').value || null; // Ensure null if empty
+            poDataToRegenerate.vendor_contact = document.getElementById('editVendorContact').value;
+            poDataToRegenerate.vendor_tin = document.getElementById('editVendorTIN').value;
+            poDataToRegenerate.has_w9_document = document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true';
+            poDataToRegenerate.is_incorp_on_w9 = document.querySelector('#incorpControl button.active')?.dataset.value || 'Unknown';
+            poDataToRegenerate.tax_amount = document.getElementById('editTaxAmount').value;
+            poDataToRegenerate.total_vendor_amount_str = document.getElementById('editTotalAmount').value;
+            poDataToRegenerate.status = isApproval ? 'Approved' : 'Regenerated';
+            
+            // Rebuild line items from the form
+            poDataToRegenerate.aggregated_line_items = [];
             document.querySelectorAll('#editLineItemsContainer .line-item-grid').forEach(itemRow => {
                 const inputs = itemRow.querySelectorAll('input');
                 poDataToRegenerate.aggregated_line_items.push({
@@ -1823,6 +1826,7 @@
                     quantity: inputs[2].value,
                     unit_price: inputs[3].value,
                     amount: inputs[4].value,
+                    source_doc_for_po_line: null // This isn't edited on the form
                 });
             });
             
