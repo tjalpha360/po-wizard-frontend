@@ -1475,30 +1475,32 @@
             }
         }
 
+
         // --- APP PAGE: MY POs LOGIC ---
         function renderMyPOsPage() {
             const container = document.getElementById('dashboard-content');
-            container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`; // Add title back
+            container.innerHTML = ``; // Clear previous content
 
-            // Step 1: Check for Dropbox token. If missing, redirect.
             if (!dropboxAccessToken) {
                 showAppView('dropboxView');
                 return;
             }
 
-            // Step 2: Configure Job
             if (!currentJobNumberContext) {
-                 startOnboardingWizard();
-                 return;
+                 startOnboardingWizard(); // This launches the fullscreen wizard
+                 // Render a placeholder or nothing until wizard is complete
+                 container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`;
+                 return; 
             }
             
-            // Step 3: PO Dashboard
-            container.innerHTML += `
+            // This part only runs AFTER the wizard is completed and job context is set
+            container.innerHTML = `
+                <h2 class="app-section-title">My POs</h2>
                 <div id="poDashboardStep">
                     <div class="po-header">
                         <div class="po-header-info">
                             <p>Job: <span id="displayJobNumber_dashboard">${currentJobNumberContext}</span> | Project: <span id="displayProjectName_dashboard">${currentProjectNameContext}</span></p>
-                            <p id="poCount">0 POs Generated</p>
+                            <p id="poCount">Loading POs...</p>
                         </div>
                         <button id="newPOBatchBtn" class="btn btn-secondary">Process New Job</button>
                     </div>
@@ -1518,8 +1520,8 @@
                     <div id="poGrid"></div>
                     <div id="noPOsActionContainer" style="display: none;">
                         <h3>No Purchase Orders Found</h3>
-                        <p id="noPOsMessage">You can start by processing a new batch.</p>
-                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Process New Job</button>
+                        <p id="noPOsMessage">No POs have been generated for this job yet.</p>
+                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Process a New Job</button>
                     </div>
                 </div>`;
             
