@@ -726,7 +726,7 @@
         .vendor-display {
             text-align: center;
             margin: 30px 0;
-            padding: 30px;
+            padding: 0; /* Remove padding to let video fill edges */
             background: rgba(45, 95, 130, 0.15);
             border-radius: 20px;
             border: 1px solid rgba(45, 95, 130, 0.3);
@@ -736,7 +736,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 200px; /* Give it some height */
+            min-height: 250px; /* Increased height */
         }
         .vendor-display-video {
             position: absolute;
@@ -747,17 +747,28 @@
             object-fit: cover;
             transform: translate(-50%, -50%);
             z-index: 0;
-            opacity: 0.2;
+            opacity: 1; /* Set to full opacity */
         }
         .vendor-display-content {
             position: relative;
             z-index: 1;
+            padding: 30px; /* Add padding to the content instead */
+            background: rgba(var(--primary-bg-rgb), 0.5); /* Semi-transparent background for readability */
+            border-radius: 10px;
+            backdrop-filter: blur(2px);
         }
-        .current-vendor { font-size: 2.2rem; color: #4ABDED; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 15px rgba(74, 189, 237, 0.5); min-height: 40px;}
+        .current-vendor { 
+            font-size: 2.2rem; 
+            color: var(--text-primary); /* Changed to primary for better contrast */
+            font-weight: bold; 
+            margin-bottom: 15px; 
+            text-shadow: 0 0 10px rgba(0,0,0,0.7); /* Stronger shadow */
+            min-height: 40px;
+        }
         .vendor-stats { display: flex; justify-content: center; gap: 40px; margin-top: 15px; }
         .vendor-stat { text-align: center; }
-        .stat-value { font-size: 1.8rem; color: #3B7BA8; font-weight: bold; margin-bottom: 5px; }
-        .stat-label { color: #8A9BA8; font-size: 0.9rem; }
+        .stat-value { font-size: 1.8rem; color: var(--text-primary); font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 8px rgba(0,0,0,0.5); }
+        .stat-label { color: var(--text-secondary); font-size: 0.9rem; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
         
         .status-message { 
             text-align: center; margin-top: 20px; padding: 15px; 
@@ -1808,7 +1819,7 @@
                         <div class="progress-fill" id="progressFill"><div class="neural-network" id="neuralNetworkProcessing"></div></div>
                     </div>
                     <div class="vendor-display">
-                        <video class="vendor-display-video" src="assets/POWizard_Loading.webm" autoplay loop muted playsinline></video>
+                        <video class="vendor-display-video" src="assets/POWizard_Loading.mp4" autoplay loop muted playsinline></video>
                         <div class="vendor-display-content">
                             <div class="current-vendor" id="currentVendor">Initializing PO Wizard...</div>
                             <div class="vendor-stats">
@@ -1882,7 +1893,7 @@
             if(!progressFill) return;
 
             progressFill.style.width = `${data.progress_percent}%`;
-            statusMessage.textContent = data.current_step || data.status;
+            if (statusMessage) statusMessage.textContent = data.current_step || data.status;
 
             const vendorMatch = (data.current_step || "").match(/.*\((\d+)\/(\d+)\)/);
             if(vendorProgress && vendorMatch) {
