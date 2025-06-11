@@ -763,6 +763,31 @@
         @keyframes draw-check {
             to { stroke-dashoffset: 0; }
         }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .tooltip:hover::after {
+            opacity: 1;
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -1037,21 +1062,21 @@
         <div class="wizard-container">
             <!-- Step 1: Job Number -->
             <div class="wizard-slide" data-step="1">
-                <h2>Step 1: Job Number</h2>
+                <h2 class="tooltip" data-tooltip="This is the main identifier for your entire production. e.g., '12345'">Step 1: Job Number</h2>
                 <p>Enter the unique Job Number for this production. This helps keep all your projects organized.</p>
                 <div class="form-group" style="width: 100%;"><input type="text" id="wizard_inputJobNumber" placeholder="e.g., 85319"></div>
                 <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(2)">Next</button></div>
             </div>
             <!-- Step 2: Project Name -->
             <div class="wizard-slide" data-step="2">
-                <h2>Step 2: Project Name</h2>
+                <h2 class="tooltip" data-tooltip="The common name for your project, like a film title or campaign name.">Step 2: Project Name</h2>
                 <p>Give your project a descriptive name. This will appear on all your generated documents.</p>
                 <div class="form-group" style="width: 100%;"><input type="text" id="wizard_inputProjectName" placeholder="e.g., Macy's Holiday Shoot"></div>
                 <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(3)">Next</button></div>
             </div>
              <!-- Step 3: Source Path -->
             <div class="wizard-slide" data-step="3">
-                <h2>Step 3: Source Folder</h2>
+                <h2 class="tooltip" data-tooltip="PO Wizard will look inside this folder for subfolders, one for each vendor.">Step 3: Source Folder</h2>
                 <p>Choose the main Dropbox folder that contains all of your individual vendor folders. We'll scan everything inside.</p>
                 <div class="form-group" style="width: 100%;">
                     <div class="form-group-inline">
@@ -1063,7 +1088,7 @@
             </div>
             <!-- Step 4: Output Path -->
             <div class="wizard-slide" data-step="4">
-                <h2>Step 4: Output Folder</h2>
+                <h2 class="tooltip" data-tooltip="This is where the final, neatly organized PDF purchase orders will be saved.">Step 4: Output Folder</h2>
                 <p>Choose the Dropbox folder where you want your final, organized Purchase Orders to be saved.</p>
                  <div class="form-group" style="width: 100%;">
                     <div class="form-group-inline">
@@ -1075,7 +1100,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- ACTION TOAST NOTIFICATION -->
     <div id="actionToast">
         <div class="toast-icon"></div>
