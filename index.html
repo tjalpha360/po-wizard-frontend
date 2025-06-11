@@ -25,6 +25,7 @@
             --border-color: #333;
             --success-color: #34D399;
             --error-color: #ef4444;
+            --warning-color: #FBBF24;
         }
 
         body {
@@ -564,12 +565,11 @@
         }
 
         /* My POs - Dashboard */
-        .po-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .po-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
         .po-header-info { color: var(--text-secondary); }
         .po-header-info span { font-weight: 600; color: var(--text-primary); }
         .po-actions-bar { background-color: rgba(31, 31, 31, 0.5); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 2rem; }
         .po-filters { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
-        /* MODIFIED - Dark theme filter inputs */
         .po-filters input, .po-filters select {
             background-color: var(--primary-bg); border: 1px solid var(--border-color);
             color: var(--text-primary); border-radius: 4px; padding: 0.6rem;
@@ -577,10 +577,28 @@
         .po-filters input:focus, .po-filters select:focus { border-color: var(--accent-neon); outline: none; }
         #poGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
         .po-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; transition: all 0.3s ease; position: relative; z-index: 1; display: flex; flex-direction: column; }
+        .po-card:hover .po-card-checkbox { opacity: 1; }
         .po-card.selected-card { border-color: var(--accent-neon); box-shadow: 0 0 15px rgba(74, 189, 237, 0.2); }
         .po-card:hover { transform: translateY(-5px); border-color: var(--accent-neon); }
-        .po-card-checkbox { position: absolute; top: 1rem; right: 1rem; z-index: 10; }
-        .po-card-checkbox input { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-neon); }
+        
+        /* NEW Checkbox Styling */
+        .po-card-checkbox { 
+            position: absolute; 
+            top: 1rem; 
+            left: 1rem; 
+            z-index: 10;
+            opacity: 0.4;
+            transition: opacity 0.2s ease-in-out;
+        }
+        .po-card-checkbox input { 
+            width: 22px; 
+            height: 22px; 
+            cursor: pointer; 
+            accent-color: var(--accent-neon); 
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 4px;
+        }
+
         .po-card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
         .po-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
         .po-card-po-number { font-size: 1.25rem; font-weight: 600; color: var(--accent-neon); }
@@ -603,6 +621,64 @@
             transform: translateY(-5px);
             border-color: var(--success-color);
             background: rgba(52, 211, 153, 0.1);
+        }
+        .btn-share-approved {
+            background: var(--success-color);
+            color: var(--primary-bg);
+            border-color: var(--success-color);
+        }
+        .btn-share-approved:hover {
+            background: #2fbd8b;
+        }
+        .batch-actions-container {
+            display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .batch-actions-container .btn:hover {
+            transform: translateY(-2px);
+        }
+        .batch-actions-container .btn-share-batch:disabled {
+            cursor: help;
+        }
+
+        /* NEW Project Switcher */
+        .project-switcher-container { position: relative; }
+        .project-switcher-toggle {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--secondary-bg); border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .project-switcher-toggle:hover { border-color: var(--accent-neon); }
+        .project-switcher-toggle .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .status-dot.approved { background-color: var(--success-color); }
+        .status-dot.pending { background-color: var(--warning-color); }
+        .project-switcher-dropdown {
+            display: none; position: absolute; top: 100%; left: 0;
+            margin-top: 8px; background: var(--secondary-bg);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            min-width: 250px; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-height: 300px; overflow-y: auto;
+        }
+        .project-switcher-container:hover .project-switcher-dropdown { display: block; }
+        .project-switcher-dropdown a {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1rem; color: var(--text-secondary);
+            text-decoration: none; font-size: 0.9rem;
+        }
+        .project-switcher-dropdown a:hover { background: var(--card-bg); color: var(--text-primary); }
+        
+        /* NEW Job Complete Banner */
+        #jobCompleteBanner {
+            background: linear-gradient(90deg, rgba(52, 211, 153, 0.2), rgba(52, 211, 153, 0.05));
+            border: 1px solid var(--success-color);
+            border-radius: 8px; padding: 1.5rem;
+            text-align: center; margin-bottom: 2rem;
+            display: none;
+        }
+        #jobCompleteBanner h3 {
+            color: var(--success-color); font-size: 1.5rem; margin-bottom: 0.5rem;
         }
 
         /* Settings & Billing Page */
@@ -1109,28 +1185,28 @@
         // --- CONFIG ---
         const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
 
-        // --- GLOBAL STATE ---
+        // --- GLOBAL STATE & CACHING ---
         let isAuthenticated = false;
         let currentUser = null;
-        let userTier = 'free'; // Default to free
+        let userTier = 'free';
         let dropboxAccessToken = "";
-        let currentJobNumberContext = "";
-        let currentProjectNameContext = "";
-        let allFetchedPOs = [];
+        let currentJobNumber = null;
+        let projectCache = {}; // Cache for PO data: { 'jobNumber': { name: 'Project Name', pos: [...] } }
+        let knownProjects = {}; // For switcher: { 'jobNumber': 'Project Name' }
         let selectedPOIds = new Set();
         let statusPollInterval = null;
-        let currentPickerTarget = null; // 'source_wizard' or 'output_wizard'
+        let currentPickerTarget = null;
         
         // --- DOM ELEMENTS ---
         let navAuthButtons, landingPageContainer, appPageContainer;
         
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // FIX: Assign DOM elements only after DOM is loaded
             navAuthButtons = document.getElementById('nav-auth-buttons');
             landingPageContainer = document.getElementById('landingPageContainer');
             appPageContainer = document.getElementById('appPageContainer');
             
+            loadStateFromLocalStorage(); // Load projects and current job
             await handleAuthCallback();
             await checkAuthOnLoad();
             initializeEventListeners();
@@ -1139,6 +1215,36 @@
             populateFaq();
             createNeuralNetwork();
         });
+
+        // --- STATE MANAGEMENT ---
+        function loadStateFromLocalStorage() {
+            const savedProjects = localStorage.getItem('knownProjects');
+            if (savedProjects) {
+                knownProjects = JSON.parse(savedProjects);
+            }
+            const savedJob = localStorage.getItem('currentJobNumber');
+            if (savedJob) {
+                currentJobNumber = savedJob;
+            }
+        }
+
+        function saveStateToLocalStorage() {
+            localStorage.setItem('knownProjects', JSON.stringify(knownProjects));
+            localStorage.setItem('currentJobNumber', currentJobNumber);
+        }
+
+        function addProject(job, name) {
+            knownProjects[job] = name;
+            saveStateToLocalStorage();
+        }
+
+        function switchProject(job) {
+            if (knownProjects[job]) {
+                currentJobNumber = job;
+                saveStateToLocalStorage();
+                showAppView('dashboardView');
+            }
+        }
 
         // --- PAGE/VIEW ROUTING ---
         function showLandingPage() {
@@ -1154,7 +1260,7 @@
                 openModal('loginModal');
                 return;
             }
-            document.getElementById('landingNavLinks').style.display = 'none'; // FIX: Hide marketing links in-app
+            document.getElementById('landingNavLinks').style.display = 'none';
             landingPageContainer.style.display = 'none';
             appPageContainer.style.display = 'block';
             showAppView(viewId);
@@ -1184,7 +1290,7 @@
             showLandingPage();
             const targetElement = document.querySelector(selector);
             if(targetElement) {
-                 setTimeout(() => { // Timeout ensures page is visible before scrolling
+                 setTimeout(() => {
                     const headerOffset = document.querySelector('.header').offsetHeight + 32;
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -1244,7 +1350,6 @@
             document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => handleReviewModalSubmit(false));
             document.getElementById('reviewModalApproveButton').addEventListener('click', () => handleReviewModalSubmit(true));
             
-            // NEW: Add listeners for the W9 and Incorp toggles
             const w9Control = document.getElementById('w9AttachedControl');
             if (w9Control) {
                 w9Control.addEventListener('click', (e) => {
@@ -1366,7 +1471,7 @@
             mobileNavAuthButtons.innerHTML = '';
             
             if (isAuthenticated && currentUser) {
-                landingNavLinks.style.display = 'none'; // MODIFIED: Always show
+                landingNavLinks.style.display = 'none';
                 const userMenuHTML = `
                     <div class="user-menu-container">
                         <div class="user-menu-toggle">
@@ -1411,7 +1516,7 @@
                     localStorage.setItem('user_displayName', currentUser.displayName);
                     localStorage.setItem('user_email', currentUser.email);
                     dropboxAccessToken = sessionStorage.getItem('dropbox_access_token') || "";
-                    await fetchUserTier(); // Fetch user tier on load
+                    await fetchUserTier();
                 }
             }
             updateAuthUI();
@@ -1433,8 +1538,7 @@
         function signOut(e) {
             if(e) e.preventDefault();
             localStorage.clear(); sessionStorage.clear();
-            isAuthenticated = false; currentUser = null; dropboxAccessToken = ""; allFetchedPOs = [];
-            currentJobNumberContext = ""; currentProjectNameContext = ""; // Reset job context on sign out
+            isAuthenticated = false; currentUser = null; dropboxAccessToken = ""; projectCache = {}; knownProjects = {}; currentJobNumber = null;
             updateAuthUI();
             showLandingPage();
         }
@@ -1445,7 +1549,6 @@
             if (isAuthenticated) {
                 showAppPage();
             } else {
-                // For logged-out users, "Start Free Trial" directly initiates login
                 signInWithGoogle();
             }
         }
@@ -1453,9 +1556,16 @@
         // --- MODAL & UI HELPERS ---
         function openModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
         function closeModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
+        function formatCurrency(amount) {
+            const num = parseFloat(String(amount).replace(/[^0-9.-]+/g,""));
+            if (isNaN(num)) {
+                return "$0.00";
+            }
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+        }
 
         // --- APP PAGE: MY POs LOGIC ---
-        function renderMyPOsPage() {
+        async function renderMyPOsPage() {
             const container = document.getElementById('dashboard-content');
             container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`;
 
@@ -1464,12 +1574,12 @@
                 return;
             }
 
-            if (!currentJobNumberContext) {
+            if (!currentJobNumber || !knownProjects[currentJobNumber]) {
                 container.innerHTML += `
                     <div class="guided-step-card" style="margin-top: 2rem; text-align: center;">
                         <h3>Welcome to Your Dashboard</h3>
                         <p>It looks like you don't have an active job. Let's get you set up to process your first batch of Purchase Orders.</p>
-                        <button id="dashboardGetStartedBtn" class="btn btn-primary">Get Started</button>
+                        <button id="dashboardGetStartedBtn" class="btn btn-primary">Process New Job</button>
                     </div>
                 `;
                 document.getElementById('dashboardGetStartedBtn').addEventListener('click', startOnboardingWizard);
@@ -1479,17 +1589,19 @@
             container.innerHTML += `
                 <div id="poDashboardStep">
                     <div class="po-header">
-                        <div class="po-header-info">
-                            <p>Job: <span id="displayJobNumber_dashboard">${currentJobNumberContext}</span> | Project: <span id="displayProjectName_dashboard">${currentProjectNameContext}</span></p>
-                            <p id="poCount">0 POs Generated</p>
-                        </div>
+                        <div id="projectSwitcher"></div>
                         <button id="newPOBatchBtn" class="btn btn-secondary">Process New Job</button>
+                    </div>
+                    <div id="jobCompleteBanner">
+                        <h3>Job Complete!</h3>
+                        <p>All purchase orders for this job have been approved.</p>
                     </div>
                     <div id="batchActionControls" class="po-actions-bar" style="display: none;">
                          <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
-                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                         <div class="batch-actions-container">
                              <button id="approveSelectedButton" class="btn btn-secondary" style="border-color: var(--success-color); color: var(--success-color);" disabled>Approve</button>
                              <button id="deleteSelectedButton" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);" disabled>Delete</button>
+                             <button id="shareSelectedButton" class="btn btn-secondary btn-share-batch" disabled title="Multi-share coming soon!">Share Selected</button>
                          </div>
                     </div>
                     <div class="po-actions-bar">
@@ -1506,23 +1618,53 @@
                     </div>
                 </div>`;
             
-            document.getElementById('newPOBatchBtn').addEventListener('click', resetAndStartNewBatch);
-            document.getElementById('noPOsCreateBtn').addEventListener('click', resetAndStartNewBatch);
+            document.getElementById('newPOBatchBtn').addEventListener('click', startOnboardingWizard);
+            document.getElementById('noPOsCreateBtn').addEventListener('click', startOnboardingWizard);
             document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
             document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
             document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
             document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
             
-            fetchGeneratedPOs();
-        }
-        
-        function resetAndStartNewBatch() {
-            currentJobNumberContext = "";
-            currentProjectNameContext = "";
-            allFetchedPOs = [];
-            startOnboardingWizard();
+            renderProjectSwitcher();
+            
+            if (projectCache[currentJobNumber]) {
+                console.log("Loading POs from cache for job:", currentJobNumber);
+                renderPOGrid(projectCache[currentJobNumber].pos);
+            } else {
+                await fetchGeneratedPOs();
+            }
         }
 
+        function renderProjectSwitcher() {
+            const container = document.getElementById('projectSwitcher');
+            if (!container) return;
+
+            const project = projectCache[currentJobNumber] || { name: knownProjects[currentJobNumber], pos: [] };
+            const allApproved = project.pos.length > 0 && project.pos.every(po => po.status?.toLowerCase() === 'approved');
+            const statusClass = allApproved ? 'approved' : 'pending';
+
+            let dropdownHTML = '';
+            for (const job in knownProjects) {
+                if (job !== currentJobNumber) {
+                    const projInCache = projectCache[job] || { pos: [] };
+                    const isApproved = projInCache.pos.length > 0 && projInCache.pos.every(po => po.status?.toLowerCase() === 'approved');
+                    const dotClass = isApproved ? 'approved' : 'pending';
+                    dropdownHTML += `<a href="#" onclick="switchProject('${job}')"><span class="status-dot ${dotClass}"></span>${job}: ${knownProjects[job]}</a>`;
+                }
+            }
+
+            container.innerHTML = `
+                <div class="project-switcher-container">
+                    <div class="project-switcher-toggle">
+                        <span class="status-dot ${statusClass}"></span>
+                        <span>Job: <b>${currentJobNumber}</b> | Project: <b>${project.name}</b></span>
+                        <svg class="arrow-down" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="project-switcher-dropdown">${dropdownHTML || '<a>No other projects</a>'}</div>
+                </div>
+            `;
+        }
+        
         async function startDocumentProcessing(sourcePath, outputPath) {
             showAppView('progressView');
             const container = document.getElementById('progress-content');
@@ -1539,16 +1681,16 @@
                     </div>
                     <div class="status-message"><div class="status-text" id="statusMessage">🧙‍♂️ Merlin the PO Wizard is preparing your documents...</div></div>
                 </div>`;
-            createNeuralNetwork('neuralNetworkProcessing'); // Initialize animations
+            createNeuralNetwork('neuralNetworkProcessing');
 
             const appToken = localStorage.getItem('app_token');
             const payload = { 
                 dropbox_access_token: dropboxAccessToken, 
                 dropbox_source_path: sourcePath, 
                 dropbox_output_path: outputPath, 
-                job_number_context: currentJobNumberContext, 
-                project_name_context: currentProjectNameContext,
-                user_tier: userTier // Send user tier for watermark logic
+                job_number_context: currentJobNumber, 
+                project_name_context: knownProjects[currentJobNumber],
+                user_tier: userTier
             };
             try {
                 const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` }, body: JSON.stringify(payload) });
@@ -1577,6 +1719,7 @@
                         if(data.status === 'SUCCESS') {
                             document.getElementById('statusMessage').textContent = "Processing complete! Loading dashboard...";
                             document.getElementById('currentVendor').textContent = 'Scan Complete!';
+                            delete projectCache[currentJobNumber]; // Invalidate cache to force a reload
                             setTimeout(() => showAppView('dashboardView'), 2000);
                         } else {
                              const failureDetails = data.result?.error_message || JSON.stringify(data.result);
@@ -1599,7 +1742,7 @@
             const statusMessage = document.getElementById('statusMessage');
             const vendorProgress = document.getElementById('vendorProgress');
             const currentVendor = document.getElementById('currentVendor');
-            if(!progressFill) return; // Exit if not on the progress view
+            if(!progressFill) return;
 
             progressFill.style.width = `${data.progress_percent}%`;
             statusMessage.textContent = data.current_step || data.status;
@@ -1626,18 +1769,18 @@
         // --- PO MANAGEMENT (Dashboard View) ---
         async function fetchGeneratedPOs() {
             const poGrid = document.getElementById('poGrid');
-            if (!poGrid) return; // Not on the dashboard view
-            poGrid.innerHTML = `<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">Loading POs...</p>`;
+            if (!poGrid) return;
+            poGrid.innerHTML = `<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">Loading POs for Job ${currentJobNumber}...</p>`;
             const appToken = localStorage.getItem('app_token');
 
             try {
-                const url = `${API_BASE_URL}/processed-pos/${currentJobNumberContext}?projectName=${encodeURIComponent(currentProjectNameContext)}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                const url = `${API_BASE_URL}/processed-pos/${currentJobNumber}?projectName=${encodeURIComponent(knownProjects[currentJobNumber])}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
                 const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appToken}` } });
                 if (!response.ok) throw new Error(`Failed to fetch POs: ${response.statusText}`);
                 
                 const data = await response.json();
-                allFetchedPOs = data.generated_pos || [];
-                renderPOGrid(allFetchedPOs);
+                projectCache[currentJobNumber] = { name: data.project_name, pos: data.generated_pos || [] };
+                renderPOGrid(projectCache[currentJobNumber].pos);
             } catch (error) {
                 poGrid.innerHTML = `<p style="color: var(--error-color); grid-column: 1 / -1; text-align: center;">Error loading POs: ${error.message}</p>`;
             }
@@ -1646,17 +1789,24 @@
         function renderPOGrid(posToRender) {
             const poGrid = document.getElementById('poGrid');
             const noPOsContainer = document.getElementById('noPOsActionContainer');
-            if(!poGrid || !noPOsContainer) return;
+            const jobCompleteBanner = document.getElementById('jobCompleteBanner');
+            if(!poGrid || !noPOsContainer || !jobCompleteBanner) return;
+            
+            renderProjectSwitcher(); // Re-render switcher to update status dot
 
             document.getElementById('poCount').textContent = `${posToRender.length} POs Generated`;
             if (posToRender.length === 0) {
                 poGrid.style.display = 'none';
                 noPOsContainer.style.display = 'block';
+                jobCompleteBanner.style.display = 'none';
             } else {
                 poGrid.style.display = 'grid';
                 noPOsContainer.style.display = 'none';
                 poGrid.innerHTML = '';
                 posToRender.forEach(po => poGrid.appendChild(createPOCard(po)));
+                
+                const allApproved = posToRender.every(po => po.status?.toLowerCase() === 'approved');
+                jobCompleteBanner.style.display = allApproved ? 'block' : 'none';
             }
             updateBatchActionButtons();
         }
@@ -1665,20 +1815,26 @@
             const card = document.createElement('div');
             card.className = 'po-card card-light-effect';
             card.id = `po-card-${po.po_id_on_grid}`;
-            const isApproved = po.status?.toLowerCase().includes('approved');
+            const isApproved = po.status?.toLowerCase() === 'approved';
             
             if (isApproved) {
                 card.classList.add('po-card-approved');
             }
 
+            let statusText = 'Pending Review';
             let statusClass = 'status-pending';
-            if(isApproved) statusClass = 'status-approved';
-            else if (po.status?.toLowerCase().includes('error')) statusClass = 'status-error';
+            if(isApproved) {
+                statusText = 'Approved';
+                statusClass = 'status-approved';
+            } else if (po.status?.toLowerCase().includes('error')) {
+                statusText = 'Error';
+                statusClass = 'status-error';
+            }
             
             const pdfPath = po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.final_dropbox_path;
-            const shareButtonHtml = pdfPath ? `<button class="btn btn-secondary" style="flex: 1;" onclick="sharePDF('${pdfPath}')">Share</button>` : '';
+            const shareButtonHtml = pdfPath ? `<button class="btn btn-secondary ${isApproved ? 'btn-share-approved' : ''}" style="flex: 1;" onclick="sharePDF('${pdfPath}')">Share</button>` : '';
 
-            card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${po.status || 'Pending'}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${po.total_amount || '$0.00'}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="flex: 2;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>${shareButtonHtml}</div></div>`;
+            card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${statusText}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${formatCurrency(po.total_amount)}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="flex: 2;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>${shareButtonHtml}</div></div>`;
             return card;
         }
 
@@ -1689,13 +1845,14 @@
         }
         
         function applyFiltersAndSort() {
-            let filteredPOs = [...allFetchedPOs];
+            if (!projectCache[currentJobNumber]) return;
+            let filteredPOs = [...projectCache[currentJobNumber].pos];
             const statusFilter = document.getElementById('filterStatus').value;
             const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
             if (statusFilter === 'pending') {
-                filteredPOs = filteredPOs.filter(po => !po.status || po.status.toLowerCase().includes('pending') || po.status.toLowerCase().includes('regenerated'));
+                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase() !== 'approved');
             } else if (statusFilter !== 'all') { 
-                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase().includes(statusFilter)); 
+                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase() === statusFilter); 
             }
             if (vendorNameFilter) { filteredPOs = filteredPOs.filter(po => po.vendor_name?.toLowerCase().includes(vendorNameFilter)); }
             renderPOGrid(filteredPOs);
@@ -1708,7 +1865,7 @@
 
         // --- REVIEW MODAL LOGIC ---
         async function openReviewModal(poId) {
-            const poData = allFetchedPOs.find(p => p.po_id_on_grid === poId); if (!poData) { alert('Could not find PO data.'); return; }
+            const poData = projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId); if (!poData) { alert('Could not find PO data.'); return; }
             const fullData = poData.full_po_data_for_review || poData;
             document.getElementById('reviewModalTitle').textContent = `Review PO: ${fullData.po_number}`;
             document.getElementById('editPoIdOnGrid').value = poId;
@@ -1788,7 +1945,7 @@
 
         async function handleReviewModalSubmit(isApproval) {
             const poId = document.getElementById('editPoIdOnGrid').value;
-            const originalPO = allFetchedPOs.find(p => p.po_id_on_grid === poId);
+            const originalPO = projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId);
             if (!originalPO || !originalPO.full_po_data_for_review) {
                 showLoadingSuccessModal('error', 'Could not find original PO data.');
                 return;
@@ -1797,17 +1954,14 @@
             const actionText = isApproval ? 'Approving PO...' : 'Saving Changes...';
             showLoadingSuccessModal('loading', actionText);
 
-            // **CORRECTED PAYLOAD CONSTRUCTION**
-            // Start with a deep copy of the original full data to preserve all fields
             const poDataToRegenerate = JSON.parse(JSON.stringify(originalPO.full_po_data_for_review));
 
-            // Overwrite with values from the form
             poDataToRegenerate.po_number = document.getElementById('editPoNumber').value;
             poDataToRegenerate.po_date = document.getElementById('editPoDate').value;
             poDataToRegenerate.vendor_name = document.getElementById('editVendor').value;
             poDataToRegenerate.vendor_address = document.getElementById('editVendorAddress').value;
             poDataToRegenerate.vendor_phone = document.getElementById('editVendorPhone').value;
-            poDataToRegenerate.vendor_email = document.getElementById('editVendorEmail').value || null; // Ensure null if empty
+            poDataToRegenerate.vendor_email = document.getElementById('editVendorEmail').value || null;
             poDataToRegenerate.vendor_contact = document.getElementById('editVendorContact').value;
             poDataToRegenerate.vendor_tin = document.getElementById('editVendorTIN').value;
             poDataToRegenerate.has_w9_document = document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true';
@@ -1816,7 +1970,6 @@
             poDataToRegenerate.total_vendor_amount_str = document.getElementById('editTotalAmount').value;
             poDataToRegenerate.status = isApproval ? 'Approved' : 'Regenerated';
             
-            // Rebuild line items from the form
             poDataToRegenerate.aggregated_line_items = [];
             document.querySelectorAll('#editLineItemsContainer .line-item-grid').forEach(itemRow => {
                 const inputs = itemRow.querySelectorAll('input');
@@ -1826,7 +1979,7 @@
                     quantity: inputs[2].value,
                     unit_price: inputs[3].value,
                     amount: inputs[4].value,
-                    source_doc_for_po_line: null // This isn't edited on the form
+                    source_doc_for_po_line: null
                 });
             });
             
@@ -1850,15 +2003,15 @@
                 const updatedPOInfo = await response.json();
                 showLoadingSuccessModal('success');
                 
-                const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
+                const poIndex = projectCache[currentJobNumber].pos.findIndex(p => p.po_id_on_grid === poId);
                 if (poIndex > -1) {
-                    allFetchedPOs[poIndex] = updatedPOInfo;
+                    projectCache[currentJobNumber].pos[poIndex] = updatedPOInfo;
                 } else {
-                    allFetchedPOs.push(updatedPOInfo);
+                    projectCache[currentJobNumber].pos.push(updatedPOInfo);
                 }
 
                 closeModal('reviewModal');
-                applyFiltersAndSort();
+                renderPOGrid(projectCache[currentJobNumber].pos);
 
             } catch (error) {
                 console.error('Error saving PO:', error);
@@ -1881,7 +2034,7 @@
                         <!-- Plan info will be rendered by fetchUserTier -->
                     </div>
                 </div>`;
-            fetchUserTier(true); // Pass true to render the full billing card
+            fetchUserTier(true);
         }
 
         function renderDropboxPage() {
@@ -1917,7 +2070,7 @@
                     successMsg.textContent = '✅ Token updated successfully!';
                     successMsg.style.opacity = '1';
                     setTimeout(() => {
-                         showAppView('dashboardView'); // Guide user back to dashboard
+                         showAppView('dashboardView');
                     }, 1500);
                 } else {
                     alert('Please enter a valid token.');
@@ -1966,7 +2119,7 @@
                     `;
                 }
             } catch (error) {
-                userTier = 'free'; // Default to free on error
+                userTier = 'free';
                 if (renderFullCard) {
                      const billingContainer = document.getElementById('billing-plan-info');
                      if(billingContainer) billingContainer.innerHTML = `<p style="color: var(--error-color);">Could not load your subscription details.</p>`;
@@ -1984,7 +2137,7 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/users/me/switch-tier`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('app_token')}` } });
                 if (!response.ok) throw new Error('Failed to switch tier');
-                await fetchUserTier(true); // Re-render the full card
+                await fetchUserTier(true);
             } catch (error) {
                 alert('An error occurred while switching tiers.');
                 if (switchBtn) {
@@ -1995,7 +2148,7 @@
 
         // --- Dropbox Folder Picker ---
         function openDropboxPicker(target) {
-            currentPickerTarget = target; // e.g., 'source_wizard' or 'output_wizard'
+            currentPickerTarget = target;
             openModal('dropboxPickerModal');
             const pickerInfo = document.getElementById('dbx-picker-info');
             if (target.includes('output')) {
@@ -2125,16 +2278,20 @@
         }
 
         function finishWizard() {
-            currentJobNumberContext = document.getElementById('wizard_inputJobNumber').value.trim();
-            currentProjectNameContext = document.getElementById('wizard_inputProjectName').value.trim();
+            const newJobNumber = document.getElementById('wizard_inputJobNumber').value.trim();
+            const newProjectName = document.getElementById('wizard_inputProjectName').value.trim();
             const sourcePath = document.getElementById('wizard_dropboxSourcePath').value.trim();
             const outputPath = document.getElementById('wizard_dropboxOutputPath').value.trim();
             
-            if (!currentJobNumberContext || !currentProjectNameContext || !sourcePath || !outputPath) {
+            if (!newJobNumber || !newProjectName || !sourcePath || !outputPath) {
                 alert("All fields, including source and output folders, are required to start processing.");
                 return;
             }
             
+            addProject(newJobNumber, newProjectName);
+            currentJobNumber = newJobNumber;
+            saveStateToLocalStorage();
+
             document.getElementById('onboardingWizard').classList.remove('active');
             startDocumentProcessing(sourcePath, outputPath);
         }
