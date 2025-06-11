@@ -485,11 +485,42 @@
         #reviewModal .form-group { margin-bottom: 1rem; }
         #reviewModal .form-group label { font-size: 0.8rem; }
         #reviewModal .form-group input, #reviewModal .form-group select, #reviewModal .form-group textarea { padding: 0.5rem; font-size: 0.9rem; background: var(--primary-bg); }
-        #reviewModal .line-item-grid { display: grid; grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
-        #reviewModal .line-item-grid input { font-size: 0.8rem; padding: 0.4rem; background: var(--primary-bg); }
-        #reviewModal .line-item-grid button { background: none; border: none; color: var(--error-color); cursor: pointer; }
         #reviewModal .modal-footer { padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; margin-top: 1rem; }
         .highlight-box { position: absolute; border: 2px solid var(--accent-neon); background-color: rgba(74, 189, 237, 0.2); border-radius: 3px; z-index: 2001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
+        
+        /* Review Modal Line Items - Improved Readability */
+        #reviewModal .line-item-grid { 
+            display: grid; 
+            grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto; 
+            gap: 0.75rem;
+            align-items: center; 
+            margin-bottom: 1rem;
+        }
+        #reviewModal .line-item-grid input { 
+            font-size: 0.9rem; 
+            padding: 0.6rem;
+            background: var(--primary-bg); 
+            color: var(--text-primary);
+        }
+        #reviewModal .line-item-grid button { 
+            background: none; border: none; color: var(--error-color); cursor: pointer; padding: 0.6rem;
+        }
+        #reviewModal .line-item-grid-header {
+            display: grid;
+            grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.25rem;
+        }
+        #reviewModal .line-item-grid-header label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        #reviewModal .line-item-grid-header label.text-right {
+            text-align: right;
+        }
+
 
         /* App Page Structure */
         #appPageContainer { display: none; min-height: 100vh; padding-top: 8rem; }
@@ -564,7 +595,6 @@
         #noPOsActionContainer { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-secondary); }
         #noPOsActionContainer h3 { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1rem; }
         
-        /* NEW - Approved PO Card Styling */
         .po-card.po-card-approved {
             border-color: var(--success-color);
             background: rgba(52, 211, 153, 0.05);
@@ -688,6 +718,55 @@
         .wizard-navigation {
             margin-top: 2rem;
         }
+
+        /* NEW: Loading/Success Modal */
+        #loadingSuccessModal .modal-content {
+            background: var(--secondary-bg);
+            padding: 3rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            width: auto;
+            min-width: 250px;
+            box-shadow: none;
+        }
+        #loadingSuccessModal .spinner-container,
+        #loadingSuccessModal .success-container,
+        #loadingSuccessModal .error-container {
+            display: none;
+        }
+        #loadingSuccessModal .spinner-container.active,
+        #loadingSuccessModal .success-container.active,
+        #loadingSuccessModal .error-container.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #loadingSuccessModal .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--accent-neon);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        #loadingSuccessModal p {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success-color); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .checkmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; margin: 0 auto 1rem; box-shadow: inset 0px 0px 0px var(--success-color); animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+        .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+        @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+        @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 30px var(--success-color); } }
+        .crossmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--error-color); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .crossmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; margin: 0 auto 1rem; box-shadow: inset 0px 0px 0px var(--error-color); animation: fill-error .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+        .crossmark__cross { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+        @keyframes fill-error { 100% { box-shadow: inset 0px 0px 0px 30px var(--error-color); } }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -955,7 +1034,7 @@
         </div>
     </div>
     
-    <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe><div class="highlight-box" id="highlightBox"></div></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm" oninput="updateTotalFromManualInputs()"><input type="hidden" id="editPoIdOnGrid"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editPoNumber">PO Number</label><input type="text" id="editPoNumber" name="po_number"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editVendorEmail">Vendor Email</label><input type="text" id="editVendorEmail" name="vendor_email"></div></div><div class="form-group"><label for="editVendorContact">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact"></div><div class="form-group"><label for="editVendorTIN">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin"></div><div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;"><div><label>W9 Attached?</label><div class="segmented-control" id="w9AttachedControl"><button type="button" data-value="true">Yes</button><button type="button" data-value="false">No</button></div></div><div><label>Incorporated?</label><div class="segmented-control" id="incorpControl"><button type="button" data-value="Yes">Yes</button><button type="button" data-value="No">No</button><button type="button" data-value="Unknown">Unk</button></div></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount" value="0.00"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" readonly style="background:var(--secondary-bg); cursor: not-allowed;"></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;"><span class="btn-text">Save Changes</span><span class="spinner"></span></button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);"><span class="btn-text">Approve PO</span><span class="spinner"></span></button></div></div></div></div></div>
+    <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe><div class="highlight-box" id="highlightBox"></div></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm" oninput="updateTotalFromManualInputs()"><input type="hidden" id="editPoIdOnGrid"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editPoNumber">PO Number</label><input type="text" id="editPoNumber" name="po_number"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editVendorEmail">Vendor Email</label><input type="text" id="editVendorEmail" name="vendor_email"></div></div><div class="form-group"><label for="editVendorContact">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact"></div><div class="form-group"><label for="editVendorTIN">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin"></div><div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;"><div><label>W9 Attached?</label><div class="segmented-control" id="w9AttachedControl"><button type="button" data-value="true">Yes</button><button type="button" data-value="false">No</button></div></div><div><label>Incorporated?</label><div class="segmented-control" id="incorpControl"><button type="button" data-value="Yes">Yes</button><button type="button" data-value="No">No</button><button type="button" data-value="Unknown">Unk</button></div></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div class="line-item-grid-header"><label>Description</label><label>Code</label><label>Qty</label><label class="text-right">Unit Price</label><label class="text-right">Amount</label><span></span></div><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount" value="0.00"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" readonly style="background:var(--secondary-bg); cursor: not-allowed;"></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;"><span class="btn-text">Save Changes</span><span class="spinner"></span></button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);"><span class="btn-text">Approve PO</span><span class="spinner"></span></button></div></div></div></div></div>
 
     <!-- Onboarding Wizard -->
     <div id="onboardingWizard">
@@ -997,6 +1076,30 @@
                     </div>
                 </div>
                 <div class="wizard-navigation"><button class="btn btn-primary" onclick="finishWizard()">Start Processing</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Loading/Success Modal -->
+    <div class="modal" id="loadingSuccessModal">
+        <div class="modal-content">
+            <div class="spinner-container active">
+                <div class="spinner"></div>
+                <p id="loadingStatusText">Saving...</p>
+            </div>
+            <div class="success-container">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+                <p>Success!</p>
+            </div>
+            <div class="error-container">
+                <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
+                </svg>
+                <p id="loadingErrorText">Error</p>
             </div>
         </div>
     </div>
@@ -1653,45 +1756,110 @@
             document.getElementById('editTotalAmount').value = (subtotal + tax).toFixed(2);
         }
 
-        async function handleReviewModalSubmit(isApproval) {
-            const saveBtn = document.getElementById('reviewModalSaveChangesButton');
-            const approveBtn = document.getElementById('reviewModalApproveButton');
-            
-            const actionButton = isApproval ? approveBtn : saveBtn;
-            actionButton.classList.add('loading');
-            
-            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate processing
-            
-            actionButton.classList.remove('loading');
+        function showLoadingSuccessModal(status, message = '') {
+            const modal = document.getElementById('loadingSuccessModal');
+            const spinnerContainer = modal.querySelector('.spinner-container');
+            const successContainer = modal.querySelector('.success-container');
+            const errorContainer = modal.querySelector('.error-container');
 
-            const poId = document.getElementById('editPoIdOnGrid').value; 
-            const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
-            if(poIndex > -1) {
-                const poToUpdate = allFetchedPOs[poIndex];
-                const dataToUpdate = poToUpdate.full_po_data_for_review || poToUpdate;
+            spinnerContainer.classList.remove('active');
+            successContainer.classList.remove('active');
+            errorContainer.classList.remove('active');
 
-                const newVendorName = document.getElementById('editVendor').value;
-                dataToUpdate.vendor_name = newVendorName;
-                poToUpdate.vendor_name = newVendorName;
-                
-                const newTotal = '$' + document.getElementById('editTotalAmount').value;
-                dataToUpdate.total_amount = newTotal;
-                poToUpdate.total_amount = newTotal;
-
-                const w9Value = document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true';
-                const incorpValue = document.querySelector('#incorpControl button.active')?.dataset.value;
-                dataToUpdate.has_w9_document = w9Value;
-                dataToUpdate.is_incorp_on_w9 = incorpValue;
-                
-                if(isApproval) { 
-                    poToUpdate.status = 'Approved'; 
-                } else { 
-                    poToUpdate.status = 'Regenerated'; 
-                } 
+            if (status === 'loading') {
+                modal.querySelector('#loadingStatusText').textContent = message || 'Processing...';
+                spinnerContainer.classList.add('active');
+                openModal('loadingSuccessModal');
+            } else if (status === 'success') {
+                spinnerContainer.classList.remove('active');
+                successContainer.classList.add('active');
+                setTimeout(() => {
+                    closeModal('loadingSuccessModal');
+                }, 1500);
+            } else if (status === 'error') {
+                spinnerContainer.classList.remove('active');
+                modal.querySelector('#loadingErrorText').textContent = message || 'An error occurred.';
+                errorContainer.classList.add('active');
+                setTimeout(() => {
+                    closeModal('loadingSuccessModal');
+                }, 3000);
             }
-            closeModal('reviewModal'); 
-            applyFiltersAndSort(); 
-            alert(`PO changes ${isApproval ? 'approved' : 'saved'} successfully! (Note: This is a frontend demo of the action)`);
+        }
+
+        async function handleReviewModalSubmit(isApproval) {
+            const poId = document.getElementById('editPoIdOnGrid').value;
+            const originalPO = allFetchedPOs.find(p => p.po_id_on_grid === poId);
+            if (!originalPO) {
+                showLoadingSuccessModal('error', 'Could not find original PO data.');
+                return;
+            }
+
+            const actionText = isApproval ? 'Approving PO...' : 'Saving Changes...';
+            showLoadingSuccessModal('loading', actionText);
+
+            const poDataToRegenerate = {
+                ...originalPO.full_po_data_for_review,
+                po_number: document.getElementById('editPoNumber').value,
+                po_date: document.getElementById('editPoDate').value,
+                vendor_name: document.getElementById('editVendor').value,
+                vendor_address: document.getElementById('editVendorAddress').value,
+                vendor_phone: document.getElementById('editVendorPhone').value,
+                vendor_email: document.getElementById('editVendorEmail').value,
+                vendor_contact: document.getElementById('editVendorContact').value,
+                vendor_tin: document.getElementById('editVendorTIN').value,
+                has_w9_document: document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true',
+                is_incorp_on_w9: document.querySelector('#incorpControl button.active')?.dataset.value || 'Unknown',
+                tax_amount: document.getElementById('editTaxAmount').value,
+                total_vendor_amount_str: document.getElementById('editTotalAmount').value,
+                status: isApproval ? 'Approved' : 'Regenerated',
+                aggregated_line_items: [],
+            };
+
+            document.querySelectorAll('#editLineItemsContainer .line-item-grid').forEach(itemRow => {
+                const inputs = itemRow.querySelectorAll('input');
+                poDataToRegenerate.aggregated_line_items.push({
+                    description: inputs[0].value,
+                    budget_code: inputs[1].value,
+                    quantity: inputs[2].value,
+                    unit_price: inputs[3].value,
+                    amount: inputs[4].value,
+                });
+            });
+            
+            const payload = { po_data_to_regenerate: poDataToRegenerate };
+
+            try {
+                const appToken = localStorage.getItem('app_token');
+                const url = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ detail: 'Failed to save. Please try again.' }));
+                    throw new Error(errorData.detail || `Server responded with status ${response.status}`);
+                }
+
+                const updatedPOInfo = await response.json();
+                showLoadingSuccessModal('success');
+                
+                const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
+                if (poIndex > -1) {
+                    allFetchedPOs[poIndex] = updatedPOInfo;
+                } else {
+                    allFetchedPOs.push(updatedPOInfo);
+                }
+
+                closeModal('reviewModal');
+                applyFiltersAndSort();
+
+            } catch (error) {
+                console.error('Error saving PO:', error);
+                showLoadingSuccessModal('error', error.message);
+            }
         }
 
         function addHighlightListeners() {
