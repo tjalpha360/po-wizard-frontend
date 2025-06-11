@@ -638,71 +638,6 @@
         .stat-label { color: #8A9BA8; font-size: 0.9rem; }
         .status-message { text-align: center; margin-top: 20px; padding: 15px; background: rgba(45, 95, 130, 0.1); border-radius: 15px; border-left: 4px solid #4ABDED; }
         .status-text { color: #4ABDED; font-weight: 500; font-size: 1.1rem; min-height: 24px;}
-
-        /* Fullscreen Onboarding Wizard */
-        #onboardingWizard {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(var(--primary-bg-rgb), 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 1500;
-            display: none; /* Hidden by default */
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        #onboardingWizard.active {
-            display: flex;
-        }
-        .wizard-container {
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-            height: 250px;
-        }
-        .wizard-slide {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            pointer-events: none;
-        }
-        .wizard-slide.active {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .wizard-slide h2 {
-            font-size: 2.5rem;
-            color: var(--accent-neon);
-            margin-bottom: 1rem;
-        }
-        .wizard-slide p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 450px;
-        }
-        .wizard-slide .form-group input {
-            text-align: center;
-            font-size: 1.2rem;
-            padding: 1rem;
-        }
-        .wizard-slide .form-group-inline {
-            width: 100%;
-        }
-        .wizard-navigation {
-            margin-top: 2rem;
-        }
         
         /* Action Toast Notification */
         #actionToast {
@@ -961,7 +896,7 @@
                 <!-- Dashboard View -->
                 <div id="dashboardView" class="app-view">
                     <div id="dashboard-content">
-                        <!-- Guided steps will be injected here by JS -->
+                        <!-- Content rendered by JS -->
                     </div>
                 </div>
                 <!-- Dropbox View -->
@@ -1032,50 +967,6 @@
     
     <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe><div class="highlight-box" id="highlightBox"></div></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm" oninput="updateTotalFromManualInputs()"><input type="hidden" id="editPoIdOnGrid"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editPoNumber">PO Number</label><input type="text" id="editPoNumber" name="po_number"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editVendorEmail">Vendor Email</label><input type="text" id="editVendorEmail" name="vendor_email"></div></div><div class="form-group"><label for="editVendorContact">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact"></div><div class="form-group"><label for="editVendorTIN">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin"></div><div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;"><div><label>W9 Attached?</label><div class="segmented-control" id="w9AttachedControl"><button type="button" data-value="true">Yes</button><button type="button" data-value="false">No</button></div></div><div><label>Incorporated?</label><div class="segmented-control" id="incorpControl"><button type="button" data-value="Yes">Yes</button><button type="button" data-value="No">No</button><button type="button" data-value="Unknown">Unk</button></div></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount" value="0.00"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" readonly></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;"><span class="btn-text">Save Changes</span><span class="spinner"></span></button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);"><span class="btn-text">Approve PO</span><span class="spinner"></span></button></div></div></div></div>
 
-    <!-- Onboarding Wizard -->
-    <div id="onboardingWizard">
-        <div class="wizard-container">
-            <!-- Step 1: Job Number -->
-            <div class="wizard-slide" data-step="1">
-                <h2>Step 1: Job Number</h2>
-                <p>Enter the unique Job Number for this production. This helps keep all your projects organized.</p>
-                <div class="form-group" style="width: 100%;"><input type="text" id="wizard_inputJobNumber" placeholder="e.g., 85319"></div>
-                <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(2)">Next</button></div>
-            </div>
-            <!-- Step 2: Project Name -->
-            <div class="wizard-slide" data-step="2">
-                <h2>Step 2: Project Name</h2>
-                <p>Give your project a descriptive name. This will appear on all your generated documents.</p>
-                <div class="form-group" style="width: 100%;"><input type="text" id="wizard_inputProjectName" placeholder="e.g., Macy's Holiday Shoot"></div>
-                <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(3)">Next</button></div>
-            </div>
-             <!-- Step 3: Source Path -->
-            <div class="wizard-slide" data-step="3">
-                <h2>Step 3: Source Folder</h2>
-                <p>Choose the main Dropbox folder that contains all of your individual vendor folders. We'll scan everything inside.</p>
-                <div class="form-group" style="width: 100%;">
-                    <div class="form-group-inline">
-                        <input type="text" id="wizard_dropboxSourcePath" placeholder="Click 'Choose folder' to select" readonly>
-                        <button class="btn btn-secondary" onclick="openDropboxPicker('source_wizard')">Choose folder</button>
-                    </div>
-                </div>
-                <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(4)">Next</button></div>
-            </div>
-            <!-- Step 4: Output Path -->
-            <div class="wizard-slide" data-step="4">
-                <h2>Step 4: Output Folder</h2>
-                <p>Choose the Dropbox folder where you want your final, organized Purchase Orders to be saved.</p>
-                 <div class="form-group" style="width: 100%;">
-                    <div class="form-group-inline">
-                        <input type="text" id="wizard_dropboxOutputPath" placeholder="Click 'Choose folder' to select" readonly>
-                        <button class="btn btn-secondary" onclick="openDropboxPicker('output_wizard')">Choose folder</button>
-                    </div>
-                </div>
-                <div class="wizard-navigation"><button class="btn btn-primary" onclick="finishWizard()">Start Processing</button></div>
-            </div>
-        </div>
-    </div>
-
     <!-- ACTION TOAST NOTIFICATION -->
     <div id="actionToast">
         <div class="toast-icon"></div>
@@ -1123,7 +1014,6 @@
             document.getElementById('landingNavLinks').style.display = 'flex';
             landingPageContainer.style.display = 'block';
             appPageContainer.style.display = 'none';
-            document.getElementById('onboardingWizard').classList.remove('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1143,9 +1033,12 @@
             document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.app-sidebar button').forEach(btn => btn.classList.remove('active'));
             
-            document.getElementById(viewId)?.classList.add('active');
+            const viewEl = document.getElementById(viewId);
+            if(viewEl) viewEl.classList.add('active');
+
             const navBtnId = viewId.replace('View', '');
-            document.getElementById(`navBtn${navBtnId.charAt(0).toUpperCase() + navBtnId.slice(1)}`)?.classList.add('active');
+            const navBtn = document.getElementById(`navBtn${navBtnId.charAt(0).toUpperCase() + navBtnId.slice(1)}`);
+            if(navBtn) navBtn.classList.add('active');
 
             if (viewId === 'dashboardView') {
                 renderMyPOsPage();
@@ -1222,7 +1115,7 @@
             document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => handleReviewModalSubmit(false));
             document.getElementById('reviewModalApproveButton').addEventListener('click', () => handleReviewModalSubmit(true));
             
-            // Segmented Control Logic (for W9/Incorp buttons)
+             // Segmented Control Logic (for W9/Incorp buttons)
             document.body.addEventListener('click', (e) => {
                 if (e.target && e.target.matches('.segmented-control button')) {
                     const button = e.target;
@@ -1231,7 +1124,7 @@
                     button.classList.add('active');
                 }
             });
-            
+
             // Organic movement scripts
             (() => {
                 const light = document.querySelector('.mouse-aware-light');
@@ -1454,66 +1347,91 @@
         // --- APP PAGE: MY POs LOGIC ---
         function renderMyPOsPage() {
             const container = document.getElementById('dashboard-content');
-            container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`; // Add title back
-
-            // Step 1: Check for Dropbox token. If missing, redirect.
+            
             if (!dropboxAccessToken) {
                 showAppView('dropboxView');
                 return;
             }
 
-            // Step 2: Configure Job
             if (!currentJobNumberContext) {
-                 startOnboardingWizard();
-                 return;
+                renderOnboardingStep();
+            } else {
+                container.innerHTML = `
+                    <h2 class="app-section-title">Dashboard</h2>
+                    <div id="poDashboardStep">
+                        <div class="po-header">
+                            <div class="po-header-info">
+                                <p>Job: <span id="displayJobNumber_dashboard">${currentJobNumberContext}</span> | Project: <span id="displayProjectName_dashboard">${currentProjectNameContext}</span></p>
+                                <p id="poCount">0 POs Generated</p>
+                            </div>
+                            <button id="newPOBatchBtn" class="btn btn-secondary">Process New Job</button>
+                        </div>
+                        <div id="batchActionControls" class="po-actions-bar" style="display: none;">
+                            <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                <button id="approveSelectedButton" class="btn btn-secondary" style="border-color: var(--success-color); color: var(--success-color);" disabled>Approve</button>
+                                <button id="deleteSelectedButton" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);" disabled>Delete</button>
+                            </div>
+                        </div>
+                        <div class="po-actions-bar">
+                            <div class="po-filters">
+                                <select id="filterStatus"><option value="all">All Status</option><option value="pending">Pending</option><option value="approved">Approved</option></select>
+                                <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." style="flex-grow: 1;">
+                            </div>
+                        </div>
+                        <div id="poGrid"></div>
+                        <div id="noPOsActionContainer" style="display: none;">
+                            <h3>No Purchase Orders Found</h3>
+                            <p id="noPOsMessage">You can start by processing a new batch.</p>
+                            <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Process New Job</button>
+                        </div>
+                    </div>`;
+            
+                document.getElementById('newPOBatchBtn').addEventListener('click', resetAndStartNewBatch);
+                document.getElementById('noPOsCreateBtn').addEventListener('click', resetAndStartNewBatch);
+                document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
+                document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
+                document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
+                document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
+                
+                fetchGeneratedPOs();
             }
+        }
+
+        function renderOnboardingStep() {
+            const container = document.getElementById('dashboard-content');
+            container.innerHTML = `
+                <h2 class="app-section-title">Start a New Job</h2>
+                <div class="guided-step-card">
+                    <h3>Configure Your Production</h3>
+                    <p>Enter the details for your production. These will be used to generate and organize your Purchase Orders.</p>
+                    <div class="form-group"><label for="onboard_jobNumber">Job Number</label><input type="text" id="onboard_jobNumber" placeholder="e.g., 85319"></div>
+                    <div class="form-group"><label for="onboard_projectName">Project Name</label><input type="text" id="onboard_projectName" placeholder="e.g., Macy's Holiday Shoot"></div>
+                    <div class="form-group"><label for="onboard_sourcePath">Source Folder (in Dropbox)</label><input type="text" id="onboard_sourcePath" placeholder="e.g., /My Production/Vendor Docs"></div>
+                    <div class="form-group"><label for="onboard_outputPath">Output Folder (in Dropbox)</label><input type="text" id="onboard_outputPath" placeholder="e.g., /My Production/Generated POs"></div>
+                    <button class="btn btn-primary" onclick="startProcessingFromOnboarding()">Start Processing</button>
+                </div>
+            `;
+        }
+
+        function startProcessingFromOnboarding() {
+            currentJobNumberContext = document.getElementById('onboard_jobNumber').value.trim();
+            currentProjectNameContext = document.getElementById('onboard_projectName').value.trim();
+            const sourcePath = document.getElementById('onboard_sourcePath').value.trim();
+            const outputPath = document.getElementById('onboard_outputPath').value.trim();
             
-            // Step 3: PO Dashboard
-            container.innerHTML += `
-                <div id="poDashboardStep">
-                    <div class="po-header">
-                        <div class="po-header-info">
-                            <p>Job: <span id="displayJobNumber_dashboard">${currentJobNumberContext}</span> | Project: <span id="displayProjectName_dashboard">${currentProjectNameContext}</span></p>
-                            <p id="poCount">0 POs Generated</p>
-                        </div>
-                        <button id="newPOBatchBtn" class="btn btn-secondary">Process New Job</button>
-                    </div>
-                    <div id="batchActionControls" class="po-actions-bar" style="display: none;">
-                         <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
-                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                             <button id="approveSelectedButton" class="btn btn-secondary" style="border-color: var(--success-color); color: var(--success-color);" disabled>Approve</button>
-                             <button id="deleteSelectedButton" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);" disabled>Delete</button>
-                         </div>
-                    </div>
-                    <div class="po-actions-bar">
-                        <div class="po-filters">
-                            <select id="filterStatus"><option value="all">All Status</option><option value="pending">Pending</option><option value="approved">Approved</option></select>
-                            <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." style="flex-grow: 1;">
-                        </div>
-                    </div>
-                    <div id="poGrid"></div>
-                    <div id="noPOsActionContainer" style="display: none;">
-                        <h3>No Purchase Orders Found</h3>
-                        <p id="noPOsMessage">You can start by processing a new batch.</p>
-                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Process New Job</button>
-                    </div>
-                </div>`;
-            
-            document.getElementById('newPOBatchBtn').addEventListener('click', resetAndStartNewBatch);
-            document.getElementById('noPOsCreateBtn').addEventListener('click', resetAndStartNewBatch);
-            document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
-            document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
-            document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
-            document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
-            
-            fetchGeneratedPOs();
+            if (currentJobNumberContext && currentProjectNameContext && sourcePath && outputPath) {
+                startDocumentProcessing(sourcePath, outputPath);
+            } else {
+                alert("All fields are required to start processing.");
+            }
         }
         
         function resetAndStartNewBatch() {
             currentJobNumberContext = "";
             currentProjectNameContext = "";
             allFetchedPOs = [];
-            startOnboardingWizard();
+            renderMyPOsPage();
         }
 
         async function startDocumentProcessing(sourcePath, outputPath) {
@@ -1973,7 +1891,7 @@
             document.getElementById('dbx-confirm-selection').onclick = () => {
                 const selectedRadio = document.querySelector('input[name="dbx-folder"]:checked');
                 if (selectedRadio) {
-                    const targetInputId = currentPickerTarget.includes('source') ? 'wizard_dropboxSourcePath' : 'wizard_dropboxOutputPath';
+                    const targetInputId = currentPickerTarget.includes('source') ? 'onboard_sourcePath' : 'onboard_outputPath';
                     document.getElementById(targetInputId).value = selectedRadio.value;
                     closeModal('dropboxPickerModal');
                 } else {
@@ -2053,34 +1971,6 @@
             } catch (error) {
                 console.error("Error fetching Dropbox folders:", error);
                 containerEl.innerHTML = `<li style="color: var(--error-color);">${error.message}</li>`;
-            }
-        }
-
-        // --- Onboarding Wizard Logic ---
-        function startOnboardingWizard() {
-            document.getElementById('onboardingWizard').classList.add('active');
-            wizardNext(1);
-        }
-
-        function wizardNext(step) {
-            document.querySelectorAll('.wizard-slide').forEach(s => s.classList.remove('active'));
-            const nextSlide = document.querySelector(`.wizard-slide[data-step="${step}"]`);
-            if (nextSlide) {
-                nextSlide.classList.add('active');
-            }
-        }
-
-        function finishWizard() {
-            currentJobNumberContext = document.getElementById('wizard_inputJobNumber').value.trim();
-            currentProjectNameContext = document.getElementById('wizard_inputProjectName').value.trim();
-            const sourcePath = document.getElementById('wizard_dropboxSourcePath').value.trim();
-            const outputPath = document.getElementById('wizard_dropboxOutputPath').value.trim();
-            
-            if (currentJobNumberContext && currentProjectNameContext && sourcePath && outputPath) {
-                document.getElementById('onboardingWizard').classList.remove('active');
-                startDocumentProcessing(sourcePath, outputPath);
-            } else {
-                alert("All fields, including source and output paths, are required.");
             }
         }
     </script>
