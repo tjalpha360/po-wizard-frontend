@@ -581,7 +581,6 @@
         .po-card.selected-card { border-color: var(--accent-neon); box-shadow: 0 0 15px rgba(74, 189, 237, 0.2); }
         .po-card:hover { transform: translateY(-5px); border-color: var(--accent-neon); }
         
-        /* NEW Checkbox Styling */
         .po-card-checkbox { 
             position: absolute; 
             top: 1rem; 
@@ -600,7 +599,7 @@
         }
 
         .po-card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
-        .po-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .po-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; padding-top: 1.5rem; }
         .po-card-po-number { font-size: 1.25rem; font-weight: 600; color: var(--accent-neon); }
         .po-card-status { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 20px; white-space: nowrap; }
         .status-approved { background-color: rgba(52, 211, 153, 0.1); color: var(--success-color); }
@@ -629,6 +628,7 @@
         }
         .btn-share-approved:hover {
             background: #2fbd8b;
+            color: black;
         }
         .batch-actions-container {
             display: flex; flex-wrap: wrap; gap: 0.5rem;
@@ -873,6 +873,56 @@
         .crossmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; margin: 0 auto 1rem; box-shadow: inset 0px 0px 0px var(--error-color); animation: fill-error .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
         .crossmark__cross { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
         @keyframes fill-error { 100% { box-shadow: inset 0px 0px 0px 30px var(--error-color); } }
+
+        /* NEW Confirmation Modal */
+        #confirmationModal .modal-content {
+            max-width: 500px;
+        }
+        #confirmationModal h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        #confirmationModal p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .confirmation-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* NEW Share Links Modal */
+        #shareLinksModal .modal-content {
+            max-width: 600px;
+        }
+        #shareLinksModal h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        #shareLinksList {
+            list-style: none;
+            max-height: 40vh;
+            overflow-y: auto;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        #shareLinksList li {
+            margin-bottom: 1rem;
+        }
+        #shareLinksList li:last-child {
+            margin-bottom: 0;
+        }
+        #shareLinksList a {
+            color: var(--accent-neon);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        #shareLinksList a:hover {
+            text-decoration: underline;
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -1186,7 +1236,7 @@
         </div>
     </div>
 
-    <!-- NEW Loading/Success Modal -->
+    <!-- Loading/Success Modal -->
     <div class="modal" id="loadingSuccessModal">
         <div class="modal-content">
             <div class="spinner-container active">
@@ -1207,6 +1257,29 @@
                 </svg>
                 <p id="loadingErrorText">Error</p>
             </div>
+        </div>
+    </div>
+    
+    <!-- NEW Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <h3 id="confirmationTitle">Are you sure?</h3>
+            <p id="confirmationMessage">This action cannot be undone.</p>
+            <div class="confirmation-actions">
+                <button id="confirmNoBtn" class="btn btn-secondary">No, Cancel</button>
+                <button id="confirmYesBtn" class="btn btn-primary">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Share Links Modal -->
+    <div class="modal" id="shareLinksModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('shareLinksModal')">×</button>
+            <h3>Shareable Dropbox Links</h3>
+            <ul id="shareLinksList">
+                <!-- Links will be populated here -->
+            </ul>
         </div>
     </div>
 
@@ -1631,7 +1704,7 @@
                          <div class="batch-actions-container">
                              <button id="approveSelectedButton" class="btn btn-secondary" style="border-color: var(--success-color); color: var(--success-color);" disabled>Approve</button>
                              <button id="deleteSelectedButton" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);" disabled>Delete</button>
-                             <button id="shareSelectedButton" class="btn btn-secondary btn-share-batch" disabled title="Multi-share coming soon!">Share Selected</button>
+                             <button id="shareSelectedButton" class="btn btn-primary" style="flex-grow: 1;" disabled>Share Selected</button>
                          </div>
                     </div>
                     <div class="po-actions-bar">
@@ -1654,6 +1727,7 @@
             document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
             document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
             document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
+            document.getElementById('shareSelectedButton').addEventListener('click', handleShareSelected);
             
             renderProjectSwitcher();
             
@@ -1893,10 +1967,18 @@
         }
         
         function handlePOCheckboxChange(checkbox) { const poId = checkbox.dataset.poId; const cardElement = document.getElementById(`po-card-${poId}`); if (checkbox.checked) { selectedPOIds.add(poId); cardElement?.classList.add('selected-card'); } else { selectedPOIds.delete(poId); cardElement?.classList.remove('selected-card'); } updateBatchActionButtons(); }
-        function updateBatchActionButtons() { const count = selectedPOIds.size; const controls = document.getElementById('batchActionControls'); if(!controls) return; document.getElementById('selectedPoCount').textContent = count; document.getElementById('approveSelectedButton').disabled = count === 0; document.getElementById('deleteSelectedButton').disabled = count === 0; controls.style.display = count > 0 ? 'block' : 'none'; }
-        async function handleApproveSelected() { if (selectedPOIds.size === 0 || !confirm(`Approve ${selectedPOIds.size} selected PO(s)?`)) return; allFetchedPOs.forEach(po => { if (selectedPOIds.has(po.po_id_on_grid)) { po.status = 'Approved'; } }); selectedPOIds.clear(); applyFiltersAndSort(); alert('POs marked as approved. (Note: This is a frontend demo of the action)'); }
-        async function handleDeleteSelected() { if (selectedPOIds.size === 0 || !confirm(`DELETE ${selectedPOIds.size} selected PO(s)? This is a demo and will only remove them from view.`)) return; allFetchedPOs = allFetchedPOs.filter(po => !selectedPOIds.has(po.po_id_on_grid)); selectedPOIds.clear(); applyFiltersAndSort(); alert('POs removed from view. (Note: This is a frontend demo of the action)'); }
-
+        
+        function updateBatchActionButtons() { 
+            const count = selectedPOIds.size; 
+            const controls = document.getElementById('batchActionControls'); 
+            if(!controls) return; 
+            document.getElementById('selectedPoCount').textContent = count; 
+            document.getElementById('approveSelectedButton').disabled = count === 0; 
+            document.getElementById('deleteSelectedButton').disabled = count === 0; 
+            document.getElementById('shareSelectedButton').disabled = count === 0;
+            controls.style.display = count > 0 ? 'block' : 'none'; 
+        }
+        
         // --- REVIEW MODAL LOGIC ---
         async function openReviewModal(poId) {
             const poData = projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId); if (!poData) { alert('Could not find PO data.'); return; }
