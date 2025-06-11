@@ -475,7 +475,7 @@
         }
         .modal-close:hover { color: var(--text-primary); }
 
-        /* Review PO Modal */
+        /* Review PO Modal -- DESIGN IMPROVEMENTS */
         #reviewModal .modal-content { max-width: 90vw; width: 100%; max-height: 90vh; display: flex; flex-direction: column; background: var(--secondary-bg); }
         #reviewModal .review-modal-body { display: flex; gap: 2rem; flex-grow: 1; overflow: hidden; }
         #reviewModal .pdf-viewer-area { flex: 2 1 60%; min-width: 0; position: relative; }
@@ -484,11 +484,37 @@
         #reviewModal .form-scroll-container { flex-grow: 1; overflow-y: auto; padding-right: 1rem; }
         #reviewModal .form-group { margin-bottom: 1rem; }
         #reviewModal .form-group label { font-size: 0.8rem; }
-        #reviewModal .form-group input, #reviewModal .form-group select, #reviewModal .form-group textarea { padding: 0.5rem; font-size: 0.9rem; background: var(--primary-bg); }
+        /* Lighter inputs for better readability */
+        #reviewModal .form-group input, #reviewModal .form-group select, #reviewModal .form-group textarea { 
+            padding: 0.5rem; 
+            font-size: 0.9rem; 
+            background: var(--secondary-bg);
+            border: 1px solid #444;
+        }
+        #reviewModal .form-group input:focus, #reviewModal .form-group select:focus, #reviewModal .form-group textarea:focus {
+             border-color: var(--accent-neon);
+        }
+        /* Make readonly Total field distinct */
+        #reviewModal .form-group input[readonly] {
+            background: var(--primary-bg);
+            color: var(--text-secondary);
+        }
         #reviewModal .line-item-grid { display: grid; grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
-        #reviewModal .line-item-grid input { font-size: 0.8rem; padding: 0.4rem; background: var(--primary-bg); }
+        #reviewModal .line-item-grid input { 
+            font-size: 0.8rem; padding: 0.4rem; 
+            background: var(--secondary-bg); /* Match other inputs */
+            border: 1px solid #444;
+        }
         #reviewModal .line-item-grid button { background: none; border: none; color: var(--error-color); cursor: pointer; }
         #reviewModal .modal-footer { padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; margin-top: 1rem; }
+        /* Make Save button more prominent */
+        #reviewModal .modal-footer .btn-secondary {
+            background-color: var(--secondary-bg);
+        }
+        #reviewModal .modal-footer .btn-secondary:hover {
+            background-color: #333;
+            border-color: var(--accent-neon);
+        }
         .highlight-box { position: absolute; border: 2px solid var(--accent-neon); background-color: rgba(74, 189, 237, 0.2); border-radius: 3px; z-index: 2001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
 
         /* App Page Structure */
@@ -676,6 +702,66 @@
         }
         .wizard-navigation {
             margin-top: 2rem;
+        }
+        
+        /* Action Toast Notification */
+        #actionToast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--secondary-bg);
+            color: var(--text-primary);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #actionToast.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #actionToast.success {
+            background: var(--success-color);
+            color: var(--primary-bg);
+            border-color: var(--success-color);
+        }
+        #actionToast.error {
+            background: var(--error-color);
+            color: var(--text-primary);
+            border-color: var(--error-color);
+        }
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .toast-icon .spinner { /* From .btn styles */
+            width: 100%;
+            height: 100%;
+            border: 3px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .toast-icon .checkmark {
+            width: 100%;
+            height: 100%;
+            stroke: var(--primary-bg);
+            stroke-width: 4;
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+            animation: draw-check 0.4s ease-out forwards;
+        }
+        @keyframes draw-check {
+            to { stroke-dashoffset: 0; }
         }
 
         /* Responsive */
@@ -944,7 +1030,7 @@
         </div>
     </div>
     
-    <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe><div class="highlight-box" id="highlightBox"></div></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm" oninput="updateTotalFromManualInputs()"><input type="hidden" id="editPoIdOnGrid"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editPoNumber">PO Number</label><input type="text" id="editPoNumber" name="po_number"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editVendorEmail">Vendor Email</label><input type="text" id="editVendorEmail" name="vendor_email"></div></div><div class="form-group"><label for="editVendorContact">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact"></div><div class="form-group"><label for="editVendorTIN">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin"></div><div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;"><div><label>W9 Attached?</label><div class="segmented-control" id="w9AttachedControl"><button type="button" data-value="true">Yes</button><button type="button" data-value="false">No</button></div></div><div><label>Incorporated?</label><div class="segmented-control" id="incorpControl"><button type="button" data-value="Yes">Yes</button><button type="button" data-value="No">No</button><button type="button" data-value="Unknown">Unk</button></div></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount" value="0.00"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" readonly style="background:var(--secondary-bg); cursor: not-allowed;"></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;"><span class="btn-text">Save Changes</span><span class="spinner"></span></button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);"><span class="btn-text">Approve PO</span><span class="spinner"></span></button></div></div></div></div></div>
+    <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe><div class="highlight-box" id="highlightBox"></div></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm" oninput="updateTotalFromManualInputs()"><input type="hidden" id="editPoIdOnGrid"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editPoNumber">PO Number</label><input type="text" id="editPoNumber" name="po_number"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editVendorEmail">Vendor Email</label><input type="text" id="editVendorEmail" name="vendor_email"></div></div><div class="form-group"><label for="editVendorContact">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact"></div><div class="form-group"><label for="editVendorTIN">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin"></div><div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;"><div><label>W9 Attached?</label><div class="segmented-control" id="w9AttachedControl"><button type="button" data-value="true">Yes</button><button type="button" data-value="false">No</button></div></div><div><label>Incorporated?</label><div class="segmented-control" id="incorpControl"><button type="button" data-value="Yes">Yes</button><button type="button" data-value="No">No</button><button type="button" data-value="Unknown">Unk</button></div></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount" value="0.00"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" readonly></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;"><span class="btn-text">Save Changes</span><span class="spinner"></span></button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);"><span class="btn-text">Approve PO</span><span class="spinner"></span></button></div></div></div></div>
 
     <!-- Onboarding Wizard -->
     <div id="onboardingWizard">
@@ -988,6 +1074,12 @@
                 <div class="wizard-navigation"><button class="btn btn-primary" onclick="finishWizard()">Start Processing</button></div>
             </div>
         </div>
+    </div>
+
+    <!-- ACTION TOAST NOTIFICATION -->
+    <div id="actionToast">
+        <div class="toast-icon"></div>
+        <span class="toast-message"></span>
     </div>
 
 
@@ -1129,6 +1221,16 @@
             document.getElementById('addLineItemBtn').addEventListener('click', () => addLineItemField());
             document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => handleReviewModalSubmit(false));
             document.getElementById('reviewModalApproveButton').addEventListener('click', () => handleReviewModalSubmit(true));
+            
+            // Segmented Control Logic (for W9/Incorp buttons)
+            document.body.addEventListener('click', (e) => {
+                if (e.target && e.target.matches('.segmented-control button')) {
+                    const button = e.target;
+                    const parent = button.parentElement;
+                    parent.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                }
+            });
             
             // Organic movement scripts
             (() => {
@@ -1319,6 +1421,35 @@
         // --- MODAL & UI HELPERS ---
         function openModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
         function closeModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
+        
+        // --- ACTION TOAST NOTIFICATION ---
+        function showActionToast(message, type = 'info', duration = 3000) {
+            const toast = document.getElementById('actionToast');
+            const iconContainer = toast.querySelector('.toast-icon');
+            const messageEl = toast.querySelector('.toast-message');
+            if (!toast || !iconContainer || !messageEl) return;
+
+            toast.className = 'show'; // Reset classes and show
+            iconContainer.innerHTML = ''; 
+
+            if (type === 'loading') {
+                iconContainer.innerHTML = '<div class="spinner"></div>';
+            } else if (type === 'success') {
+                toast.classList.add('success');
+                iconContainer.innerHTML = '<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            } else if (type === 'error') {
+                 toast.classList.add('error');
+            }
+            
+            messageEl.textContent = message;
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+        }
+
 
         // --- APP PAGE: MY POs LOGIC ---
         function renderMyPOsPage() {
@@ -1577,11 +1708,14 @@
             
             const w9AttachedControl = document.getElementById('w9AttachedControl');
             w9AttachedControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            w9AttachedControl.querySelector(`button[data-value="${fullData.has_w9_document}"]`)?.classList.add('active');
+            const w9Button = w9AttachedControl.querySelector(`button[data-value="${fullData.has_w9_document}"]`);
+            if (w9Button) w9Button.classList.add('active');
+
 
             const incorpControl = document.getElementById('incorpControl');
             incorpControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            incorpControl.querySelector(`button[data-value="${fullData.is_incorp_on_w9}"]`)?.classList.add('active');
+            const incorpButton = incorpControl.querySelector(`button[data-value="${fullData.is_incorp_on_w9}"]`);
+            if (incorpButton) incorpButton.classList.add('active');
 
             document.getElementById('editTaxAmount').value = (fullData.tax_amount || '0.00').replace('$', '');
             
@@ -1593,11 +1727,11 @@
             const pdfViewer = document.getElementById('pdfViewer'); const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
             if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&user_tier=${userTier}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
             
-            // Add focus/blur listeners for highlighting
             addHighlightListeners();
 
             openModal('reviewModal');
         }
+
         function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { const container = document.getElementById('editLineItemsContainer'); const div = document.createElement('div'); div.className = 'line-item-grid'; div.innerHTML = `<input type="text" value="${item.description || ''}" placeholder="Description"><input type="text" value="${item.budget_code || ''}" placeholder="Code"><input type="text" value="${item.quantity || '1'}" placeholder="Qty"><input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right"><input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right"><button type="button" onclick="this.parentElement.remove()">×</button>`; container.appendChild(div); }
         
         function updateTotalFromManualInputs() {
@@ -1612,31 +1746,86 @@
         }
 
         async function handleReviewModalSubmit(isApproval) {
-            const saveBtn = document.getElementById('reviewModalSaveChangesButton');
-            const approveBtn = document.getElementById('reviewModalApproveButton');
-            
-            const actionButton = isApproval ? approveBtn : saveBtn;
-            actionButton.classList.add('loading');
-            
-            // Simulate 5-second processing
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            
-            actionButton.classList.remove('loading');
+            const actionText = isApproval ? 'Approving' : 'Saving';
+            showActionToast(`${actionText}...`, 'loading');
 
-            const poId = document.getElementById('editPoIdOnGrid').value; 
-            const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poId);
-            if(poIndex > -1) { 
-                allFetchedPOs[poIndex].vendor_name = document.getElementById('editVendor').value; 
-                allFetchedPOs[poIndex].total_amount = '$' + document.getElementById('editTotalAmount').value; 
-                if(isApproval) { allFetchedPOs[poIndex].status = 'Approved'; } 
-                else { allFetchedPOs[poIndex].status = 'Regenerated'; } 
+            const poIdOnGrid = document.getElementById('editPoIdOnGrid').value;
+            const originalPoData = allFetchedPOs.find(p => p.po_id_on_grid === poIdOnGrid)?.full_po_data_for_review;
+
+            if (!originalPoData) {
+                showActionToast('Error: Original PO data not found.', 'error');
+                return;
             }
-            closeModal('reviewModal'); 
-            applyFiltersAndSort(); 
-            alert(`PO changes ${isApproval ? 'approved' : 'saved'} successfully! (Note: This is a frontend demo of the action)`);
-        }
 
-        // --- NEW FUNCTION TO FIX REFERENCE ERROR ---
+            const lineItems = [];
+            document.querySelectorAll('#editLineItemsContainer .line-item-grid').forEach(row => {
+                lineItems.push({
+                    description: row.children[0].value,
+                    budget_code: row.children[1].value,
+                    quantity: row.children[2].value,
+                    unit_price: row.children[3].value,
+                    amount: row.children[4].value
+                });
+            });
+
+            const w9Button = document.querySelector('#w9AttachedControl button.active');
+            const incorpButton = document.querySelector('#incorpControl button.active');
+
+            const poDataToRegenerate = {
+                ...originalPoData, // Start with original data to keep paths etc.
+                vendor_name: document.getElementById('editVendor').value,
+                vendor_address: document.getElementById('editVendorAddress').value,
+                vendor_phone: document.getElementById('editVendorPhone').value,
+                vendor_email: document.getElementById('editVendorEmail').value,
+                vendor_contact: document.getElementById('editVendorContact').value,
+                vendor_tin: document.getElementById('editVendorTIN').value,
+                po_number: document.getElementById('editPoNumber').value,
+                po_date: document.getElementById('editPoDate').value,
+                has_w9_document: w9Button ? w9Button.dataset.value === 'true' : false,
+                is_incorp_on_w9: incorpButton ? incorpButton.dataset.value : 'Unknown',
+                aggregated_line_items: lineItems,
+                tax_amount: document.getElementById('editTaxAmount').value,
+                total_vendor_amount_str: document.getElementById('editTotalAmount').value,
+                status: isApproval ? 'Approved' : 'Regenerated',
+            };
+            
+            const requestBody = {
+                po_data_to_regenerate: poDataToRegenerate
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('app_token')}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error ${response.status}`);
+                }
+
+                const updatedPO = await response.json();
+                
+                // Update the local data store
+                const poIndex = allFetchedPOs.findIndex(p => p.po_id_on_grid === poIdOnGrid);
+                if (poIndex > -1) {
+                    allFetchedPOs[poIndex] = updatedPO;
+                }
+                
+                closeModal('reviewModal');
+                applyFiltersAndSort(); // Re-render the grid
+                showActionToast(`PO ${isApproval ? 'Approved' : 'Saved'}!`, 'success');
+
+            } catch (error) {
+                console.error("Error submitting PO changes:", error);
+                showActionToast(`Error: ${error.message}`, 'error', 5000);
+            }
+        }
+        
         function addHighlightListeners() {
             // This function is intended to highlight areas on the PDF when a form field is focused.
             // The logic for mapping fields to PDF coordinates is not yet implemented.
