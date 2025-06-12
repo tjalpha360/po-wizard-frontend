@@ -732,7 +732,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 16/9; /* Maintain video aspect ratio */
+            aspect-ratio: 16/9;
         }
         .vendor-display-video {
             position: absolute;
@@ -1759,13 +1759,7 @@
                     </div>
                 </div>`;
             
-            document.getElementById('newPOBatchBtn').addEventListener('click', startOnboardingWizard);
-            document.getElementById('noPOsCreateBtn').addEventListener('click', startOnboardingWizard);
-            document.getElementById('filterStatus').addEventListener('change', applyFiltersAndSort);
-            document.getElementById('filterVendorName').addEventListener('input', applyFiltersAndSort);
-            document.getElementById('approveSelectedButton').addEventListener('click', handleApproveSelected);
-            document.getElementById('deleteSelectedButton').addEventListener('click', handleDeleteSelected);
-            document.getElementById('shareSelectedButton').addEventListener('click', handleShareSelected);
+            setupDashboardListeners();
             
             renderProjectSwitcher();
             
@@ -1775,6 +1769,16 @@
             } else {
                 await fetchGeneratedPOs();
             }
+        }
+
+        function setupDashboardListeners() {
+            document.getElementById('newPOBatchBtn')?.addEventListener('click', startOnboardingWizard);
+            document.getElementById('noPOsCreateBtn')?.addEventListener('click', startOnboardingWizard);
+            document.getElementById('filterStatus')?.addEventListener('change', applyFiltersAndSort);
+            document.getElementById('filterVendorName')?.addEventListener('input', applyFiltersAndSort);
+            document.getElementById('approveSelectedButton')?.addEventListener('click', handleApproveSelected);
+            document.getElementById('deleteSelectedButton')?.addEventListener('click', handleDeleteSelected);
+            document.getElementById('shareSelectedButton')?.addEventListener('click', handleShareSelected);
         }
 
         function renderProjectSwitcher() {
@@ -1791,7 +1795,7 @@
                     const projInCache = projectCache[job] || { pos: [] };
                     const isApproved = projInCache.pos.length > 0 && projInCache.pos.every(po => po.status?.toLowerCase() === 'approved');
                     const dotClass = isApproved ? 'approved' : 'pending';
-                    dropdownHTML += `<a href="#" onclick="switchProject('${job}')"><span class="status-dot ${dotClass}"></span>${job}: ${knownProjects[job]}</a>`;
+                    dropdownHTML += `<a href="#" data-job-id="${job}"><span class="status-dot ${dotClass}"></span>${job}: ${knownProjects[job]}</a>`;
                 }
             }
 
@@ -1805,6 +1809,16 @@
                     <div class="project-switcher-dropdown">${dropdownHTML || '<a>No other projects</a>'}</div>
                 </div>
             `;
+
+            container.querySelectorAll('.project-switcher-dropdown a').forEach(link => {
+                const jobId = link.dataset.jobId;
+                if (jobId) {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        switchProject(jobId);
+                    });
+                }
+            });
         }
         
         async function startDocumentProcessing(sourcePath, outputPath) {
