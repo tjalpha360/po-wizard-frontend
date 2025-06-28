@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI-powered purchase order generation for production coordinators. Transform post-production chaos into precision with PO Wizard.">
+    <meta name="description" content="The AI assistant every production coordinator needs. Turn scattered receipts and invoices into beautiful, accounting-ready purchase orders in seconds. Save 10+ hours per wrap.">
     <meta name="keywords" content="purchase orders, production coordinator, AI automation, post-production, film production">
     <title>PO Wizard - Transform Post-Production Chaos into Precision</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
     <style>
         * {
             margin: 0;
@@ -380,13 +381,92 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
+        /* Value Proposition Section */
+        .value-prop-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+        .value-prop-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            height: 400px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--secondary-bg);
+        }
+        .value-prop-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-neon);
+        }
+        .value-prop-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, filter 0.4s ease;
+            filter: brightness(0.7);
+        }
+        .value-prop-card:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.4) blur(2px);
+        }
+        .value-prop-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+            color: white;
+            transform: translateY(calc(100% - 80px));
+            transition: transform 0.4s ease;
+        }
+        .value-prop-card:hover .value-prop-text {
+            transform: translateY(0);
+        }
+        .value-prop-text h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-neon);
+            font-weight: bold;
+            font-size: 1.4rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .value-prop-text p {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease 0.1s;
+            line-height: 1.5;
+        }
+        .value-prop-card:hover .value-prop-text p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Initial state for animation */
+        .value-prop-card.animate {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .value-prop-card.animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+
         /* Features */
         .features { margin-top: 4rem; column-count: 1; column-gap: 2rem; }
         @media (min-width: 768px) { .features { column-count: 2; } }
         @media (min-width: 1024px) { .features { column-count: 3; } }
         .feature { background: var(--card-bg); padding: 2rem; border-radius: 6px; border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; z-index: 1; margin-bottom: 2rem; break-inside: avoid; -webkit-column-break-inside: avoid; }
         .feature:hover { border-color: var(--accent-neon); transform: translateY(-5px); }
-        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue)); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.5rem; }
+        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue)); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; position: relative; overflow: hidden; }
+        .feature-icon::before { content: ''; position: absolute; inset: -2px; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+        .feature:hover .feature-icon::before { transform: translateX(100%); }
+        .feature-icon svg { width: 28px; height: 28px; fill: var(--primary-bg); }
 
         /* Testimonials */
         .testimonials-container { padding: 4rem 0; }
@@ -738,12 +818,14 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
             transform: translate(-50%, -50%);
             z-index: 0;
             opacity: 1;
+            max-width: 300px;
+            max-height: 200px;
         }
         .vendor-display-content {
             position: relative;
@@ -985,6 +1067,15 @@
         /* Animations */
         .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        @keyframes slide-in-left {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .value-prop-card.animate {
+            animation: slide-in-left 0.5s forwards;
+        }
     </style>
 </head>
 <body>
@@ -996,7 +1087,7 @@
         <nav class="nav-container">
             <div class="nav-left">
                 <a class="logo-container" onclick="showLandingPage()">
-                    <img src="assets/POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
+                    <img src="./assets/POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
                     <div class="logo-text-wrapper">
                         <span class="logo-text">Wizard</span>
                     </div>
@@ -1038,11 +1129,11 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
-                <h1>Transform <span class="highlight-chaos">Post-Production Chaos</span> into <span class="highlight-precision">Precision</span></h1>
-                <p class="hero-subtitle">AI-powered purchase order generation for production coordinators, saving 10+ hours per wrap with 99% accuracy and seamless vendor integration.</p>
+                <h1>Turn <span class="highlight-chaos">Scattered Receipts</span> into <span class="highlight-precision">Perfect POs</span></h1>
+                <p class="hero-subtitle">The AI assistant every production coordinator needs. Drop your receipts and invoices into Dropbox, and watch as beautiful, accounting-ready purchase orders appear in seconds—not hours.</p>
                 <div class="hero-cta">
                     <a onclick="handleGetStartedClick()" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Start Free Trial</a>
-                    <a onclick="scrollToSection('#how-it-works')" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">Watch Demo</a>
+                    <a onclick="scrollToSection('#features')" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">See Features</a>
                 </div>
                 <div class="stats">
                     <div class="stat"><div class="stat-number">10+</div><div class="stat-label">Hours Saved</div></div>
@@ -1052,24 +1143,43 @@
             </div>
         </section>
 
-        <!-- Video Demo Section -->
-        <section class="section-fullwidth" id="how-it-works">
-            <video style="width: 100%; height: auto; display: block;" autoplay loop muted playsinline>
-                <source src="https://cdn.dribbble.com/userupload/12470914/file/original-b98a3a8a0d33a7def6e4b3734138e4a7.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+        <!-- Value Proposition Section -->
+        <section class="section" id="value-prop">
+            <div class="value-prop-section">
+                <div class="value-prop-card">
+                    <img src="./assets/PO1.webp" alt="Organize Receipts">
+                    <div class="value-prop-text">
+                        <h3>Drop & Forget</h3>
+                        <p>Dump all your vendor receipts, invoices, and W9s into one Dropbox folder. Our AI sorts everything automatically.</p>
+                    </div>
+                </div>
+                <div class="value-prop-card">
+                    <img src="./assets/PO2.webp" alt="Save Time and Money">
+                    <div class="value-prop-text">
+                        <h3>10+ Hours Saved Per Wrap</h3>
+                        <p>Stop typing vendor details into spreadsheets at 2 AM. Generate all your POs in minutes, not days.</p>
+                    </div>
+                </div>
+                <div class="value-prop-card">
+                    <img src="./assets/PO3.webp" alt="Ensure Accuracy">
+                    <div class="value-prop-text">
+                        <h3>Accounting-Ready POs</h3>
+                        <p>Professional purchase orders with line items, tax breakdowns, and vendor info—ready for Global Vista or any system.</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Features -->
         <section class="section" id="features">
             <h2 class="section-title">Features</h2>
             <div class="features">
-                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">🎯</div><h3>99% Accuracy</h3><p>AI-powered data extraction and validation ensures error-free purchase orders every time.</p></div>
-                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">📊</div><h3>Complete Audit Trail</h3><p>Track every change, approval, and communication with comprehensive audit logging.</p></div>
-                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">⚡</div><h3>Lightning Fast</h3><p>Generate professional POs in seconds, not hours. No more manual data entry.</p></div>
-                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">🔗</div><h3>Seamless Integration</h3><p>Works with your existing accounting software and production management tools.</p></div>
-                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">💰</div><h3>Faster Payments</h3><p>Automated vendor notifications and approval workflows accelerate payment processing.</p></div>
-                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon">🛡️</div><h3>Enterprise Security</h3><p>Bank-level encryption and compliance with industry security standards.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg></div><h3>Batch Processing Magic</h3><p>Upload hundreds of receipts at once. Our AI extracts vendor info, amounts, and dates from crumpled receipts, blurry photos, and multi-page invoices.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div><h3>Smart Vendor Grouping</h3><p>Multiple invoices from the same vendor? No problem. We automatically consolidate them into one clean PO with itemized line items.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div><h3>Production-Ready Format</h3><p>POs include job codes, GL codes, episode numbers, and all the fields accounting needs. Export to PDF or integrate with Global Vista, Media Services, or PSL.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></div><h3>W9 & Tax Tracking</h3><p>Never miss tax documentation again. We flag vendors missing W9s and track TINs, ensuring you're audit-ready at year-end.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></div><h3>Error Detection</h3><p>Duplicate invoices? Math errors? Missing info? Our AI catches issues before they become expensive problems in post.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div><h3>Bank-Level Security</h3><p>Your receipts never touch our servers. Direct Dropbox integration with session-based tokens that expire when you close the tab.</p></div>
             </div>
         </section>
 
@@ -1355,6 +1465,7 @@
             
             populateFaq();
             createNeuralNetwork();
+            animateValueProps();
         });
 
         // --- STATE MANAGEMENT ---
@@ -1708,14 +1819,23 @@
         // --- APP PAGE: MY POs LOGIC ---
         async function renderMyPOsPage() {
             const container = document.getElementById('dashboard-content');
+            if (!container) {
+                console.error('Dashboard container not found');
+                return;
+            }
+            
             container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`;
 
+            console.log('Dashboard render - dropboxAccessToken:', !!dropboxAccessToken, 'currentJobNumber:', currentJobNumber, 'knownProjects:', Object.keys(knownProjects));
+
             if (!dropboxAccessToken) {
+                console.log('No Dropbox token, redirecting to Dropbox view');
                 showAppView('dropboxView');
                 return;
             }
 
             if (!currentJobNumber || !knownProjects[currentJobNumber]) {
+                console.log('No active job, showing get started screen');
                 container.innerHTML += `
                     <div class="guided-step-card" style="margin-top: 2rem; text-align: center;">
                         <h3>Welcome to Your Dashboard</h3>
@@ -1723,7 +1843,10 @@
                         <button id="dashboardGetStartedBtn" class="btn btn-primary">Process New Job</button>
                     </div>
                 `;
-                document.getElementById('dashboardGetStartedBtn').addEventListener('click', startOnboardingWizard);
+                const btn = document.getElementById('dashboardGetStartedBtn');
+                if (btn) {
+                    btn.addEventListener('click', startOnboardingWizard);
+                }
                 return;
             }
             
@@ -1830,7 +1953,7 @@
                         <div class="progress-fill" id="progressFill"><div class="neural-network" id="neuralNetworkProcessing"></div></div>
                     </div>
                     <div class="vendor-display">
-                        <video class="vendor-display-video" src="assets/POWizard_Loading.webm" autoplay loop muted playsinline></video>
+                        <video class="vendor-display-video" src="./assets/POWizard_Loading.webm" autoplay loop muted playsinline></video>
                         <div class="vendor-display-content">
                             <div class="current-vendor" id="currentVendor">Initializing PO Wizard...</div>
                             <div class="vendor-stats">
@@ -2032,6 +2155,73 @@
             document.getElementById('deleteSelectedButton').disabled = count === 0; 
             document.getElementById('shareSelectedButton').disabled = count === 0;
             controls.style.display = count > 0 ? 'block' : 'none'; 
+        }
+        
+        function handleApproveSelected() {
+            if (selectedPOIds.size === 0) return;
+            
+            const selectedPOs = Array.from(selectedPOIds).map(poId => 
+                projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId)
+            ).filter(Boolean);
+            
+            if (selectedPOs.length === 0) return;
+            
+            // Show confirmation
+            const poNumbers = selectedPOs.map(po => po.po_number).join(', ');
+            if (!confirm(`Are you sure you want to approve ${selectedPOs.length} PO(s): ${poNumbers}?`)) return;
+            
+            // Approve each PO
+            selectedPOs.forEach(async (po) => {
+                try {
+                    po.full_po_data_for_review.status = 'Approved';
+                    await handleReviewModalSubmit(true, po.po_id_on_grid);
+                } catch (error) {
+                    console.error(`Error approving PO ${po.po_number}:`, error);
+                }
+            });
+            
+            // Clear selection and refresh
+            selectedPOIds.clear();
+            updateBatchActionButtons();
+            setTimeout(() => fetchAndRenderMyPOs(), 1000);
+        }
+        
+        function handleDeleteSelected() {
+            if (selectedPOIds.size === 0) return;
+            
+            const selectedPOs = Array.from(selectedPOIds).map(poId => 
+                projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId)
+            ).filter(Boolean);
+            
+            if (selectedPOs.length === 0) return;
+            
+            const poNumbers = selectedPOs.map(po => po.po_number).join(', ');
+            if (!confirm(`Are you sure you want to delete ${selectedPOs.length} PO(s): ${poNumbers}? This action cannot be undone.`)) return;
+            
+            alert('Delete functionality not yet implemented. Please contact support for assistance.');
+        }
+        
+        function handleShareSelected() {
+            if (selectedPOIds.size === 0) return;
+            
+            const selectedPOs = Array.from(selectedPOIds).map(poId => 
+                projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId)
+            ).filter(Boolean);
+            
+            const pdfPaths = selectedPOs
+                .map(po => po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.final_dropbox_path)
+                .filter(Boolean);
+            
+            if (pdfPaths.length === 0) {
+                alert('No PDF files available to share for the selected POs.');
+                return;
+            }
+            
+            // Open each PDF in a new tab
+            pdfPaths.forEach(pdfPath => {
+                const dropboxFileUrl = `https://www.dropbox.com/home${pdfPath}`;
+                window.open(dropboxFileUrl, '_blank');
+            });
         }
         
         // --- REVIEW MODAL LOGIC ---
@@ -2465,6 +2655,25 @@
 
             document.getElementById('onboardingWizard').classList.remove('active');
             startDocumentProcessing(sourcePath, outputPath);
+        }
+
+        function animateValueProps() {
+            const cards = document.querySelectorAll('.value-prop-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+            
+            cards.forEach(card => {
+                card.classList.add('animate');
+                observer.observe(card);
+            });
         }
     </script>
 </body>
