@@ -1,0 +1,2680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The AI assistant every production coordinator needs. Turn scattered receipts and invoices into beautiful, accounting-ready purchase orders in seconds. Save 10+ hours per wrap.">
+    <meta name="keywords" content="purchase orders, production coordinator, AI automation, post-production, film production">
+    <title>PO Wizard - Transform Post-Production Chaos into Precision</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #1A1A1A;
+            --primary-bg-rgb: 26, 26, 26;
+            --secondary-bg: #242424;
+            --accent-neon: #4ABDED;
+            --accent-blue: #1E3A8A;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --card-bg: #1f1f1f;
+            --border-color: #333;
+            --success-color: #34D399;
+            --error-color: #ef4444;
+            --warning-color: #FBBF24;
+        }
+
+        body {
+            background: var(--primary-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .mouse-aware-light {
+            content: '';
+            position: fixed;
+            width: 1000px;
+            height: 1000px;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(74, 189, 237, 0.08) 0%, transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            will-change: transform, opacity;
+        }
+
+        body:hover .mouse-aware-light {
+            opacity: 1;
+        }
+        
+        .card-light-effect {
+            position: relative;
+        }
+        .card-light-effect .light-blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(74, 189, 237, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(var(--blob-x, -150px), var(--blob-y, -150px));
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+            z-index: 0;
+            will-change: transform, opacity;
+        }
+        .card-light-effect:hover .light-blob {
+            opacity: 1;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            width: auto;
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 0.75rem 0;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .logo-container:hover .logo-text {
+            transform: translateX(0);
+        }
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+        .logo-text-wrapper {
+            overflow: hidden;
+            width: 155px;
+        }
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--accent-neon);
+            display: inline-block;
+            padding-left: 0.25rem;
+            transform: translateX(0);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            will-change: transform;
+        }
+        .logo-text.is-hidden {
+            transform: translateX(-110%);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-neon);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        /* Redesigned User Menu */
+        .user-menu-container {
+            position: relative;
+        }
+        .user-menu-container .user-menu-toggle {
+            display: flex;
+            align-items: center;
+            border-radius: 3px;
+            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            color: var(--primary-bg);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 0; /* Clear padding for inner elements to control it */
+            cursor: pointer;
+            overflow: hidden; /* Ensures rounded corners on children */
+        }
+        .user-menu-container:hover .user-menu-toggle {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(74, 189, 237, 0.25);
+        }
+        .user-menu-toggle > a {
+            padding: 0.75rem 1.5rem;
+            color: inherit;
+            text-decoration: none;
+            display: block;
+        }
+        .user-menu-separator {
+            width: 1px;
+            align-self: stretch;
+            background-color: rgba(255, 255, 255, 0.25);
+            margin: 8px 0;
+        }
+        .user-menu-name-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: rgba(30, 30, 30, 0.4);
+            height: 100%;
+            color: var(--text-secondary);
+        }
+        .user-menu-name-section:hover {
+            color: var(--text-primary);
+        }
+        .user-menu-name-section .arrow-down {
+             transition: transform 0.2s ease-in-out;
+        }
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%; /* Position right below the button */
+            margin-top: 8px; /* Add small gap */
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            min-width: 220px;
+            z-index: 1010;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+        }
+        .user-menu-container:hover .user-dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .user-menu-container:hover .user-menu-name-section .arrow-down {
+            transform: rotate(180deg);
+        }
+        .user-dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .user-dropdown-menu a:hover {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex; /* Changed to inline-flex */
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn .spinner {
+            width: 1em;
+            height: 1em;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+        }
+        .btn.loading .spinner {
+            display: inline-block;
+        }
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            color: var(--primary-bg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(74, 189, 237, 0.25);
+        }
+        
+        .btn-primary:disabled {
+            background: #333;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-neon);
+            color: var(--accent-neon);
+        }
+        
+        /* Mobile menu */
+        .menu-toggle { display: none; flex-direction: column; cursor: pointer; z-index: 1001; }
+        .menu-toggle span { width: 25px; height: 3px; background: var(--text-primary); margin: 3px 0; transition: 0.3s; }
+        
+        .mobile-nav-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .mobile-nav-overlay.open { transform: translateX(0); }
+        .mobile-nav-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: var(--text-primary); font-size: 3rem; cursor: pointer; line-height: 1; }
+        .mobile-nav-links { list-style: none; text-align: center; padding: 0; margin: 0; }
+        .mobile-nav-links li { margin: 1.5rem 0; }
+        .mobile-nav-links a { color: var(--text-primary); text-decoration: none; font-size: 2rem; font-weight: 600; transition: color 0.3s ease; cursor: pointer; }
+        .mobile-nav-links a:hover { color: var(--accent-neon); }
+        .mobile-nav-buttons { margin-top: 3rem; display: flex; flex-direction: column; gap: 1rem; width: 80%; max-width: 300px; }
+
+        /* Hero Section */
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; background: transparent; overflow: hidden; z-index: 1; padding-top: 100px; }
+        .hero-content { text-align: center; max-width: 900px; padding: 0 2rem; z-index: 2; position: relative; }
+        .hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; letter-spacing: -2px; }
+        .hero h1 .highlight-chaos { font-style: italic; font-weight: 400; color: var(--text-secondary); }
+        .hero h1 .highlight-precision {
+            font-weight: 800; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-subtitle { font-size: clamp(1.1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+
+        /* Stats */
+        .stats { display: flex; justify-content: center; gap: 3rem; margin-top: 4rem; opacity: 0.8; }
+        .stat { text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--accent-neon); }
+        .stat-label { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* Section Styles */
+        .section { padding: 6rem 0; max-width: 1200px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; position: relative; z-index: 3; background: transparent; }
+        .section-fullwidth { padding: 6rem 0; position: relative; z-index: 3; }
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem); font-weight: bold; text-align: center; margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-neon));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        /* Value Proposition Section */
+        .value-prop-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+        .value-prop-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            height: 400px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--secondary-bg);
+        }
+        .value-prop-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-neon);
+        }
+        .value-prop-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, filter 0.4s ease;
+            filter: brightness(0.7);
+        }
+        .value-prop-card:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.4) blur(2px);
+        }
+        .value-prop-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+            color: white;
+            transform: translateY(calc(100% - 80px));
+            transition: transform 0.4s ease;
+        }
+        .value-prop-card:hover .value-prop-text {
+            transform: translateY(0);
+        }
+        .value-prop-text h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-neon);
+            font-weight: bold;
+            font-size: 1.4rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .value-prop-text p {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease 0.1s;
+            line-height: 1.5;
+        }
+        .value-prop-card:hover .value-prop-text p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Initial state for animation */
+        .value-prop-card.animate {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .value-prop-card.animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+
+        /* Features */
+        .features { margin-top: 4rem; column-count: 1; column-gap: 2rem; }
+        @media (min-width: 768px) { .features { column-count: 2; } }
+        @media (min-width: 1024px) { .features { column-count: 3; } }
+        .feature { background: var(--card-bg); padding: 2rem; border-radius: 6px; border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; z-index: 1; margin-bottom: 2rem; break-inside: avoid; -webkit-column-break-inside: avoid; }
+        .feature:hover { border-color: var(--accent-neon); transform: translateY(-5px); }
+        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue)); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; position: relative; overflow: hidden; }
+        .feature-icon::before { content: ''; position: absolute; inset: -2px; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+        .feature:hover .feature-icon::before { transform: translateX(100%); }
+        .feature-icon svg { width: 28px; height: 28px; fill: var(--primary-bg); }
+
+        /* Testimonials */
+        .testimonials-container { padding: 4rem 0; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .testimonial { background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); }
+        .testimonial-quote { font-style: italic; margin-bottom: 1.5rem; color: var(--text-secondary); }
+        .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+        .author-avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent-neon), var(--accent-blue)); border-radius: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        /* Pricing */
+        .pricing-toggle-container { display: flex; justify-content: center; align-items: center; margin-bottom: -1rem; }
+        .segmented-control { display: inline-flex; background-color: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 4px; }
+        .segmented-control button { background: none; border: none; padding: 0.5rem 1rem; color: var(--text-secondary); font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.3s ease; }
+        .segmented-control button.active { background-color: var(--card-bg); color: var(--text-primary); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; align-items: start; }
+        .pricing-card { background: var(--card-bg); padding: 2.5rem; border-radius: 6px; border: 1px solid var(--border-color); text-align: center; position: relative; transition: all 0.3s ease; display: flex; flex-direction: column; height: 100%; z-index: 1; }
+        .pricing-card.popular { border-color: var(--accent-neon); }
+        .popular-badge { content: 'Most Popular'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-neon); color: var(--primary-bg); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .pricing-card:hover { transform: translateY(-10px) scale(1.04); border-color: var(--accent-neon); }
+        .pricing-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .pricing-card-subtitle { color: var(--text-secondary); margin-bottom: 1.5rem; min-height: 40px; }
+        .price { font-size: 3rem; font-weight: bold; color: var(--text-primary); }
+        .price-subtitle { color: var(--text-secondary); margin-bottom: 1rem; min-height: 20px; }
+        .pricing-features { list-style: none; margin: 2rem 0; text-align: left; flex-grow: 1; }
+        .pricing-features li { padding: 0.5rem 0; color: var(--text-secondary); display: flex; align-items: start; }
+        .pricing-features li svg { color: var(--success-color); margin-right: 0.75rem; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+        .btn-disabled { background: #333; color: #888; cursor: not-allowed; border: 1px solid #444; width: 100%; }
+
+        /* Trusted By Marquee */
+        .trusted-by { text-align: center; padding: 8rem 0; }
+        .logo-flipper-container { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; opacity: 0.6; }
+        .logo-flipper-column { height: 4rem; overflow: hidden; }
+        .logo-flipper-column .flipper-inner { transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1); }
+        .company-name-logo { font-size: 1.5rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; height: 4rem; display: flex; align-items: center; justify-content: center; }
+
+        /* FAQ Section */
+        #faq .faq-grid { display: grid; grid-template-columns: 1fr; gap: 4rem; margin-top: 3rem; }
+        @media (min-width: 768px) { #faq .faq-grid { grid-template-columns: 1fr 2fr; } }
+        #faq .faq-grid-title h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: bold; line-height: 1.2; background: linear-gradient(135deg, var(--text-primary), var(--accent-neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .faq-accordion { text-align: left; }
+        .faq-item { border-bottom: 1px solid var(--border-color); }
+        .faq-item:first-of-type { border-top: 1px solid var(--border-color); }
+        .faq-question { width: 100%; background: none; border: none; padding: 1.5rem 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--text-primary); font-size: 1.1rem; font-weight: 500; }
+        .faq-question span { text-align: left; }
+        .faq-icon { width: 1rem; height: 1rem; transition: transform 0.3s ease; flex-shrink: 0; margin-left: 1rem; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; color: var(--text-secondary); }
+        .faq-answer p { padding: 0 0.5rem 1.5rem 0.5rem; line-height: 1.7; }
+
+        /* Footer */
+        .footer { background: var(--secondary-bg); padding: 4rem 2rem 2rem; margin-top: 6rem; position: relative; z-index: 5; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+        @media (min-width: 768px) { .footer-content { grid-template-columns: 2fr repeat(4, 1fr); } } /* MODIFIED - Added column for Legal */
+        .footer-section h3 { color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; }
+        .footer-section ul { list-style: none; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section ul li a { color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease; }
+        .footer-section ul li a:hover { color: var(--accent-neon); }
+        .footer-bottom { text-align: center; padding-top: 2rem; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-secondary); }
+
+        /* Form Group (used in modals and app) */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.75rem; background: var(--primary-bg);
+            border: 1px solid var(--border-color); border-radius: 3px;
+            color: var(--text-primary); transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent-neon); }
+        .form-group-inline { display: flex; gap: 1rem; align-items: center; }
+        .form-group-inline input { flex-grow: 1;}
+
+        /* Modals */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
+            z-index: 2000; justify-content: center; align-items: center; padding: 1rem;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 2rem; border-radius: 6px;
+            max-width: 450px; width: 100%; position: relative;
+            border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal-close {
+            position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+            color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; line-height: 1;
+        }
+        .modal-close:hover { color: var(--text-primary); }
+
+        /* Review PO Modal */
+        #reviewModal .modal-content { max-width: 90vw; width: 100%; max-height: 90vh; display: flex; flex-direction: column; background: var(--secondary-bg); }
+        #reviewModal .review-modal-body { display: flex; gap: 2rem; flex-grow: 1; overflow: hidden; }
+        #reviewModal .pdf-viewer-area { flex: 2 1 60%; min-width: 0; position: relative; }
+        #reviewModal .pdf-viewer-area iframe { width: 100%; height: 100%; border: 1px solid var(--border-color); border-radius: 4px; }
+        #reviewModal .form-area { flex: 1 1 40%; min-width: 0; display: flex; flex-direction: column; }
+        #reviewModal .form-scroll-container { flex-grow: 1; overflow-y: auto; padding-right: 1rem; }
+        #reviewModal .form-group { margin-bottom: 1rem; }
+        #reviewModal .form-group label { font-size: 0.8rem; }
+        #reviewModal .form-group input, #reviewModal .form-group select, #reviewModal .form-group textarea { padding: 0.5rem; font-size: 0.9rem; background: var(--primary-bg); }
+        #reviewModal .modal-footer { padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; margin-top: 1rem; }
+        .highlight-box { position: absolute; border: 2px solid var(--accent-neon); background-color: rgba(74, 189, 237, 0.2); border-radius: 3px; z-index: 2001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
+        
+        /* Review Modal Line Items - Improved Readability */
+        #reviewModal .line-item-grid { 
+            display: grid; 
+            grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto; 
+            gap: 0.75rem;
+            align-items: center; 
+            margin-bottom: 1rem;
+        }
+        #reviewModal .line-item-grid input { 
+            font-size: 0.9rem; 
+            padding: 0.6rem;
+            background: var(--primary-bg); 
+            color: var(--text-primary);
+        }
+        #reviewModal .line-item-grid button { 
+            background: none; border: none; color: var(--error-color); cursor: pointer; padding: 0.6rem;
+        }
+        #reviewModal .line-item-grid-header {
+            display: grid;
+            grid-template-columns: 4fr 2fr 1fr 1fr 1fr auto;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.25rem;
+        }
+        #reviewModal .line-item-grid-header label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        #reviewModal .line-item-grid-header label.text-right {
+            text-align: right;
+        }
+
+
+        /* App Page Structure */
+        #appPageContainer { display: none; min-height: 100vh; padding-top: 8rem; }
+        .app-layout { display: flex; max-width: 1600px; margin: 0 auto; gap: 2rem; padding: 0 2rem; }
+        .app-sidebar { flex: 0 0 220px; }
+        .app-sidebar nav ul { list-style: none; }
+        .app-sidebar nav button {
+            display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem;
+            background: none; border: none; border-radius: 6px; color: var(--text-secondary);
+            font-size: 1rem; text-align: left; cursor: pointer; transition: all 0.2s ease;
+        }
+        .app-sidebar nav button:hover { background: var(--secondary-bg); color: var(--text-primary); }
+        .app-sidebar nav button.active { background: var(--accent-neon); color: var(--primary-bg); font-weight: 600; }
+        .app-content { flex-grow: 1; min-width: 0; }
+        .app-view { display: none; }
+        .app-view.active { display: block; }
+        .app-section-title { font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary); }
+
+        /* Guided Step Cards */
+        .guided-step-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2.5rem;
+            max-width: 700px; /* Wider for instructions */
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .guided-step-card h3 { font-size: 1.5rem; color: var(--accent-neon); margin-bottom: 1rem; }
+        .guided-step-card p { color: var(--text-secondary); margin-bottom: 2rem; }
+        .guided-step-card ol { color: var(--text-secondary); text-align: left; padding-left: 1.5rem; margin-bottom: 1.5rem;}
+        .token-success-message {
+            color: var(--success-color);
+            background-color: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* My POs - Dashboard */
+        .po-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .po-header-info { color: var(--text-secondary); }
+        .po-header-info span { font-weight: 600; color: var(--text-primary); }
+        .po-actions-bar { background-color: rgba(31, 31, 31, 0.5); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 2rem; }
+        .po-filters { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+        .po-filters input, .po-filters select {
+            background-color: var(--primary-bg); border: 1px solid var(--border-color);
+            color: var(--text-primary); border-radius: 4px; padding: 0.6rem;
+        }
+        .po-filters input:focus, .po-filters select:focus { border-color: var(--accent-neon); outline: none; }
+        #poGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .po-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; transition: all 0.3s ease; position: relative; z-index: 1; display: flex; flex-direction: column; }
+        .po-card:hover .po-card-checkbox { opacity: 1; }
+        .po-card.selected-card { border-color: var(--accent-neon); box-shadow: 0 0 15px rgba(74, 189, 237, 0.2); }
+        .po-card:hover { transform: translateY(-5px); border-color: var(--accent-neon); }
+        
+        .po-card-checkbox { 
+            position: absolute; 
+            top: 1rem; 
+            left: 1rem; 
+            z-index: 10;
+            opacity: 0.4;
+            transition: opacity 0.2s ease-in-out;
+        }
+        .po-card-checkbox input { 
+            width: 22px; 
+            height: 22px; 
+            cursor: pointer; 
+            accent-color: var(--accent-neon); 
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 4px;
+        }
+
+        .po-card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .po-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; padding-top: 1.5rem; }
+        .po-card-po-number { font-size: 1.25rem; font-weight: 600; color: var(--accent-neon); }
+        .po-card-status { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 20px; white-space: nowrap; }
+        .status-approved { background-color: rgba(52, 211, 153, 0.1); color: var(--success-color); }
+        .status-pending, .status-regenerated { background-color: rgba(251, 191, 36, 0.1); color: #FBBF24; }
+        .status-error { background-color: rgba(239, 68, 68, 0.1); color: var(--error-color); }
+        .po-card-vendor { font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; font-weight: 500; }
+        .po-card-amount { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .po-card-date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .po-card-footer { margin-top: auto; display: flex; gap: 0.5rem; }
+        #noPOsActionContainer { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-secondary); }
+        #noPOsActionContainer h3 { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1rem; }
+        
+        .po-card.po-card-approved {
+            border-color: var(--success-color);
+            background: rgba(52, 211, 153, 0.05);
+        }
+        .po-card.po-card-approved:hover {
+            transform: translateY(-5px);
+            border-color: var(--success-color);
+            background: rgba(52, 211, 153, 0.1);
+        }
+        .btn-share-approved {
+            background: var(--success-color);
+            color: var(--primary-bg);
+            border-color: var(--success-color);
+        }
+        .btn-share-approved:hover {
+            background: #2fbd8b;
+            color: black;
+        }
+        .batch-actions-container {
+            display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .batch-actions-container .btn:hover {
+            transform: translateY(-2px);
+        }
+        .batch-actions-container .btn-share-batch:disabled {
+            cursor: help;
+        }
+
+        /* NEW Project Switcher */
+        .project-switcher-container { position: relative; }
+        .project-switcher-toggle {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--secondary-bg); border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .project-switcher-toggle:hover { border-color: var(--accent-neon); }
+        .project-switcher-toggle .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .status-dot.approved { background-color: var(--success-color); }
+        .status-dot.pending { background-color: var(--warning-color); }
+        .project-switcher-dropdown {
+            display: none; position: absolute; top: 100%; left: 0;
+            margin-top: 8px; background: var(--secondary-bg);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            min-width: 250px; z-index: 10; box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-height: 300px; overflow-y: auto;
+        }
+        .project-switcher-container:hover .project-switcher-dropdown { display: block; }
+        .project-switcher-dropdown a {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1rem; color: var(--text-secondary);
+            text-decoration: none; font-size: 0.9rem;
+        }
+        .project-switcher-dropdown a:hover { background: var(--card-bg); color: var(--text-primary); }
+        
+        /* NEW Job Complete Banner */
+        #jobCompleteBanner {
+            background: linear-gradient(90deg, rgba(52, 211, 153, 0.2), rgba(52, 211, 153, 0.05));
+            border: 1px solid var(--success-color);
+            border-radius: 8px; padding: 1.5rem;
+            text-align: center; margin-bottom: 2rem;
+            display: none;
+        }
+        #jobCompleteBanner h3 {
+            color: var(--success-color); font-size: 1.5rem; margin-bottom: 0.5rem;
+        }
+
+        /* Settings & Billing Page */
+        .settings-card { background: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
+        .settings-card h3 { font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .settings-card.danger-zone { border-color: var(--error-color); }
+        .settings-card.danger-zone h3 { color: var(--error-color); }
+        .billing-plan-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .billing-plan-card.active { border-color: var(--accent-neon); }
+        .billing-plan-name { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
+        .billing-plan-name.active { color: var(--accent-neon); }
+        .billing-plan-description { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Dropbox Picker Modal */
+        #dropboxPickerModal .modal-content { max-width: 600px; }
+        #dbx-picker-info { margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;}
+        #dbx-folder-list-container { max-height: 40vh; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; padding: 1rem; margin-bottom: 1.5rem; }
+        #dbx-folder-list { list-style: none; }
+        #dbx-folder-list ul { list-style: none; padding-left: 1.5rem; }
+        .folder-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; }
+        .folder-item-label { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; flex-grow: 1; }
+        .folder-item-label input[type="radio"] { -webkit-appearance: none; appearance: none; background-color: var(--primary-bg); margin: 0; font: inherit; color: currentColor; width: 1.5em; height: 1.5em; border: 0.15em solid currentColor; border-radius: 50%; transform: translateY(-0.075em); display: grid; place-content: center; cursor: pointer; }
+        .folder-item-label input[type="radio"]::before { content: ""; width: 0.75em; height: 0.75em; border-radius: 50%; transform: scale(0); transition: 120ms transform ease-in-out; box-shadow: inset 1em 1em var(--accent-neon); }
+        .folder-item-label input[type="radio"]:checked::before { transform: scale(1); }
+        .folder-item-label input[type="radio"]:checked { border-color: var(--accent-neon); }
+        .folder-expand-icon { cursor: pointer; width: 20px; text-align: center; color: var(--text-secondary); }
+        .folder-expand-icon.loading { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #dbx-picker-actions { display: flex; justify-content: flex-end; gap: 1rem; }
+        
+        /* Progress Bar Styles */
+        .progress-container {
+            width: 100%; background: rgba(26, 35, 50, 0.8); border-radius: 24px; padding: 40px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(45, 95, 130, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .progress-track { position: relative; height: 80px; background: linear-gradient(90deg, #1a2332 0%, #2a3441 100%); border-radius: 40px; margin: 30px 0; overflow: hidden; border: 2px solid rgba(45, 95, 130, 0.3); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #2D5F82 0%, #3B7BA8 50%, #2D5F82 100%); border-radius: 40px; width: 0%; transition: width 0.5s ease; position: relative; overflow: hidden; }
+        .progress-fill::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+        .neural-network { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+        .neuron { position: absolute; width: 6px; height: 6px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: organicPulse 3s infinite ease-in-out; }
+        @keyframes organicPulse { 0%, 100% { transform: scale(0.8) translateY(0px); opacity: 0.4; } 25% { transform: scale(1.2) translateY(-2px); opacity: 0.9; } 50% { transform: scale(1) translateY(1px); opacity: 0.7; } 75% { transform: scale(1.1) translateY(-1px); opacity: 0.8; } }
+        
+        .vendor-display {
+            margin: 30px 0;
+            background: rgba(45, 95, 130, 0.15);
+            border-radius: 20px;
+            border: 1px solid rgba(45, 95, 130, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 16/9;
+        }
+        .vendor-display-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 1;
+            max-width: 300px;
+            max-height: 200px;
+        }
+        .vendor-display-content {
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+            background: rgba(var(--primary-bg-rgb), 0.5);
+            border-radius: 10px;
+            backdrop-filter: blur(2px);
+            text-align: center;
+        }
+        .current-vendor { 
+            font-size: 2.2rem; 
+            color: var(--text-primary);
+            font-weight: bold; 
+            margin-bottom: 15px; 
+            text-shadow: 0 0 10px rgba(0,0,0,0.7);
+            min-height: 40px;
+        }
+        .vendor-stats { display: flex; justify-content: center; gap: 40px; margin-top: 15px; }
+        .vendor-stat { text-align: center; }
+        .stat-value { font-size: 1.8rem; color: var(--text-primary); font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 8px rgba(0,0,0,0.5); }
+        .stat-label { color: var(--text-secondary); font-size: 0.9rem; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        
+        .status-message { 
+            text-align: center; margin-top: 20px; padding: 15px; 
+            background: rgba(45, 95, 130, 0.1); border-radius: 15px; 
+            border-left: 4px solid #4ABDED;
+            position: relative;
+            overflow: hidden;
+        }
+        .status-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            background-color: rgba(74, 189, 237, 0.25);
+            border-radius: 15px;
+            animation: slide-in-out 5s ease-in-out infinite;
+        }
+        .status-text { 
+            color: #4ABDED; font-weight: 500; font-size: 1.1rem; min-height: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes slide-in-out {
+            0% { width: 0%; left: 0; right: auto; }
+            45% { width: 100%; left: 0; right: auto; }
+            50% { width: 100%; left: auto; right: 0; }
+            95% { width: 0%; left: auto; right: 0; }
+            100% { width: 0%; left: 0; right: auto; }
+        }
+
+        /* Fullscreen Onboarding Wizard */
+        #onboardingWizard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(var(--primary-bg-rgb), 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1500;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #onboardingWizard.active {
+            display: flex;
+        }
+        .wizard-container {
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            height: 250px;
+        }
+        .wizard-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+        .wizard-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .wizard-slide h2 {
+            font-size: 2.5rem;
+            color: var(--accent-neon);
+            margin-bottom: 1rem;
+        }
+        .wizard-slide p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 450px;
+        }
+        .wizard-slide .form-group input {
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 1rem;
+        }
+        .wizard-slide .form-group-inline {
+            width: 100%;
+        }
+        .wizard-navigation {
+            margin-top: 2rem;
+        }
+
+        /* NEW: Loading/Success Modal */
+        #loadingSuccessModal .modal-content {
+            background: var(--secondary-bg);
+            padding: 3rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            width: auto;
+            min-width: 250px;
+            box-shadow: none;
+        }
+        #loadingSuccessModal .spinner-container,
+        #loadingSuccessModal .success-container,
+        #loadingSuccessModal .error-container {
+            display: none;
+        }
+        #loadingSuccessModal .spinner-container.active,
+        #loadingSuccessModal .success-container.active,
+        #loadingSuccessModal .error-container.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #loadingSuccessModal .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--accent-neon);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        #loadingSuccessModal p {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success-color); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .checkmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; margin: 0 auto 1rem; box-shadow: inset 0px 0px 0px var(--success-color); animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+        .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+        @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+        @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 30px var(--success-color); } }
+        .crossmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--error-color); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .crossmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; margin: 0 auto 1rem; box-shadow: inset 0px 0px 0px var(--error-color); animation: fill-error .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+        .crossmark__cross { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+        @keyframes fill-error { 100% { box-shadow: inset 0px 0px 0px 30px var(--error-color); } }
+
+        /* NEW Confirmation Modal */
+        #confirmationModal .modal-content {
+            max-width: 500px;
+        }
+        #confirmationModal h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        #confirmationModal p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .confirmation-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* NEW Share Links Modal */
+        #shareLinksModal .modal-content {
+            max-width: 600px;
+        }
+        #shareLinksModal h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        #shareLinksList {
+            list-style: none;
+            max-height: 40vh;
+            overflow-y: auto;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        #shareLinksList li {
+            margin-bottom: 1rem;
+        }
+        #shareLinksList li:last-child {
+            margin-bottom: 0;
+        }
+        #shareLinksList a {
+            color: var(--accent-neon);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        #shareLinksList a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container { display: flex; justify-content: space-between; }
+            .nav-right { display: none; }
+            .menu-toggle { display: flex; }
+            .hero-cta { flex-direction: column; align-items: center; }
+            .stats { flex-direction: column; gap: 1rem; }
+            .section { padding: 4rem 1rem; }
+            #reviewModal .review-modal-body { flex-direction: column; }
+            .features { column-count: 1; }
+            #faq .faq-grid { grid-template-columns: 1fr; }
+            #faq .faq-grid-title h2 { text-align: center; }
+            .logo-flipper-container { gap: 1rem; }
+            .company-name-logo { font-size: 1.2rem; }
+            .app-layout { flex-direction: column; }
+            .app-sidebar { flex: 0 0 auto; display: flex; overflow-x: auto; padding-bottom: 0.5rem;}
+            .app-sidebar nav { width: 100%; }
+            .app-sidebar nav ul { display: flex; gap: 0.5rem; }
+        }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        @keyframes slide-in-left {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .value-prop-card.animate {
+            animation: slide-in-left 0.5s forwards;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="mouse-aware-light"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-left">
+                <a class="logo-container" onclick="showLandingPage()">
+                    <img src="./assets/POWizard_256_Alpha.webp" alt="PO Wizard Logo" class="logo-icon">
+                    <div class="logo-text-wrapper">
+                        <span class="logo-text">Wizard</span>
+                    </div>
+                </a>
+            </div>
+            <div class="nav-right">
+                <ul class="nav-links" id="landingNavLinks">
+                    <li><a onclick="scrollToSection('#features')">Features</a></li>
+                    <li><a onclick="scrollToSection('#pricing')">Pricing</a></li>
+                    <li><a onclick="scrollToSection('#testimonials')">Testimonials</a></li>
+                    <li><a onclick="scrollToSection('#faq')">FAQ</a></li>
+                </ul>
+                <div id="nav-auth-buttons" class="nav-buttons">
+                    <!-- This will be populated by JS -->
+                </div>
+            </div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <button class="mobile-nav-close">&times;</button>
+        <ul class="mobile-nav-links">
+            <li><a onclick="scrollToSection('#features')">Features</a></li>
+            <li><a onclick="scrollToSection('#pricing')">Pricing</a></li>
+            <li><a onclick="scrollToSection('#testimonials')">Testimonials</a></li>
+            <li><a onclick="scrollToSection('#faq')">FAQ</a></li>
+        </ul>
+        <div class="mobile-nav-buttons" id="mobileNavAuthButtons">
+            <!-- Mobile Auth Buttons Populated by JS -->
+        </div>
+    </div>
+
+    <main id="landingPageContainer">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Turn <span class="highlight-chaos">Scattered Receipts</span> into <span class="highlight-precision">Perfect POs</span></h1>
+                <p class="hero-subtitle">The AI assistant every production coordinator needs. Drop your receipts and invoices into Dropbox, and watch as beautiful, accounting-ready purchase orders appear in seconds—not hours.</p>
+                <div class="hero-cta">
+                    <a onclick="handleGetStartedClick()" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Start Free Trial</a>
+                    <a onclick="scrollToSection('#features')" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">See Features</a>
+                </div>
+                <div class="stats">
+                    <div class="stat"><div class="stat-number">10+</div><div class="stat-label">Hours Saved</div></div>
+                    <div class="stat"><div class="stat-number">99%</div><div class="stat-label">Accuracy</div></div>
+                    <div class="stat"><div class="stat-number">500+</div><div class="stat-label">Productions</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Value Proposition Section -->
+        <section class="section" id="value-prop">
+            <div class="value-prop-section">
+                <div class="value-prop-card">
+                    <img src="./assets/PO1.webp" alt="Organize Receipts">
+                    <div class="value-prop-text">
+                        <h3>Drop & Forget</h3>
+                        <p>Dump all your vendor receipts, invoices, and W9s into one Dropbox folder. Our AI sorts everything automatically.</p>
+                    </div>
+                </div>
+                <div class="value-prop-card">
+                    <img src="./assets/PO2.webp" alt="Save Time and Money">
+                    <div class="value-prop-text">
+                        <h3>10+ Hours Saved Per Wrap</h3>
+                        <p>Stop typing vendor details into spreadsheets at 2 AM. Generate all your POs in minutes, not days.</p>
+                    </div>
+                </div>
+                <div class="value-prop-card">
+                    <img src="./assets/PO3.webp" alt="Ensure Accuracy">
+                    <div class="value-prop-text">
+                        <h3>Accounting-Ready POs</h3>
+                        <p>Professional purchase orders with line items, tax breakdowns, and vendor info—ready for Global Vista or any system.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section" id="features">
+            <h2 class="section-title">Features</h2>
+            <div class="features">
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg></div><h3>Batch Processing Magic</h3><p>Upload hundreds of receipts at once. Our AI extracts vendor info, amounts, and dates from crumpled receipts, blurry photos, and multi-page invoices.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div><h3>Smart Vendor Grouping</h3><p>Multiple invoices from the same vendor? No problem. We automatically consolidate them into one clean PO with itemized line items.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div><h3>Production-Ready Format</h3><p>POs include job codes, GL codes, episode numbers, and all the fields accounting needs. Export to PDF or integrate with Global Vista, Media Services, or PSL.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></div><h3>W9 & Tax Tracking</h3><p>Never miss tax documentation again. We flag vendors missing W9s and track TINs, ensuring you're audit-ready at year-end.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></div><h3>Error Detection</h3><p>Duplicate invoices? Math errors? Missing info? Our AI catches issues before they become expensive problems in post.</p></div>
+                <div class="feature fade-in card-light-effect"><div class="light-blob"></div><div class="feature-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div><h3>Bank-Level Security</h3><p>Your receipts never touch our servers. Direct Dropbox integration with session-based tokens that expire when you close the tab.</p></div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="section" id="testimonials">
+            <div class="testimonials-container">
+                <h2 class="section-title">Trusted by Industry Leaders</h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial fade-in"><p class="testimonial-quote">"PO Wizard cut our post-production admin time by 80%. It's a game-changer for production coordinators."</p><div class="testimonial-author"><div class="author-avatar">SM</div><div><strong>Sarah Mitchell</strong><br><small>Production Coordinator, Netflix</small></div></div></div>
+                    <div class="testimonial fade-in"><p class="testimonial-quote">"The accuracy and speed are incredible. We've eliminated PO errors completely since implementing PO Wizard."</p><div class="testimonial-author"><div class="author-avatar">JD</div><div><strong>James Davidson</strong><br><small>Finance Manager, HBO</small></div></div></div>
+                    <div class="testimonial fade-in"><p class="testimonial-quote">"Finally, a tool that understands the complexity of film production. PO Wizard is essential for any serious production."</p><div class="testimonial-author"><div class="author-avatar">MR</div><div><strong>Maria Rodriguez</strong><br><small>Producer, A24</small></div></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section" id="pricing">
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <div class="pricing-toggle-container">
+                <div class="segmented-control"><button id="monthlyBtn" class="active">MONTHLY</button><button id="yearlyBtn">YEARLY (SAVE 20%)</button></div>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Free</h3><p class="pricing-card-subtitle">Perfect for small productions</p><div class="price">Free</div><p class="price-subtitle">Requires Google Sign-In</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Up to 5 vendors per production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Single production processing</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Basic AI scanning</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Standard PO templates with Watermark</li></ul><a href="#" class="btn btn-secondary pricing-button" data-plan="free" style="width: 100%;" onclick="handleGetStartedClick()">Get Started Free</a></div>
+                <div class="pricing-card popular fade-in card-light-effect"><div class="light-blob"></div><div class="popular-badge">Most Popular</div><h3>Pro</h3><p class="pricing-card-subtitle">For growing productions</p><div class="price" id="proPrice" data-monthly="29">$29<small>/month</small></div><p class="price-subtitle" id="proSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited production amounts</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited iterations on 1 production</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Advanced AI with 99% accuracy</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>No Watermark on POs</li></ul><a href="#" class="btn btn-primary pricing-button" data-plan="pro" style="width: 100%;" onclick="handleGetStartedClick()">Start Free Trial</a></div>
+                <div class="pricing-card fade-in card-light-effect"><div class="light-blob"></div><h3>Enterprise</h3><p class="pricing-card-subtitle">For production companies</p><div class="price" id="enterprisePrice" data-monthly="99">$99<small>/month</small></div><p class="price-subtitle" id="enterpriseSubtitle">&nbsp;</p><ul class="pricing-features"><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited productions</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Unlimited vendors</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Cross-tracking between productions</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Microsoft Excel integration</li><li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>Fully custom, unbranded designs</li></ul><button class="btn btn-disabled" disabled>Coming Soon</button></div>
+            </div>
+        </section>
+
+        <!-- Trusted By -->
+        <section class="section trusted-by">
+            <h2 class="section-title">Trusted by Leading Production Companies</h2>
+            <div class="logo-flipper-container"></div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="section" id="faq">
+            <div class="faq-grid">
+                <div class="faq-grid-title"><h2>Questions about PO Wizard</h2></div>
+                <div class="faq-accordion">
+                    <!-- FAQ Items will be populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                 <div class="footer-section">
+                    <h3 style="color: var(--accent-neon); margin-bottom: 1rem;">PO Wizard</h3>
+                    <p style="color: var(--text-secondary);">Automate without limits.</p>
+                </div>
+                <div class="footer-section"><h3>Product</h3><ul><li><a onclick="scrollToSection('#features')">Features</a></li><li><a onclick="scrollToSection('#pricing')">Pricing</a></li><li><a onclick="handleGetStartedClick()">My POs</a></li><li><a href="#">Security</a></li></ul></div>
+                <div class="footer-section"><h3>Resources</h3><ul><li><a href="#">Documentation</a></li><li><a onclick="scrollToSection('#faq')">FAQ</a></li><li><a href="#">Blog</a></li></ul></div>
+                <div class="footer-section"><h3>Company</h3><ul><li><a href="#">About Us</a></li><li><a href="#">Contact Us</a></li></ul></div>
+                <div class="footer-section"><h3>Legal</h3><ul><li><a href="privacy.html" target="_blank">Privacy Policy</a></li><li><a href="terms.html" target="_blank">Terms of Service</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>© 2025 PO Wizard. All rights reserved.</p></div>
+        </footer>
+    </main>
+    
+    <!-- APP PAGE CONTAINER -->
+    <div id="appPageContainer">
+        <div class="app-layout">
+            <aside class="app-sidebar">
+                <nav>
+                    <ul>
+                        <li><button id="navBtnDashboard" onclick="showAppView('dashboardView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M7.5 14.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v9zM8 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-3zM.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H.5zM1 5.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zM1 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3zm0 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3z"/></svg>
+                            <span>Dashboard</span>
+                        </button></li>
+                        <li><button id="navBtnDropbox" onclick="showAppView('dropboxView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8.01 4.555 4.005 7.11 8.01 9.665 4.005 12.22 0 9.651l4.005-2.555L0 4.555 4.005 2 8.01 4.555Zm-4.005 5.11 4.005 2.556 4.005-2.556-4.005-2.555-4.005 2.555Zm8.01-5.11L8.01 2 11.995 4.555 8.01 7.11 11.995 9.665l4.005-2.555L11.995 4.555Z"/></svg>
+                            <span>Dropbox</span>
+                        </button></li>
+                        <li><button id="navBtnBilling" onclick="showAppView('billingView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1z"/><path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm13 2v5H1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm-1 9H2a1 1 0 0 1-1-1v-1h14v1a1 1 0 0 1-1 1z"/></svg>
+                            <span>Billing</span>
+                        </button></li>
+                        <li><button id="navBtnSettings" onclick="showAppView('settingsView')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1 .872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1-.872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705-1.987-1.987l-.169-.311a1.464 1.464 0 0 1-.872-2.105l.34-.1c1.4-.413-1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1 .872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/></svg>
+                            <span>Settings</span>
+                        </button></li>
+                    </ul>
+                </nav>
+            </aside>
+            <div class="app-content">
+                <!-- Dashboard View -->
+                <div id="dashboardView" class="app-view">
+                    <div id="dashboard-content">
+                        <!-- Guided steps will be injected here by JS -->
+                    </div>
+                </div>
+                <!-- Dropbox View -->
+                <div id="dropboxView" class="app-view">
+                     <div id="dropbox-content">
+                        <!-- Dropbox connection content will be rendered here -->
+                     </div>
+                </div>
+                <!-- Billing View -->
+                <div id="billingView" class="app-view">
+                    <h2 class="app-section-title">Billing & Subscription</h2>
+                    <div id="billing-content">
+                        <!-- Billing content will be rendered here by JS -->
+                    </div>
+                </div>
+                <!-- Settings View -->
+                <div id="settingsView" class="app-view">
+                    <h2 class="app-section-title">Settings</h2>
+                    <div id="settings-content">
+                        <!-- Profile Card -->
+                        <div class="settings-card">
+                            <h3>Profile Information</h3>
+                            <form id="profileSettingsForm" class="form-group-container">
+                                <div class="form-group"><label for="settingsFullName">Full Name</label><input type="text" id="settingsFullName" placeholder="Your Full Name"></div>
+                                <div class="form-group"><label for="settingsCompanyName">Company Name (Optional)</label><input type="text" id="settingsCompanyName" placeholder="Your Company LLC"></div>
+                                <div class="form-group"><label for="settingsAddress">Company Address (Optional)</label><textarea id="settingsAddress" rows="3" placeholder="123 Production Way, Hollywood, CA"></textarea></div>
+                                <button type="button" onclick="alert('Save Profile - Not Implemented Yet')" class="btn btn-secondary">Save Profile</button>
+                            </form>
+                        </div>
+                        <!-- Danger Zone -->
+                        <div class="settings-card danger-zone">
+                            <h3>Danger Zone</h3>
+                            <p class="text-secondary" style="margin-bottom: 1.5rem;">This action cannot be undone. All your data will be scheduled for deletion.</p>
+                            <button type="button" onclick="alert('Deactivate Account - Not Implemented Yet')" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);">Deactivate My Account</button>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Progress View -->
+                <div id="progressView" class="app-view">
+                    <div id="progress-content">
+                         <!-- Progress bar will be injected here by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODALS -->
+    <div class="modal" id="loginModal"> <div class="modal-content"><button class="modal-close" onclick="closeModal('loginModal')">×</button><h2 style="margin-bottom: 1.5rem; color: var(--text-primary);">Login to PO Wizard</h2><p style="color: var(--text-secondary); margin-bottom: 2rem; text-align: center;">Sign in securely with your Google account to access your dashboard.</p><button id="googleSignInBtn" class="btn btn-primary" style="width: 100%;">Sign In with Google</button></div></div>
+    
+    <div class="modal" id="dropboxPickerModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('dropboxPickerModal')">×</button>
+            <h2 id="dropboxPickerTitle" style="margin-bottom: 1rem;">Select Folder</h2>
+            <p id="dbx-picker-info">Choose the main folder that contains all of your individual vendor folders. All subfolders inside your selection will be scanned.</p>
+            <div id="dbx-folder-list-container">
+                <ul id="dbx-folder-list">
+                    <!-- Dropbox folders will be rendered here -->
+                </ul>
+            </div>
+            <div id="dbx-picker-actions">
+                <button class="btn btn-secondary" onclick="closeModal('dropboxPickerModal')">Cancel</button>
+                <button id="dbx-confirm-selection" class="btn btn-primary">Select Folder</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="reviewModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('reviewModal')">×</button><h2 id="reviewModalTitle" style="margin-bottom: 1.5rem; color: var(--text-primary);">Review Purchase Order</h2><div class="review-modal-body"><div class="pdf-viewer-area"><iframe id="pdfViewer" src="about:blank" title="PO PDF"></iframe><div class="highlight-box" id="highlightBox"></div></div><div class="form-area"><div class="form-scroll-container"><form id="reviewForm" oninput="updateTotalFromManualInputs()"><input type="hidden" id="editPoIdOnGrid"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editPoNumber">PO Number</label><input type="text" id="editPoNumber" name="po_number"></div><div class="form-group"><label for="editPoDate">PO Date (MM/DD/YY)</label><input type="text" id="editPoDate" name="po_date"></div></div><div class="form-group"><label for="editVendor">Vendor Name</label><input type="text" id="editVendor" name="vendor_name"></div><div class="form-group"><label for="editVendorAddress">Vendor Address</label><textarea id="editVendorAddress" name="vendor_address" rows="2"></textarea></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editVendorPhone">Vendor Phone</label><input type="text" id="editVendorPhone" name="vendor_phone"></div><div class="form-group"><label for="editVendorEmail">Vendor Email</label><input type="text" id="editVendorEmail" name="vendor_email"></div></div><div class="form-group"><label for="editVendorContact">Vendor Contact</label><input type="text" id="editVendorContact" name="vendor_contact"></div><div class="form-group"><label for="editVendorTIN">Vendor TIN/SSN</label><input type="text" id="editVendorTIN" name="vendor_tin"></div><div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;"><div><label>W9 Attached?</label><div class="segmented-control" id="w9AttachedControl"><button type="button" data-value="true">Yes</button><button type="button" data-value="false">No</button></div></div><div><label>Incorporated?</label><div class="segmented-control" id="incorpControl"><button type="button" data-value="Yes">Yes</button><button type="button" data-value="No">No</button><button type="button" data-value="Unknown">Unk</button></div></div></div><h4 style="font-size: 1rem; color: var(--accent-neon); margin-top: 1rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">Line Items</h4><div class="line-item-grid-header"><label>Description</label><label>Code</label><label>Qty</label><label class="text-right">Unit Price</label><label class="text-right">Amount</label><span></span></div><div id="editLineItemsContainer"></div><button type="button" id="addLineItemBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem;">+ Add Line</button><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="editTaxAmount">Tax ($)</label><input type="text" id="editTaxAmount" name="tax_amount" value="0.00"></div><div class="form-group"><label for="editTotalAmount">Total ($)</label><input type="text" id="editTotalAmount" name="total_vendor_amount_str" readonly style="background:var(--secondary-bg); cursor: not-allowed;"></div></div></form></div><div class="modal-footer"><button id="reviewModalSaveChangesButton" class="btn btn-secondary" style="flex: 1;"><span class="btn-text">Save Changes</span><span class="spinner"></span></button><button id="reviewModalApproveButton" class="btn btn-primary" style="flex: 1; background: var(--success-color); color: var(--primary-bg);"><span class="btn-text">Approve PO</span><span class="spinner"></span></button></div></div></div></div></div>
+
+    <!-- Onboarding Wizard -->
+    <div id="onboardingWizard">
+        <div class="wizard-container">
+            <!-- Step 1: Job Number -->
+            <div class="wizard-slide" data-step="1">
+                <h2>Step 1: Job Number</h2>
+                <p>Enter the unique Job Number for this production. This helps keep all your projects organized.</p>
+                <div class="form-group" style="width: 100%;"><input type="text" id="wizard_inputJobNumber" placeholder="e.g., 85319"></div>
+                <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(2)">Next</button></div>
+            </div>
+            <!-- Step 2: Project Name -->
+            <div class="wizard-slide" data-step="2">
+                <h2>Step 2: Project Name</h2>
+                <p>Give your project a descriptive name. This will appear on all your generated documents.</p>
+                <div class="form-group" style="width: 100%;"><input type="text" id="wizard_inputProjectName" placeholder="e.g., Macy's Holiday Shoot"></div>
+                <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(3)">Next</button></div>
+            </div>
+             <!-- Step 3: Source Path -->
+            <div class="wizard-slide" data-step="3">
+                <h2>Step 3: Source Folder</h2>
+                <p>Choose the main Dropbox folder that contains all of your individual vendor folders. We'll scan everything inside.</p>
+                <div class="form-group" style="width: 100%;">
+                    <div class="form-group-inline">
+                        <input type="text" id="wizard_dropboxSourcePath" placeholder="Click 'Choose folder' to select" readonly>
+                        <button class="btn btn-secondary" onclick="openDropboxPicker('source_wizard')">Choose folder</button>
+                    </div>
+                </div>
+                <div class="wizard-navigation"><button class="btn btn-primary" onclick="wizardNext(4)">Next</button></div>
+            </div>
+            <!-- Step 4: Output Path -->
+            <div class="wizard-slide" data-step="4">
+                <h2>Step 4: Output Folder</h2>
+                <p>Choose the Dropbox folder where you want your final, organized Purchase Orders to be saved.</p>
+                 <div class="form-group" style="width: 100%;">
+                    <div class="form-group-inline">
+                        <input type="text" id="wizard_dropboxOutputPath" placeholder="Click 'Choose folder' to select" readonly>
+                        <button class="btn btn-secondary" onclick="openDropboxPicker('output_wizard')">Choose folder</button>
+                    </div>
+                </div>
+                <div class="wizard-navigation"><button class="btn btn-primary" onclick="finishWizard()">Start Processing</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading/Success Modal -->
+    <div class="modal" id="loadingSuccessModal">
+        <div class="modal-content">
+            <div class="spinner-container active">
+                <div class="spinner"></div>
+                <p id="loadingStatusText">Saving...</p>
+            </div>
+            <div class="success-container">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+                <p>Success!</p>
+            </div>
+            <div class="error-container">
+                <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
+                </svg>
+                <p id="loadingErrorText">Error</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- NEW Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <h3 id="confirmationTitle">Are you sure?</h3>
+            <p id="confirmationMessage">This action cannot be undone.</p>
+            <div class="confirmation-actions">
+                <button id="confirmNoBtn" class="btn btn-secondary">No, Cancel</button>
+                <button id="confirmYesBtn" class="btn btn-primary">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Share Links Modal -->
+    <div class="modal" id="shareLinksModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('shareLinksModal')">×</button>
+            <h3>Shareable Dropbox Links</h3>
+            <ul id="shareLinksList">
+                <!-- Links will be populated here -->
+            </ul>
+        </div>
+    </div>
+
+
+    <script>
+        // --- CONFIG ---
+        const API_BASE_URL = 'https://po-wizard-backend-private.onrender.com/api/v1';
+
+        // --- GLOBAL STATE & CACHING ---
+        let isAuthenticated = false;
+        let currentUser = null;
+        let userTier = 'free';
+        let dropboxAccessToken = "";
+        let currentJobNumber = null;
+        let projectCache = {}; // Cache for PO data: { 'jobNumber': { name: 'Project Name', pos: [...] } }
+        let knownProjects = {}; // For switcher: { 'jobNumber': 'Project Name' }
+        let selectedPOIds = new Set();
+        let statusPollInterval = null;
+        let currentPickerTarget = null;
+        
+        // --- DOM ELEMENTS ---
+        let navAuthButtons, landingPageContainer, appPageContainer;
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            navAuthButtons = document.getElementById('nav-auth-buttons');
+            landingPageContainer = document.getElementById('landingPageContainer');
+            appPageContainer = document.getElementById('appPageContainer');
+            
+            loadStateFromLocalStorage(); // Load projects and current job
+            await handleAuthCallback();
+            await checkAuthOnLoad();
+            initializeEventListeners();
+            updateAuthUI();
+            
+            populateFaq();
+            createNeuralNetwork();
+            animateValueProps();
+        });
+
+        // --- STATE MANAGEMENT ---
+        function loadStateFromLocalStorage() {
+            const savedProjects = localStorage.getItem('knownProjects');
+            if (savedProjects) {
+                knownProjects = JSON.parse(savedProjects);
+            }
+            const savedJob = localStorage.getItem('currentJobNumber');
+            if (savedJob) {
+                currentJobNumber = savedJob;
+            }
+        }
+
+        function saveStateToLocalStorage() {
+            localStorage.setItem('knownProjects', JSON.stringify(knownProjects));
+            localStorage.setItem('currentJobNumber', currentJobNumber);
+        }
+
+        function addProject(job, name) {
+            knownProjects[job] = name;
+            saveStateToLocalStorage();
+        }
+
+        function switchProject(job) {
+            if (knownProjects[job]) {
+                currentJobNumber = job;
+                saveStateToLocalStorage();
+                showAppView('dashboardView');
+            }
+        }
+
+        // --- PAGE/VIEW ROUTING ---
+        function showLandingPage() {
+            document.getElementById('landingNavLinks').style.display = 'flex';
+            landingPageContainer.style.display = 'block';
+            appPageContainer.style.display = 'none';
+            document.getElementById('onboardingWizard').classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showAppPage(viewId = 'dashboardView') {
+            if (!isAuthenticated) {
+                openModal('loginModal');
+                return;
+            }
+            document.getElementById('landingNavLinks').style.display = 'none';
+            landingPageContainer.style.display = 'none';
+            appPageContainer.style.display = 'block';
+            showAppView(viewId);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        function showAppView(viewId) {
+            document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.app-sidebar button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(viewId)?.classList.add('active');
+            const navBtnId = viewId.replace('View', '');
+            document.getElementById(`navBtn${navBtnId.charAt(0).toUpperCase() + navBtnId.slice(1)}`)?.classList.add('active');
+
+            if (viewId === 'dashboardView') {
+                renderMyPOsPage();
+            } else if (viewId === 'settingsView') {
+                populateSettingsForm();
+            } else if (viewId === 'billingView') {
+                renderBillingPage();
+            } else if (viewId === 'dropboxView') {
+                renderDropboxPage();
+            }
+        }
+
+        function scrollToSection(selector) {
+            showLandingPage();
+            const targetElement = document.querySelector(selector);
+            if(targetElement) {
+                 setTimeout(() => {
+                    const headerOffset = document.querySelector('.header').offsetHeight + 32;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                 }, 100);
+            }
+        }
+
+        function initializeEventListeners() {
+            // Animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            // Modals
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal(modal.id);
+                });
+            });
+            
+            // Pricing Toggle
+            const monthlyBtn = document.getElementById('monthlyBtn');
+            const yearlyBtn = document.getElementById('yearlyBtn');
+            const updatePricing = (isYearly) => {
+                const proPriceEl = document.getElementById('proPrice');
+                const proSubtitleEl = document.getElementById('proSubtitle');
+                const entPriceEl = document.getElementById('enterprisePrice');
+                const entSubtitleEl = document.getElementById('enterpriseSubtitle');
+
+                if (isYearly) {
+                    const yearlyPro = Math.round(proPriceEl.dataset.monthly * 12 * 0.8) / 12;
+                    const yearlyEnt = Math.round(entPriceEl.dataset.monthly * 12 * 0.8) / 12;
+                    proPriceEl.innerHTML = `$${yearlyPro.toFixed(0)}<small>/month</small>`;
+                    proSubtitleEl.textContent = 'Billed annually';
+                    entPriceEl.innerHTML = `$${yearlyEnt.toFixed(0)}<small>/month</small>`;
+                    entSubtitleEl.textContent = 'Billed annually';
+                    monthlyBtn.classList.remove('active');
+                    yearlyBtn.classList.add('active');
+                } else {
+                    proPriceEl.innerHTML = `$${proPriceEl.dataset.monthly}<small>/month</small>`;
+                    proSubtitleEl.innerHTML = '&nbsp;';
+                    entPriceEl.innerHTML = `$${entPriceEl.dataset.monthly}<small>/month</small>`;
+                    entSubtitleEl.innerHTML = '&nbsp;';
+                    monthlyBtn.classList.add('active');
+                    yearlyBtn.classList.remove('active');
+                }
+            };
+            monthlyBtn.addEventListener('click', () => updatePricing(false));
+            yearlyBtn.addEventListener('click', () => updatePricing(true));
+
+            // Review Modal controls
+            document.getElementById('addLineItemBtn').addEventListener('click', () => addLineItemField());
+            document.getElementById('reviewModalSaveChangesButton').addEventListener('click', () => handleReviewModalSubmit(false));
+            document.getElementById('reviewModalApproveButton').addEventListener('click', () => handleReviewModalSubmit(true));
+            
+            const w9Control = document.getElementById('w9AttachedControl');
+            if (w9Control) {
+                w9Control.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        w9Control.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
+                });
+            }
+            const incorpControl = document.getElementById('incorpControl');
+            if (incorpControl) {
+                incorpControl.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        incorpControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
+                });
+            }
+
+            // Organic movement scripts
+            (() => {
+                const light = document.querySelector('.mouse-aware-light');
+                if (!light) return;
+                let lightPos = { x: 0, y: 0 }, lightTarget = { x: 0, y: 0 };
+                document.body.addEventListener('mousemove', e => {
+                    lightTarget.x = e.clientX;
+                    lightTarget.y = e.clientY;
+                });
+                function animateElements() {
+                    lightPos.x += (lightTarget.x - lightPos.x) * 0.1;
+                    lightPos.y += (lightTarget.y - lightPos.y) * 0.1;
+                    light.style.transform = `translate(${lightPos.x - 500}px, ${lightPos.y - 500}px)`;
+                    requestAnimationFrame(animateElements);
+                }
+                animateElements();
+            })();
+            (() => {
+                document.querySelectorAll('.card-light-effect').forEach(card => {
+                    card.addEventListener('mousemove', e => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        card.style.setProperty('--blob-x', `${x - 150}px`);
+                        card.style.setProperty('--blob-y', `${y - 150}px`);
+                    });
+                });
+            })();
+            
+            // Stats Counter
+            const statsSection = document.querySelector('.stats');
+            const statsObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateStats();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            if (statsSection) statsObserver.observe(statsSection);
+
+            // Logo Flipper
+            const companies = [['NETFLIX', 'HBO', 'WARNER BROS.', 'A24'],['PARAMOUNT', 'SONY PICTURES', 'DISNEY', 'AMAZON STUDIOS'],['UNIVERSAL', 'LIONSGATE', 'LEGENDARY', 'BLUMHOUSE'],['PLAN B', 'ANNAPURNA', 'SEARCHLIGHT', 'FOCUS FEATURES']];
+            const flipperContainer = document.querySelector('.logo-flipper-container');
+            if(flipperContainer) {
+                companies.forEach(companyList => {
+                    const column = document.createElement('div'); column.className = 'logo-flipper-column';
+                    const inner = document.createElement('div'); inner.className = 'flipper-inner';
+                    [...companyList, companyList[0]].forEach(name => { const div = document.createElement('div'); div.className = 'company-name-logo'; div.textContent = name; inner.appendChild(div); });
+                    column.appendChild(inner); flipperContainer.appendChild(column);
+                });
+                document.querySelectorAll('.logo-flipper-column').forEach((column, i) => {
+                    const inner = column.querySelector('.flipper-inner'); const items = inner.querySelectorAll('.company-name-logo');
+                    const itemHeight = items[0].offsetHeight; let currentIndex = 0;
+                    setInterval(() => {
+                        currentIndex++; inner.style.transition = 'transform 0.8s cubic-bezier(0.77, 0, 0.175, 1)'; inner.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
+                        if (currentIndex >= items.length - 1) { setTimeout(() => { inner.style.transition = 'none'; currentIndex = 0; inner.style.transform = 'translateY(0)'; }, 800); }
+                    }, 2000 + i * 300);
+                });
+            }
+
+            // Canvas Background
+            const canvas = document.getElementById('backgroundCanvas'); const ctx = canvas.getContext('2d');
+            let blobs = [];
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resizeCanvas); resizeCanvas();
+            class Blob { constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.radius = Math.random() * 200 + 150; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.color = `rgba(${Math.random() > 0.5 ? '74, 189, 237' : '30, 58, 138'}, 0.15)`; } update() { this.x += this.vx; this.y += this.vy; if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) this.vx *= -1; if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) this.vy *= -1; } draw() { ctx.beginPath(); const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.1, this.x, this.y, this.radius); gradient.addColorStop(0, this.color); gradient.addColorStop(1, 'rgba(10, 10, 10, 0)'); ctx.fillStyle = gradient; ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); } }
+            for (let i = 0; i < 4; i++) { blobs.push(new Blob()); }
+            function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); blobs.forEach(blob => { blob.update(); blob.draw(); }); requestAnimationFrame(animateCanvas); }
+            animateCanvas();
+
+            // Logo Text Animation
+            const logoText = document.querySelector('.logo-text');
+            if (logoText) { setTimeout(() => { logoText.classList.add('is-hidden'); }, 2000); }
+
+            // Mobile Menu Toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+            const mobileNavClose = document.querySelector('.mobile-nav-close');
+            menuToggle.addEventListener('click', () => { mobileNavOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; });
+            mobileNavClose.addEventListener('click', () => { mobileNavOverlay.classList.remove('open'); document.body.style.overflow = 'auto'; });
+            mobileNavOverlay.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { mobileNavOverlay.classList.remove('open'); document.body.style.overflow = 'auto'; }); });
+        }
+        
+        function animateStats() { document.querySelectorAll('.stat-number').forEach(stat => { const targetText = stat.textContent; const target = parseInt(targetText.replace(/[^0-9]/g, '')); if (isNaN(target)) return; const suffix = targetText.replace(/[0-9]/g, ''); let current = 0; const duration = 1500, stepTime = 20, steps = duration / stepTime, increment = target / steps; const timer = setInterval(() => { current += increment; if (current >= target) { current = target; clearInterval(timer); } stat.textContent = `${Math.floor(current)}${suffix}`; }, stepTime); }); }
+        
+        function populateFaq() {
+            const faqContainer = document.querySelector('.faq-accordion');
+            const faqs = [ { q: "What is PO Wizard?", a: "PO Wizard is an AI-powered software designed for production coordinators to automate the creation of purchase orders. It drastically reduces manual data entry, minimizes errors, and saves significant time during the production wrap process." }, { q: "How does the Dropbox integration work?", a: "You grant PO Wizard temporary, session-based access to a specific folder in your Dropbox. You simply drop all your receipts, invoices, and vendor documents into this folder. Our AI scans the contents, processes them, and organizes the generated POs back into your Dropbox, keeping your workflow centralized." }, { q: "What if a vendor has multiple invoices?", a: "PO Wizard is built for this exact scenario. Our AI intelligently groups all documents from the same vendor into a single, consolidated Purchase Order. It automatically creates line items for each invoice or receipt, ensuring a clean and comprehensive PO that's easy for accounting to process." }, { q: "Is my production data and Dropbox token secure?", a: "Absolutely. Security is our top priority. Your Dropbox token is stored only in your browser's session storage, meaning it's deleted the moment you close the tab and is never saved on our servers. All data transfer uses bank-grade TLS encryption, and we only ever read the files you specify for processing." }, { q: "Can I use this for multiple productions at once?", a: "The Pro plan is designed for one production at a time. However, our Enterprise plan is built for production companies and freelance coordinators juggling multiple projects. It allows you to create and manage separate, secure workspaces for each production, with cross-tracking capabilities for vendors used across different jobs." }, { q: "How does this integrate with accounting software like Global Vista?", a: "PO Wizard generates clean, professional PDF purchase orders with all necessary information, including vendor details, line items, amounts, and job codes. These PDFs are formatted for easy submission to any major production accounting system. The Enterprise plan also offers direct data export options (e.g., CSV, Excel) for seamless import into software like Global Vista or Media Services." }, { q: "What happens if I upload a blurry receipt?", a: "Our AI is trained to handle a wide variety of document qualities. If a document is too blurry or unreadable, the system will flag it for manual review. You will be able to see the problematic document and manually enter the correct information in the review step, ensuring no data is lost or guessed." }, { q: "Can I edit a PO after it has been generated?", a: "Yes. Every PO goes through a review stage where you have full control to edit any field. You can correct vendor names, adjust line items, add notes, and modify amounts. Once you approve the PO, a final, clean version is created, but you can always revisit and create a new version if needed." }, { q: "Does this work for both union and non-union productions?", a: "Absolutely. PO Wizard is agnostic to union status. It is designed to handle vendor invoices, receipts, and standard paperwork common to all types of film, television, and commercial productions, regardless of guild affiliations." }, { q: "What are the system requirements?", a: "PO Wizard is a web-based application, so there are no downloads or installations required. It runs on any modern web browser (like Chrome, Firefox, Safari, or Edge) on both Mac and PC. All you need is an internet connection and a Dropbox account." }, { q: "Can I cancel my subscription at any time?", a: "Yes, you can cancel your Pro or Enterprise subscription at any time through your account settings. You will retain access to the paid features until the end of your current billing period. There are no long-term contracts or cancellation fees." }, { q: "How is this different from just using a spreadsheet?", a: "While spreadsheets are great for tracking, PO Wizard eliminates the most time-consuming part of the process: manual data entry. Instead of you typing out every vendor, date, and amount, our AI does it for you in seconds. It also standardizes the format, groups related expenses, and creates professional, submittable PDF documents, saving you hours of administrative work compared to a manual spreadsheet workflow." }];
+            if (!faqContainer) return;
+            faqContainer.innerHTML = faqs.map(faq => ` <div class="faq-item"> <button class="faq-question"> <span>${faq.q}</span> <svg class="faq-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </button> <div class="faq-answer"> <p>${faq.a}</p> </div> </div> `).join('');
+            faqContainer.querySelectorAll('.faq-question').forEach(button => { button.addEventListener('click', () => { const item = button.parentElement; const answer = item.querySelector('.faq-answer'); const wasActive = item.classList.contains('active'); document.querySelectorAll('.faq-item.active').forEach(i => { i.classList.remove('active'); i.querySelector('.faq-answer').style.maxHeight = null; }); if (!wasActive) { item.classList.add('active'); answer.style.maxHeight = answer.scrollHeight + 'px'; } }); });
+        }
+
+        // --- AUTHENTICATION ---
+        function updateAuthUI() {
+            const mobileNavAuthButtons = document.getElementById('mobileNavAuthButtons');
+            const landingNavLinks = document.getElementById('landingNavLinks');
+            navAuthButtons.innerHTML = '';
+            mobileNavAuthButtons.innerHTML = '';
+            
+            if (isAuthenticated && currentUser) {
+                landingNavLinks.style.display = 'none';
+                const userMenuHTML = `
+                    <div class="user-menu-container">
+                        <div class="user-menu-toggle">
+                            <a href="#" onclick="showAppPage('dashboardView'); return false;">My Dashboard</a>
+                            <span class="user-menu-separator"></span>
+                            <div class="user-menu-name-section">
+                                <span>${currentUser.displayName}</span>
+                                <svg class="arrow-down" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                        </div>
+                        <div class="user-dropdown-menu">
+                            <a onclick="showAppPage('dashboardView')">Dashboard</a>
+                            <a onclick="showAppPage('dropboxView')">Dropbox Connection</a>
+                            <a onclick="showAppPage('billingView')">Billing</a>
+                            <a onclick="showAppPage('settingsView')">Settings</a>
+                            <a id="signOutBtn">Sign Out</a>
+                        </div>
+                    </div>`;
+                navAuthButtons.innerHTML = userMenuHTML;
+                document.getElementById('signOutBtn').addEventListener('click', signOut);
+                const mobileSignOutHTML = `<a href="#" onclick="showAppPage(); return false;" class="btn btn-primary">My Dashboard</a><a href="#" class="btn btn-secondary" id="mobileSignOutBtn">Sign Out</a>`;
+                mobileNavAuthButtons.innerHTML = mobileSignOutHTML;
+                document.getElementById('mobileSignOutBtn').addEventListener('click', signOut);
+            } else {
+                landingNavLinks.style.display = 'flex';
+                const loginButtonsHTML = ` <a href="#" class="btn btn-secondary" id="loginBtn">Login</a> <a onclick="handleGetStartedClick()" class="btn btn-primary">Start Free Trial</a>`;
+                navAuthButtons.innerHTML = loginButtonsHTML;
+                document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
+                document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
+                mobileNavAuthButtons.innerHTML = loginButtonsHTML;
+                mobileNavAuthButtons.querySelector('#loginBtn').addEventListener('click', () => openModal('loginModal'));
+            }
+        }
+
+        async function checkAuthOnLoad() {
+            const token = localStorage.getItem('app_token');
+            if (token) {
+                const userDetails = await fetchUserDetails(token);
+                if (userDetails) {
+                    isAuthenticated = true;
+                    currentUser = userDetails;
+                    localStorage.setItem('user_displayName', currentUser.displayName);
+                    localStorage.setItem('user_email', currentUser.email);
+                    dropboxAccessToken = sessionStorage.getItem('dropbox_access_token') || "";
+                    await fetchUserTier();
+                }
+            }
+            updateAuthUI();
+        }
+
+        async function handleAuthCallback() {
+            if (window.location.hash && window.location.hash.startsWith('#token=')) {
+                const token = window.location.hash.substring('#token='.length);
+                localStorage.setItem('app_token', token);
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+                await checkAuthOnLoad();
+                closeModal('loginModal');
+                showAppPage('dashboardView');
+            }
+        }
+
+        function signInWithGoogle() { window.location.href = `${API_BASE_URL}/auth/google/login`; }
+
+        function signOut(e) {
+            if(e) e.preventDefault();
+            localStorage.clear(); sessionStorage.clear();
+            isAuthenticated = false; currentUser = null; dropboxAccessToken = ""; projectCache = {}; knownProjects = {}; currentJobNumber = null;
+            updateAuthUI();
+            showLandingPage();
+        }
+
+        async function fetchUserDetails(token) { try { const response = await fetch(`${API_BASE_URL}/users/me`, { headers: { 'Authorization': `Bearer ${token}` } }); if (!response.ok) { if (response.status === 401) signOut(); return null; } const userData = await response.json(); return { displayName: userData.full_name || userData.email.split('@')[0], email: userData.email, }; } catch (error) { return null; } }
+        
+        function handleGetStartedClick() {
+            if (isAuthenticated) {
+                showAppPage();
+            } else {
+                signInWithGoogle();
+            }
+        }
+
+        // --- MODAL & UI HELPERS ---
+        function openModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+        function closeModal(modalId) { const modal = document.getElementById(modalId); if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
+        function formatCurrency(amount) {
+            const num = parseFloat(String(amount).replace(/[^0-9.-]+/g,""));
+            if (isNaN(num)) {
+                return "$0.00";
+            }
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+        }
+
+        // --- APP PAGE: MY POs LOGIC ---
+        async function renderMyPOsPage() {
+            const container = document.getElementById('dashboard-content');
+            if (!container) {
+                console.error('Dashboard container not found');
+                return;
+            }
+            
+            container.innerHTML = `<h2 class="app-section-title">Dashboard</h2>`;
+
+            console.log('Dashboard render - dropboxAccessToken:', !!dropboxAccessToken, 'currentJobNumber:', currentJobNumber, 'knownProjects:', Object.keys(knownProjects));
+
+            if (!dropboxAccessToken) {
+                console.log('No Dropbox token, redirecting to Dropbox view');
+                showAppView('dropboxView');
+                return;
+            }
+
+            if (!currentJobNumber || !knownProjects[currentJobNumber]) {
+                console.log('No active job, showing get started screen');
+                container.innerHTML += `
+                    <div class="guided-step-card" style="margin-top: 2rem; text-align: center;">
+                        <h3>Welcome to Your Dashboard</h3>
+                        <p>It looks like you don't have an active job. Let's get you set up to process your first batch of Purchase Orders.</p>
+                        <button id="dashboardGetStartedBtn" class="btn btn-primary">Process New Job</button>
+                    </div>
+                `;
+                const btn = document.getElementById('dashboardGetStartedBtn');
+                if (btn) {
+                    btn.addEventListener('click', startOnboardingWizard);
+                }
+                return;
+            }
+            
+            container.innerHTML += `
+                <div id="poDashboardStep">
+                    <div class="po-header">
+                        <div id="projectSwitcher"></div>
+                        <button id="newPOBatchBtn" class="btn btn-secondary">Process New Job</button>
+                    </div>
+                    <div id="jobCompleteBanner">
+                        <h3>Job Complete!</h3>
+                        <p>All purchase orders for this job have been approved.</p>
+                    </div>
+                    <div id="batchActionControls" class="po-actions-bar" style="display: none;">
+                         <p style="margin-bottom: 1rem;"><span id="selectedPoCount">0</span> PO(s) selected.</p>
+                         <div class="batch-actions-container">
+                             <button id="approveSelectedButton" class="btn btn-secondary" style="border-color: var(--success-color); color: var(--success-color);" disabled>Approve</button>
+                             <button id="deleteSelectedButton" class="btn btn-secondary" style="border-color: var(--error-color); color: var(--error-color);" disabled>Delete</button>
+                             <button id="shareSelectedButton" class="btn btn-primary" style="flex-grow: 1;" disabled>Share Selected</button>
+                         </div>
+                    </div>
+                    <div class="po-actions-bar">
+                        <div class="po-filters">
+                            <select id="filterStatus"><option value="all">All Status</option><option value="pending">Pending</option><option value="approved">Approved</option></select>
+                            <input type="text" id="filterVendorName" placeholder="Filter by Vendor Name..." style="flex-grow: 1;">
+                        </div>
+                    </div>
+                    <div id="poGrid"></div>
+                    <div id="noPOsActionContainer" style="display: none;">
+                        <h3>No Purchase Orders Found</h3>
+                        <p id="noPOsMessage">You can start by processing a new batch.</p>
+                        <button id="noPOsCreateBtn" class="btn btn-primary" style="margin-top: 2rem;">Process New Job</button>
+                    </div>
+                </div>`;
+            
+            setupDashboardListeners();
+            
+            renderProjectSwitcher();
+            
+            if (projectCache[currentJobNumber]) {
+                console.log("Loading POs from cache for job:", currentJobNumber);
+                renderPOGrid(projectCache[currentJobNumber].pos);
+            } else {
+                await fetchGeneratedPOs();
+            }
+        }
+
+        function setupDashboardListeners() {
+            document.getElementById('newPOBatchBtn')?.addEventListener('click', startOnboardingWizard);
+            document.getElementById('noPOsCreateBtn')?.addEventListener('click', startOnboardingWizard);
+            document.getElementById('filterStatus')?.addEventListener('change', applyFiltersAndSort);
+            document.getElementById('filterVendorName')?.addEventListener('input', applyFiltersAndSort);
+            document.getElementById('approveSelectedButton')?.addEventListener('click', handleApproveSelected);
+            document.getElementById('deleteSelectedButton')?.addEventListener('click', handleDeleteSelected);
+            document.getElementById('shareSelectedButton')?.addEventListener('click', handleShareSelected);
+        }
+
+        function renderProjectSwitcher() {
+            const container = document.getElementById('projectSwitcher');
+            if (!container) return;
+
+            const project = projectCache[currentJobNumber] || { name: knownProjects[currentJobNumber], pos: [] };
+            const allApproved = project.pos.length > 0 && project.pos.every(po => po.status?.toLowerCase() === 'approved');
+            const statusClass = allApproved ? 'approved' : 'pending';
+
+            let dropdownHTML = '';
+            for (const job in knownProjects) {
+                if (job !== currentJobNumber) {
+                    const projInCache = projectCache[job] || { pos: [] };
+                    const isApproved = projInCache.pos.length > 0 && projInCache.pos.every(po => po.status?.toLowerCase() === 'approved');
+                    const dotClass = isApproved ? 'approved' : 'pending';
+                    dropdownHTML += `<a href="#" data-job-id="${job}"><span class="status-dot ${dotClass}"></span>${job}: ${knownProjects[job]}</a>`;
+                }
+            }
+
+            container.innerHTML = `
+                <div class="project-switcher-container">
+                    <div class="project-switcher-toggle">
+                        <span class="status-dot ${statusClass}"></span>
+                        <span>Job: <b>${currentJobNumber}</b> | Project: <b>${project.name}</b></span>
+                        <svg class="arrow-down" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="project-switcher-dropdown">${dropdownHTML || '<a>No other projects</a>'}</div>
+                </div>
+            `;
+
+            container.querySelectorAll('.project-switcher-dropdown a').forEach(link => {
+                const jobId = link.dataset.jobId;
+                if (jobId) {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        switchProject(jobId);
+                    });
+                }
+            });
+        }
+        
+        async function startDocumentProcessing(sourcePath, outputPath) {
+            showAppView('progressView');
+            const container = document.getElementById('progress-content');
+            container.innerHTML = `
+                <div id="processingStep" class="progress-container" style="margin-top: 2rem;">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill"><div class="neural-network" id="neuralNetworkProcessing"></div></div>
+                    </div>
+                    <div class="vendor-display">
+                        <video class="vendor-display-video" src="./assets/POWizard_Loading.webm" autoplay loop muted playsinline></video>
+                        <div class="vendor-display-content">
+                            <div class="current-vendor" id="currentVendor">Initializing PO Wizard...</div>
+                            <div class="vendor-stats">
+                                <div class="vendor-stat"><div class="stat-value" id="vendorProgress">0/0</div><div class="stat-label">Vendors Scanned</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="status-message"><div class="status-text" id="statusMessage">🧙‍♂️ Merlin the PO Wizard is preparing your documents...</div></div>
+                </div>`;
+            createNeuralNetwork('neuralNetworkProcessing');
+
+            const appToken = localStorage.getItem('app_token');
+            const payload = { 
+                dropbox_access_token: dropboxAccessToken, 
+                dropbox_source_path: sourcePath, 
+                dropbox_output_path: outputPath, 
+                job_number_context: currentJobNumber, 
+                project_name_context: knownProjects[currentJobNumber],
+                user_tier: userTier
+            };
+            try {
+                const response = await fetch(`${API_BASE_URL}/trigger-dropbox-processing`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`Failed to trigger processing: ${response.statusText}`);
+                const data = await response.json();
+                pollTaskStatus(data.task_id);
+            } catch (error) {
+                document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('statusMessage').parentElement.style.borderColor = 'var(--error-color)';
+                document.getElementById('statusMessage').style.color = 'var(--error-color)';
+            }
+        }
+
+        function pollTaskStatus(taskId) {
+            if (statusPollInterval) clearInterval(statusPollInterval);
+            statusPollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/task-status/${taskId}`);
+                    if (!response.ok) { clearInterval(statusPollInterval); throw new Error(`Error fetching status: ${response.statusText}`); }
+                    
+                    const data = await response.json();
+                    updateProgressUI(data);
+
+                    if (data.status === 'SUCCESS' || data.status === 'FAILURE') {
+                        clearInterval(statusPollInterval);
+                        if(data.status === 'SUCCESS') {
+                            document.getElementById('statusMessage').textContent = "Processing complete! Loading dashboard...";
+                            document.getElementById('currentVendor').textContent = 'Scan Complete!';
+                            delete projectCache[currentJobNumber]; // Invalidate cache to force a reload
+                            setTimeout(() => showAppView('dashboardView'), 2000);
+                        } else {
+                             const failureDetails = data.result?.error_message || JSON.stringify(data.result);
+                             document.getElementById('statusMessage').textContent = `Processing failed: ${failureDetails}`;
+                             document.getElementById('statusMessage').parentElement.style.borderColor = 'var(--error-color)';
+                             document.getElementById('statusMessage').style.color = 'var(--error-color)';
+                        }
+                    }
+                } catch (error) {
+                    clearInterval(statusPollInterval);
+                    document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                    document.getElementById('statusMessage').parentElement.style.borderColor = 'var(--error-color)';
+                    document.getElementById('statusMessage').style.color = 'var(--error-color)';
+                }
+            }, 3000);
+        }
+
+        function updateProgressUI(data) {
+            const progressFill = document.getElementById('progressFill');
+            const statusMessage = document.getElementById('statusMessage');
+            const vendorProgress = document.getElementById('vendorProgress');
+            const currentVendor = document.getElementById('currentVendor');
+            if(!progressFill) return;
+
+            progressFill.style.width = `${data.progress_percent}%`;
+            if (statusMessage) statusMessage.textContent = data.current_step || data.status;
+
+            const vendorMatch = (data.current_step || "").match(/.*\((\d+)\/(\d+)\)/);
+            if(vendorProgress && vendorMatch) {
+                vendorProgress.textContent = `${vendorMatch[1]}/${vendorMatch[2]}`;
+                const vendorNameMatch = (data.current_step || "").match(/Processing vendor (.*?)\s*\(/);
+                if (currentVendor && vendorNameMatch) {
+                     currentVendor.textContent = `Scanning: ${vendorNameMatch[1]}`;
+                }
+            } else if(currentVendor && data.status === 'SUCCESS') {
+                currentVendor.textContent = 'Scan Complete!';
+            }
+        }
+        
+        function createNeuralNetwork(containerId = 'neuralNetworkProcessing') {
+            const networkContainer = document.getElementById(containerId);
+            if(!networkContainer) return;
+            networkContainer.innerHTML = '';
+            for (let i = 0; i < 25; i++) { const neuron = document.createElement('div'); neuron.className = 'neuron'; neuron.style.left = (Math.random() * 95) + '%'; neuron.style.top = (15 + Math.random() * 50) + '%'; neuron.style.animationDelay = (Math.random() * 4) + 's'; neuron.style.animationDuration = (2 + Math.random() * 2) + 's'; networkContainer.appendChild(neuron); }
+        }
+
+        // --- PO MANAGEMENT (Dashboard View) ---
+        async function fetchGeneratedPOs() {
+            const poGrid = document.getElementById('poGrid');
+            if (!poGrid) return;
+            poGrid.innerHTML = `<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">Loading POs for Job ${currentJobNumber}...</p>`;
+            const appToken = localStorage.getItem('app_token');
+
+            try {
+                const url = `${API_BASE_URL}/processed-pos/${currentJobNumber}?projectName=${encodeURIComponent(knownProjects[currentJobNumber])}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appToken}` } });
+                if (!response.ok) throw new Error(`Failed to fetch POs: ${response.statusText}`);
+                
+                const data = await response.json();
+                projectCache[currentJobNumber] = { name: data.project_name, pos: data.generated_pos || [] };
+                renderPOGrid(projectCache[currentJobNumber].pos);
+            } catch (error) {
+                poGrid.innerHTML = `<p style="color: var(--error-color); grid-column: 1 / -1; text-align: center;">Error loading POs: ${error.message}</p>`;
+            }
+        }
+
+        function renderPOGrid(posToRender) {
+            const poGrid = document.getElementById('poGrid');
+            const noPOsContainer = document.getElementById('noPOsActionContainer');
+            const jobCompleteBanner = document.getElementById('jobCompleteBanner');
+            if(!poGrid || !noPOsContainer || !jobCompleteBanner) return;
+            
+            renderProjectSwitcher(); 
+
+            const poCountEl = document.getElementById('poCount');
+            if (poCountEl) {
+                poCountEl.textContent = `${posToRender.length} POs Generated`;
+            }
+
+            if (posToRender.length === 0) {
+                poGrid.style.display = 'none';
+                noPOsContainer.style.display = 'block';
+                jobCompleteBanner.style.display = 'none';
+            } else {
+                poGrid.style.display = 'grid';
+                noPOsContainer.style.display = 'none';
+                poGrid.innerHTML = '';
+                posToRender.forEach(po => poGrid.appendChild(createPOCard(po)));
+                
+                const allApproved = posToRender.every(po => po.status?.toLowerCase() === 'approved');
+                jobCompleteBanner.style.display = allApproved ? 'block' : 'none';
+            }
+            updateBatchActionButtons();
+        }
+
+        function createPOCard(po) {
+            const card = document.createElement('div');
+            card.className = 'po-card card-light-effect';
+            card.id = `po-card-${po.po_id_on_grid}`;
+            const isApproved = po.status?.toLowerCase() === 'approved';
+            
+            if (isApproved) {
+                card.classList.add('po-card-approved');
+            }
+
+            let statusText = 'Pending Review';
+            let statusClass = 'status-pending';
+            if(isApproved) {
+                statusText = 'Approved';
+                statusClass = 'status-approved';
+            } else if (po.status?.toLowerCase().includes('error')) {
+                statusText = 'Error';
+                statusClass = 'status-error';
+            }
+            
+            const pdfPath = po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.final_dropbox_path;
+            const shareButtonHtml = pdfPath ? `<button class="btn btn-secondary ${isApproved ? 'btn-share-approved' : ''}" style="flex: 1;" onclick="sharePDF('${pdfPath}')">Share</button>` : '';
+
+            card.innerHTML = `<div class="light-blob"></div><div class="po-card-checkbox"><input type="checkbox" id="chk-${po.po_id_on_grid}" data-po-id="${po.po_id_on_grid}" onchange="handlePOCheckboxChange(this)"></div><div class="po-card-content"><div class="po-card-header"><h4 class="po-card-po-number">${po.po_number}</h4><span class="po-card-status ${statusClass}">${statusText}</span></div><p class="po-card-vendor" title="${po.vendor_name}">${po.vendor_name}</p><p class="po-card-amount">${formatCurrency(po.total_amount)}</p><p class="po-card-date">Date: ${po.po_date || 'N/A'}</p><div class="po-card-footer"><button class="btn btn-secondary" style="flex: 2;" onclick="openReviewModal('${po.po_id_on_grid}')">Review / Edit</button>${shareButtonHtml}</div></div>`;
+            return card;
+        }
+
+        function sharePDF(pdfPath) {
+            if (!pdfPath) return;
+            const dropboxFileUrl = `https://www.dropbox.com/home${pdfPath}`;
+            window.open(dropboxFileUrl, '_blank');
+        }
+        
+        function applyFiltersAndSort() {
+            if (!projectCache[currentJobNumber]) return;
+            let filteredPOs = [...projectCache[currentJobNumber].pos];
+            const statusFilter = document.getElementById('filterStatus').value;
+            const vendorNameFilter = document.getElementById('filterVendorName').value.toLowerCase();
+            if (statusFilter === 'pending') {
+                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase() !== 'approved');
+            } else if (statusFilter !== 'all') { 
+                filteredPOs = filteredPOs.filter(po => po.status?.toLowerCase() === statusFilter); 
+            }
+            if (vendorNameFilter) { filteredPOs = filteredPOs.filter(po => po.vendor_name?.toLowerCase().includes(vendorNameFilter)); }
+            renderPOGrid(filteredPOs);
+        }
+        
+        function handlePOCheckboxChange(checkbox) { const poId = checkbox.dataset.poId; const cardElement = document.getElementById(`po-card-${poId}`); if (checkbox.checked) { selectedPOIds.add(poId); cardElement?.classList.add('selected-card'); } else { selectedPOIds.delete(poId); cardElement?.classList.remove('selected-card'); } updateBatchActionButtons(); }
+        
+        function updateBatchActionButtons() { 
+            const count = selectedPOIds.size; 
+            const controls = document.getElementById('batchActionControls'); 
+            if(!controls) return; 
+            document.getElementById('selectedPoCount').textContent = count; 
+            document.getElementById('approveSelectedButton').disabled = count === 0; 
+            document.getElementById('deleteSelectedButton').disabled = count === 0; 
+            document.getElementById('shareSelectedButton').disabled = count === 0;
+            controls.style.display = count > 0 ? 'block' : 'none'; 
+        }
+        
+        function handleApproveSelected() {
+            if (selectedPOIds.size === 0) return;
+            
+            const selectedPOs = Array.from(selectedPOIds).map(poId => 
+                projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId)
+            ).filter(Boolean);
+            
+            if (selectedPOs.length === 0) return;
+            
+            // Show confirmation
+            const poNumbers = selectedPOs.map(po => po.po_number).join(', ');
+            if (!confirm(`Are you sure you want to approve ${selectedPOs.length} PO(s): ${poNumbers}?`)) return;
+            
+            // Approve each PO
+            selectedPOs.forEach(async (po) => {
+                try {
+                    po.full_po_data_for_review.status = 'Approved';
+                    await handleReviewModalSubmit(true, po.po_id_on_grid);
+                } catch (error) {
+                    console.error(`Error approving PO ${po.po_number}:`, error);
+                }
+            });
+            
+            // Clear selection and refresh
+            selectedPOIds.clear();
+            updateBatchActionButtons();
+            setTimeout(() => fetchAndRenderMyPOs(), 1000);
+        }
+        
+        function handleDeleteSelected() {
+            if (selectedPOIds.size === 0) return;
+            
+            const selectedPOs = Array.from(selectedPOIds).map(poId => 
+                projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId)
+            ).filter(Boolean);
+            
+            if (selectedPOs.length === 0) return;
+            
+            const poNumbers = selectedPOs.map(po => po.po_number).join(', ');
+            if (!confirm(`Are you sure you want to delete ${selectedPOs.length} PO(s): ${poNumbers}? This action cannot be undone.`)) return;
+            
+            alert('Delete functionality not yet implemented. Please contact support for assistance.');
+        }
+        
+        function handleShareSelected() {
+            if (selectedPOIds.size === 0) return;
+            
+            const selectedPOs = Array.from(selectedPOIds).map(poId => 
+                projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId)
+            ).filter(Boolean);
+            
+            const pdfPaths = selectedPOs
+                .map(po => po.full_po_data_for_review?.generated_draft_po_pdf_path_dropbox || po.final_dropbox_path)
+                .filter(Boolean);
+            
+            if (pdfPaths.length === 0) {
+                alert('No PDF files available to share for the selected POs.');
+                return;
+            }
+            
+            // Open each PDF in a new tab
+            pdfPaths.forEach(pdfPath => {
+                const dropboxFileUrl = `https://www.dropbox.com/home${pdfPath}`;
+                window.open(dropboxFileUrl, '_blank');
+            });
+        }
+        
+        // --- REVIEW MODAL LOGIC ---
+        async function openReviewModal(poId) {
+            const poData = projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId); if (!poData) { alert('Could not find PO data.'); return; }
+            const fullData = poData.full_po_data_for_review || poData;
+            document.getElementById('reviewModalTitle').textContent = `Review PO: ${fullData.po_number}`;
+            document.getElementById('editPoIdOnGrid').value = poId;
+            document.getElementById('editVendor').value = fullData.vendor_name || '';
+            document.getElementById('editVendorAddress').value = fullData.vendor_address || '';
+            document.getElementById('editVendorPhone').value = fullData.vendor_phone || '';
+            document.getElementById('editVendorEmail').value = fullData.vendor_email || '';
+            document.getElementById('editVendorContact').value = fullData.vendor_contact || '';
+            document.getElementById('editVendorTIN').value = fullData.vendor_tin || '';
+            document.getElementById('editPoNumber').value = fullData.po_number || '';
+            document.getElementById('editPoDate').value = fullData.po_date || '';
+            
+            const w9AttachedControl = document.getElementById('w9AttachedControl');
+            w9AttachedControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            w9AttachedControl.querySelector(`button[data-value="${fullData.has_w9_document}"]`)?.classList.add('active');
+
+            const incorpControl = document.getElementById('incorpControl');
+            incorpControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            incorpControl.querySelector(`button[data-value="${fullData.is_incorp_on_w9}"]`)?.classList.add('active');
+
+            document.getElementById('editTaxAmount').value = (fullData.tax_amount || '0.00').replace('$', '');
+            
+            const lineItemsContainer = document.getElementById('editLineItemsContainer'); lineItemsContainer.innerHTML = '';
+            const lineItems = fullData.aggregated_line_items || [{ description: 'Misc Expenses', amount: fullData.total_amount }]; lineItems.forEach(item => addLineItemField(item));
+            
+            updateTotalFromManualInputs();
+            
+            const pdfViewer = document.getElementById('pdfViewer'); const pdfPath = fullData.generated_draft_po_pdf_path_dropbox;
+            if (pdfPath) { pdfViewer.src = `${API_BASE_URL}/view-pdf?dropbox_file_path=${encodeURIComponent(pdfPath)}&user_tier=${userTier}&dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`; } else { pdfViewer.src = 'about:blank'; }
+            
+            addHighlightListeners();
+
+            openModal('reviewModal');
+        }
+        function addLineItemField(item = { description: '', budget_code: '', quantity: '1', unit_price: '', amount: '' }) { const container = document.getElementById('editLineItemsContainer'); const div = document.createElement('div'); div.className = 'line-item-grid'; div.innerHTML = `<input type="text" value="${item.description || ''}" placeholder="Description"><input type="text" value="${item.budget_code || ''}" placeholder="Code"><input type="text" value="${item.quantity || '1'}" placeholder="Qty"><input type="text" value="${item.unit_price || ''}" placeholder="Unit $" class="text-right"><input type="text" value="${item.amount || ''}" placeholder="Total $" class="text-right"><button type="button" onclick="this.parentElement.remove()">×</button>`; container.appendChild(div); }
+        
+        function updateTotalFromManualInputs() {
+            let subtotal = 0;
+            const lineItems = document.querySelectorAll('#editLineItemsContainer .line-item-grid');
+            lineItems.forEach(item => {
+                const amountInput = item.querySelector('input:nth-of-type(5)');
+                subtotal += parseFloat(amountInput.value) || 0;
+            });
+            const tax = parseFloat(document.getElementById('editTaxAmount').value) || 0;
+            document.getElementById('editTotalAmount').value = (subtotal + tax).toFixed(2);
+        }
+
+        function showLoadingSuccessModal(status, message = '') {
+            const modal = document.getElementById('loadingSuccessModal');
+            const spinnerContainer = modal.querySelector('.spinner-container');
+            const successContainer = modal.querySelector('.success-container');
+            const errorContainer = modal.querySelector('.error-container');
+
+            spinnerContainer.classList.remove('active');
+            successContainer.classList.remove('active');
+            errorContainer.classList.remove('active');
+
+            if (status === 'loading') {
+                modal.querySelector('#loadingStatusText').textContent = message || 'Processing...';
+                spinnerContainer.classList.add('active');
+                openModal('loadingSuccessModal');
+            } else if (status === 'success') {
+                spinnerContainer.classList.remove('active');
+                successContainer.classList.add('active');
+                setTimeout(() => {
+                    closeModal('loadingSuccessModal');
+                }, 1500);
+            } else if (status === 'error') {
+                spinnerContainer.classList.remove('active');
+                modal.querySelector('#loadingErrorText').textContent = message || 'An error occurred.';
+                errorContainer.classList.add('active');
+                setTimeout(() => {
+                    closeModal('loadingSuccessModal');
+                }, 3000);
+            }
+        }
+
+        async function handleReviewModalSubmit(isApproval) {
+            const poId = document.getElementById('editPoIdOnGrid').value;
+            const originalPO = projectCache[currentJobNumber]?.pos.find(p => p.po_id_on_grid === poId);
+            if (!originalPO || !originalPO.full_po_data_for_review) {
+                showLoadingSuccessModal('error', 'Could not find original PO data.');
+                return;
+            }
+
+            const actionText = isApproval ? 'Approving PO...' : 'Saving Changes...';
+            showLoadingSuccessModal('loading', actionText);
+
+            const poDataToRegenerate = JSON.parse(JSON.stringify(originalPO.full_po_data_for_review));
+
+            poDataToRegenerate.po_number = document.getElementById('editPoNumber').value;
+            poDataToRegenerate.po_date = document.getElementById('editPoDate').value;
+            poDataToRegenerate.vendor_name = document.getElementById('editVendor').value;
+            poDataToRegenerate.vendor_address = document.getElementById('editVendorAddress').value;
+            poDataToRegenerate.vendor_phone = document.getElementById('editVendorPhone').value;
+            poDataToRegenerate.vendor_email = document.getElementById('editVendorEmail').value || null;
+            poDataToRegenerate.vendor_contact = document.getElementById('editVendorContact').value;
+            poDataToRegenerate.vendor_tin = document.getElementById('editVendorTIN').value;
+            poDataToRegenerate.has_w9_document = document.querySelector('#w9AttachedControl button.active')?.dataset.value === 'true';
+            poDataToRegenerate.is_incorp_on_w9 = document.querySelector('#incorpControl button.active')?.dataset.value || 'Unknown';
+            poDataToRegenerate.tax_amount = document.getElementById('editTaxAmount').value;
+            poDataToRegenerate.total_vendor_amount_str = document.getElementById('editTotalAmount').value;
+            poDataToRegenerate.status = isApproval ? 'Approved' : 'Pending Review';
+            
+            poDataToRegenerate.aggregated_line_items = [];
+            document.querySelectorAll('#editLineItemsContainer .line-item-grid').forEach(itemRow => {
+                const inputs = itemRow.querySelectorAll('input');
+                poDataToRegenerate.aggregated_line_items.push({
+                    description: inputs[0].value,
+                    budget_code: inputs[1].value,
+                    quantity: inputs[2].value,
+                    unit_price: inputs[3].value,
+                    amount: inputs[4].value,
+                    source_doc_for_po_line: null
+                });
+            });
+            
+            const payload = { po_data_to_regenerate: poDataToRegenerate };
+
+            try {
+                const appToken = localStorage.getItem('app_token');
+                const url = `${API_BASE_URL}/regenerate-po?dropboxAccessToken=${encodeURIComponent(dropboxAccessToken)}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appToken}` },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ detail: 'Failed to save. Please try again.' }));
+                    throw new Error(errorData.detail || `Server responded with status ${response.status}`);
+                }
+
+                const updatedPOInfo = await response.json();
+                showLoadingSuccessModal('success');
+                
+                const poIndex = projectCache[currentJobNumber].pos.findIndex(p => p.po_id_on_grid === poId);
+                if (poIndex > -1) {
+                    projectCache[currentJobNumber].pos[poIndex] = updatedPOInfo;
+                } else {
+                    projectCache[currentJobNumber].pos.push(updatedPOInfo);
+                }
+
+                closeModal('reviewModal');
+                renderPOGrid(projectCache[currentJobNumber].pos);
+
+            } catch (error) {
+                console.error('Error saving PO:', error);
+                showLoadingSuccessModal('error', error.message);
+            }
+        }
+
+        function addHighlightListeners() {
+            // This function is intended to highlight areas on the PDF when a form field is focused.
+            // The logic for mapping fields to PDF coordinates is not yet implemented.
+        }
+        
+        // --- BILLING & SETTINGS PAGE LOGIC ---
+        function renderBillingPage() {
+            const container = document.getElementById('billing-content');
+            container.innerHTML = `
+                <div class="settings-card">
+                    <h3>Your Subscription</h3>
+                    <div id="billing-plan-info">
+                        <!-- Plan info will be rendered by fetchUserTier -->
+                    </div>
+                </div>`;
+            fetchUserTier(true);
+        }
+
+        function renderDropboxPage() {
+            const container = document.getElementById('dropbox-content');
+            container.innerHTML = `
+                <h2 class="app-section-title">Dropbox Connection</h2>
+                <div class="guided-step-card">
+                    <h3>Connect to Dropbox</h3>
+                    <p style="text-align: left;">
+                        To process documents, PO Wizard needs temporary access to your Dropbox.
+                        <ol style="text-align: left; padding-left: 1.5rem; margin-bottom: 1.5rem;">
+                            <li>Go to the <a href="https://www.dropbox.com/developers/apps" target="_blank" style="text-decoration: underline;">Dropbox App Console</a> and create a new app.</li>
+                            <li>Choose 'Scoped access' and 'Full Dropbox'. Name it whatever you like.</li>
+                            <li>Under the 'Permissions' tab, enable the 'files.content.write' and 'files.content.read' permissions and submit.</li>
+                            <li>Under the 'Settings' tab, find the 'Generated access token' section and click 'Generate'.</li>
+                            <li>Copy the generated token and paste it below. This token is only stored in your browser for this session and is never saved on our servers.</li>
+                        </ol>
+                    </p>
+                    <div class="form-group">
+                        <label for="appDropboxToken">New Dropbox Access Token</label>
+                        <input type="password" id="appDropboxToken" placeholder="Paste new token here">
+                    </div>
+                    <button id="submitAppTokenButton" class="btn btn-primary" style="width: 100%;">Update & Save Token</button>
+                    <div id="token-success-message" class="token-success-message" style="opacity: 0;"></div>
+                </div>`;
+            
+            document.getElementById('submitAppTokenButton').addEventListener('click', () => {
+                const token = document.getElementById('appDropboxToken').value.trim();
+                if (token) {
+                    dropboxAccessToken = token;
+                    sessionStorage.setItem('dropbox_access_token', token);
+                    const successMsg = document.getElementById('token-success-message');
+                    successMsg.textContent = '✅ Token updated successfully!';
+                    successMsg.style.opacity = '1';
+                    setTimeout(() => {
+                         showAppView('dashboardView');
+                    }, 1500);
+                } else {
+                    alert('Please enter a valid token.');
+                }
+            });
+        }
+
+        function populateSettingsForm() {
+            if (currentUser) {
+                document.getElementById('settingsFullName').value = currentUser.displayName || '';
+            }
+        }
+        
+        async function fetchUserTier(renderFullCard = false) {
+            if (!isAuthenticated || !currentUser) return;
+            const appToken = localStorage.getItem('app_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me/tier`, { headers: { 'Authorization': `Bearer ${appToken}` } });
+                if (!response.ok) throw new Error('Could not load tier');
+                
+                let tierData = await response.text();
+                userTier = tierData.replace(/"/g, ''); 
+
+                if (renderFullCard) {
+                    const billingContainer = document.getElementById('billing-plan-info');
+                    if (!billingContainer) return;
+
+                    const isPro = userTier === 'pro';
+                    billingContainer.innerHTML = `
+                        <div class="billing-plan-card ${isPro ? 'active' : ''}">
+                            <div>
+                                <div class="billing-plan-name ${isPro ? 'active' : ''}">Pro Plan</div>
+                                <div class="billing-plan-description">Unlimited vendors & no watermarks.</div>
+                            </div>
+                            <button onclick="switchUserTier()" class="btn ${isPro ? 'btn-secondary' : 'btn-primary'}" ${isPro ? '' : ''}>
+                                ${isPro ? 'Downgrade to Free' : 'Upgrade to Pro'}
+                            </button>
+                        </div>
+                        <div class="billing-plan-card ${!isPro ? 'active' : ''}" style="margin-top: 1rem;">
+                             <div>
+                                <div class="billing-plan-name ${!isPro ? 'active' : ''}">Free Plan</div>
+                                <div class="billing-plan-description">Up to 5 vendors per batch, with watermark.</div>
+                            </div>
+                            ${!isPro ? `<span style="color: var(--success-color); font-weight: 600;">Current Plan</span>` : ''}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                userTier = 'free';
+                if (renderFullCard) {
+                     const billingContainer = document.getElementById('billing-plan-info');
+                     if(billingContainer) billingContainer.innerHTML = `<p style="color: var(--error-color);">Could not load your subscription details.</p>`;
+                }
+            }
+        }
+        
+        async function switchUserTier() {
+            if (!isAuthenticated || !currentUser) return;
+            const switchBtn = document.querySelector('#billing-plan-info button');
+            if (switchBtn) {
+                switchBtn.disabled = true;
+                switchBtn.textContent = 'Switching...';
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me/switch-tier`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('app_token')}` } });
+                if (!response.ok) throw new Error('Failed to switch tier');
+                await fetchUserTier(true);
+            } catch (error) {
+                alert('An error occurred while switching tiers.');
+                if (switchBtn) {
+                    fetchUserTier(true);
+                }
+            }
+        }
+
+        // --- Dropbox Folder Picker ---
+        function openDropboxPicker(target) {
+            currentPickerTarget = target;
+            openModal('dropboxPickerModal');
+            const pickerInfo = document.getElementById('dbx-picker-info');
+            if (target.includes('output')) {
+                pickerInfo.textContent = "Choose the destination folder for your generated POs. A new subfolder for this job will be created inside your selection.";
+            } else {
+                pickerInfo.textContent = "Choose the main folder that contains all of your individual vendor folders. All subfolders inside your selection will be scanned.";
+            }
+            const folderList = document.getElementById('dbx-folder-list');
+            folderList.innerHTML = '<li>Loading folders...</li>';
+            fetchAndRenderFolders("", folderList);
+
+            document.getElementById('dbx-confirm-selection').onclick = () => {
+                const selectedRadio = document.querySelector('input[name="dbx-folder"]:checked');
+                if (selectedRadio) {
+                    const targetInputId = currentPickerTarget.includes('source') ? 'wizard_dropboxSourcePath' : 'wizard_dropboxOutputPath';
+                    document.getElementById(targetInputId).value = selectedRadio.value;
+                    closeModal('dropboxPickerModal');
+                } else {
+                    alert('Please select a folder.');
+                }
+            };
+        }
+
+        async function fetchAndRenderFolders(path, containerEl) {
+            const appToken = localStorage.getItem('app_token');
+            if (!appToken || !dropboxAccessToken) {
+                containerEl.innerHTML = `<li style="color: var(--error-color);">Authentication or Dropbox token missing. Please provide a token in the Dropbox Connection tab.</li>`;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/dropbox/list-folders?path=${encodeURIComponent(path)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${appToken}`,
+                        'X-Dropbox-Access-Token': dropboxAccessToken
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(()=>({detail: `HTTP error ${response.status}`}));
+                    if (response.status === 401) {
+                        closeModal('dropboxPickerModal');
+                        alert("Your session has expired. Please sign in again.");
+                        signOut(); 
+                        return;
+                    }
+                    throw new Error(error.detail || `Failed to fetch folders: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const folders = data.entries || [];
+                
+                containerEl.innerHTML = '';
+                if (folders.length === 0) {
+                    containerEl.innerHTML = '<li><i>No subfolders found.</i></li>';
+                    return;
+                }
+
+                folders.forEach(folder => {
+                    const li = document.createElement('li');
+                    const uniqueId = `radio-${folder.path_lower.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                    li.innerHTML = `
+                        <div class="folder-item">
+                            <span class="folder-expand-icon" data-path="${folder.path_lower}">▶</span>
+                            <label for="${uniqueId}" class="folder-item-label">
+                                <input type="radio" name="dbx-folder" value="${folder.path_lower}" id="${uniqueId}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .54-1.31zM2.19 4a1 1 0 0 0-.996.817l.637 7a1 1 0 0 0 .995.883h10.348a1 1 0 0 0 .995-.883l.637-7A1 1 0 0 0 13.81 4H2.19z"/></svg>
+                                <span>${folder.name}</span>
+                            </label>
+                        </div>
+                    `;
+                    containerEl.appendChild(li);
+
+                    li.querySelector('.folder-expand-icon').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const icon = e.target;
+                        const sublist = li.querySelector('ul');
+                        if (sublist) {
+                            sublist.remove();
+                            icon.textContent = '▶';
+                        } else {
+                            const newUl = document.createElement('ul');
+                            li.appendChild(newUl);
+                            newUl.innerHTML = '<li>Loading...</li>';
+                            icon.textContent = '▼';
+                            fetchAndRenderFolders(folder.path_lower, newUl);
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error("Error fetching Dropbox folders:", error);
+                containerEl.innerHTML = `<li style="color: var(--error-color);">${error.message}</li>`;
+            }
+        }
+
+        // --- Onboarding Wizard Logic ---
+        function startOnboardingWizard() {
+            document.getElementById('onboardingWizard').classList.add('active');
+            wizardNext(1);
+        }
+
+        function wizardNext(step) {
+            const currentSlide = document.querySelector('.wizard-slide.active');
+            if (currentSlide) {
+                const currentStep = currentSlide.dataset.step;
+                if (currentStep === "1" && !document.getElementById('wizard_inputJobNumber').value.trim()) {
+                    alert("Job Number is required.");
+                    return;
+                }
+                if (currentStep === "2" && !document.getElementById('wizard_inputProjectName').value.trim()) {
+                    alert("Project Name is required.");
+                    return;
+                }
+                if (currentStep === "3" && !document.getElementById('wizard_dropboxSourcePath').value.trim()) {
+                    alert("A Dropbox Source Folder must be selected.");
+                    return;
+                }
+            }
+
+            document.querySelectorAll('.wizard-slide').forEach(s => s.classList.remove('active'));
+            const nextSlide = document.querySelector(`.wizard-slide[data-step="${step}"]`);
+            if (nextSlide) {
+                nextSlide.classList.add('active');
+            }
+        }
+
+        function finishWizard() {
+            const newJobNumber = document.getElementById('wizard_inputJobNumber').value.trim();
+            const newProjectName = document.getElementById('wizard_inputProjectName').value.trim();
+            const sourcePath = document.getElementById('wizard_dropboxSourcePath').value.trim();
+            const outputPath = document.getElementById('wizard_dropboxOutputPath').value.trim();
+            
+            if (!newJobNumber || !newProjectName || !sourcePath || !outputPath) {
+                alert("All fields, including source and output folders, are required to start processing.");
+                return;
+            }
+            
+            addProject(newJobNumber, newProjectName);
+            currentJobNumber = newJobNumber;
+            saveStateToLocalStorage();
+
+            document.getElementById('onboardingWizard').classList.remove('active');
+            startDocumentProcessing(sourcePath, outputPath);
+        }
+
+        function animateValueProps() {
+            const cards = document.querySelectorAll('.value-prop-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+            
+            cards.forEach(card => {
+                card.classList.add('animate');
+                observer.observe(card);
+            });
+        }
+    </script>
+</body>
+</html>
